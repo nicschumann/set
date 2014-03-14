@@ -1,0 +1,16 @@
+# .gitignore for set
+
+.classpath
+.project
+.metadata
+.settings
+
+**/.classpath
+**/.DS_Store
+
+# Java
+**/*.class
+
+# C
+**/*.o
+**/*.s
