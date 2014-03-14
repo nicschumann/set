@@ -1,0 +1,152 @@
+%!PS-Adobe-3.0
+%%Creator: Rhinoceros
+%%Title: (cube.AI)
+%%BoundingBox: -39 87 694 637
+%%DocumentProcessColors: Black
+%%DocumentNeededResources: procset Adobe_packedarray 2.0 0
+%%+ procset Adobe_cmykcolor 1.1 0
+%%+ procset Adobe_cshow 1.1 0
+%%+ procset Adobe_customcolor 1.0 0
+%%+ procset Adobe_typography_AI3 1.0 0
+%%+ procset Adobe_IllustratorA_AI3 1.0 0
+%AI3_ColorUsage: Color
+%AI3_TemplateBox: 0 0 0 0
+%AI3_TileBox: 0 0 576 768
+%AI3_DocumentPreview: None
+%%Template:
+%%PageOrigin:0 0
+%%EndComments
+%%BeginProlog
+%%IncludeResource: procset Adobe_packedarray 2.0 0
+Adobe_packedarray /initialize get exec
+%%IncludeResource: procset Adobe_cmykcolor 1.1 0
+%%IncludeResource: procset Adobe_cshow 1.1 0
+%%IncludeResource: procset Adobe_customcolor 1.0 0
+%%IncludeResource: procset Adobe_typography_AI3 1.0 0
+%%IncludeResource: procset Adobe_IllustratorA_AI3 1.0 0
+%%EndProlog
+%%BeginSetup
+Adobe_cmykcolor /initialize get exec
+Adobe_cshow /initialize get exec
+Adobe_customcolor /initialize get exec
+Adobe_typography_AI3 /initialize get exec
+Adobe_IllustratorA_AI3 /initialize get exec
+%%EndSetup
+%AI5_BeginLayer
+1 1 1 1 0 0 -1 0 0 0 Lb
+(Section::Section - Behind) Ln
+0 A
+0 R
+1.0000 1.0000 1.0000 1.0000 K
+1.0000 1.0000 1.0000 1.0000 k
+0 i 1 J 1 j 1.0000 w 4 M []0 d
+0 D
+167.9162 273.5377 m
+358.0546 212.7349 L
+S
+1.0000 1.0000 1.0000 1.0000 K
+1.0000 1.0000 1.0000 1.0000 k
+0 i 1 J 1 j 1.0000 w 4 M []0 d
+0 D
+304.1735 536.7878 m
+156.5892 499.7803 L
+S
+1.0000 1.0000 1.0000 1.0000 K
+1.0000 1.0000 1.0000 1.0000 k
+0 i 1 J 1 j 1.0000 w 4 M []0 d
+0 D
+156.5892 499.7803 m
+360.5094 464.6073 L
+S
+1.0000 1.0000 1.0000 1.0000 K
+1.0000 1.0000 1.0000 1.0000 k
+0 i 1 J 1 j 1.0000 w 4 M []0 d
+0 D
+358.0546 212.7349 m
+360.5094 464.6073 L
+S
+1.0000 1.0000 1.0000 1.0000 K
+1.0000 1.0000 1.0000 1.0000 k
+0 i 1 J 1 j 1.0000 w 4 M []0 d
+0 D
+-38.4472 88.9238 m
+693.5843 88.9238 L
+693.5843 636.8982 L
+-38.4472 636.8982 L
+-38.4472 88.9238 L
+s
+1.0000 1.0000 1.0000 1.0000 K
+1.0000 1.0000 1.0000 1.0000 k
+0 i 1 J 1 j 1.0000 w 4 M []0 d
+0 D
+492.6212 511.3791 m
+304.1735 536.7878 L
+S
+1.0000 1.0000 1.0000 1.0000 K
+1.0000 1.0000 1.0000 1.0000 k
+0 i 1 J 1 j 1.0000 w 4 M []0 d
+0 D
+360.5094 464.6073 m
+492.6212 511.3791 L
+S
+1.0000 1.0000 1.0000 1.0000 K
+1.0000 1.0000 1.0000 1.0000 k
+0 i 1 J 1 j 1.0000 w 4 M []0 d
+0 D
+482.1424 293.8273 m
+492.6212 511.3791 L
+S
+1.0000 1.0000 1.0000 1.0000 K
+1.0000 1.0000 1.0000 1.0000 k
+0 i 1 J 1 j 1.0000 w 4 M []0 d
+0 D
+358.0546 212.7349 m
+482.1424 293.8273 L
+S
+1.0000 1.0000 1.0000 1.0000 K
+1.0000 1.0000 1.0000 1.0000 k
+0 i 1 J 1 j 1.0000 w 4 M []0 d
+0 D
+167.9162 273.5377 m
+156.5892 499.7803 L
+S
+LB
+%AI5_EndLayer--
+%AI5_BeginLayer
+1 1 1 1 0 0 -1 255 255 255 Lb
+(Make2D::hidden::lines) Ln
+0 A
+0 R
+0.0000 0.0000 0.0000 0.0000 K
+0.0000 0.0000 0.0000 0.0000 k
+0 i 1 J 1 j 1.0000 w 4 M []0 d
+0 D
+305.5160 338.6964 m
+167.9162 273.5377 L
+S
+0.0000 0.0000 0.0000 0.0000 K
+0.0000 0.0000 0.0000 0.0000 k
+0 i 1 J 1 j 1.0000 w 4 M []0 d
+0 D
+482.1424 293.8273 m
+305.5160 338.6964 L
+S
+0.0000 0.0000 0.0000 0.0000 K
+0.0000 0.0000 0.0000 0.0000 k
+0 i 1 J 1 j 1.0000 w 4 M []0 d
+0 D
+305.5160 338.6964 m
+304.1735 536.7878 L
+S
+LB
+%AI5_EndLayer--
+%%PageTrailer
+gsave annotatepage grestore showpage
+%%Trailer
+Adobe_IllustratorA_AI3 /terminate get exec
+Adobe_typography_AI3 /terminate get exec
+Adobe_customcolor /terminate get exec
+Adobe_cshow /terminate get exec
+Adobe_cmykcolor /terminate get exec
+Adobe_packedarray /terminate get exec
+%%EOF

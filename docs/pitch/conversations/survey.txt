@@ -1,0 +1,25 @@
+Requirements
+
+The Proposal.
+
+General:
+
+	These questions just enquire generally about the way you use 3D modeling tools.
+
+	- How does your work require you to use 3D modeling tools?
+	- Which part of your specific 3D modeling platform do you find the most valuable?
+	- Which parts do you find yourself using the least?
+	- If you could change anything about your platform, what would it be?
+	- What problem or problems do you find yourself solving over and over again in your current software,
+	either in the same or different ways?
+	- What is the greatest source of error in your work, currently? How does your program work to contribute to or alleviate this?
+
+Specific:
+
+	The following three questions ask you to reason through a hypothetical problem in your current workflow. If not applicable to the user's specific work, skip.
+
+	- Imagine, for a moment, that you're working on a project where its important for two different geometries to maintain some size and shape relative to one another, regardless of resizing or relocation. How would you go about expressing this in your model? Be as specific or general as you like.
+
+	- Now imagine that you've drawn a shape in your program, and you want to ensure that it tessellates. How would you go about checking this?
+
+	- s

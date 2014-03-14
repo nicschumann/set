@@ -1,0 +1,43 @@
+A geometric constraint problem <GCP> consists of 
+
+		a set of geometric objects
+		a set of constraints between them
+
+A geometric constraint graph G = (V,E,w) corresponding to a
+GCP is a weighted graph with n vertices ( representing entries in the object set ),
+V and m edges ( constraints ) E, w(v) is the weight of vertex v, and 
+w(e) is the weight of edge e. This G consists of
+	
+		a set V of geometric objects	
+		a set E of constraints between objects in V
+		an assignment w assigning weights to objects in V + E
+
+The following definitions relate notions of solvability of the 
+geometric constraint system to the corresponding constraint graph.
+
+A subgraph A contained in G that satisfies
+
+	sum(e in A)(w(e) + D) >= sum(v in A)(w(e))
+
+is called dense, where D is a dimension-dependent constant.
+
+d(A) = sum(e in A)(w(e)) - sum(v in A)(w(v)) is called the density of a graph A.
+
+D is typically set as (d+1 choose 2) where d is the dimension. D captures the degrees
+of freedom associated with the cluster of geometric objects corresponding to the dense
+graph. In general, we use the words subgraph, and cluster interchangeably. 
+
+A dense graph with density > -D is called overconstrained.
+A dense graph all of whose subgraphs have density <= -D is wellconstrained.
+A graph G is welloverconstrained if it satisfies the following: 
+G is dense, G has at least one over constrained subgraph, and has
+the property that on replacing all over constrained subgraphs by 
+well constrained subgraphs, G remains dense.
+
+A graph that is well constrained or welloverconstrained is said to be solvable.
+
+A dense graph is minimal if it has no proper dense subgraph. all minimal dense
+subgraphs are solvable, but the converse is not true. A graph that is not solvable
+is said to be under constrained. GSP has two aspects, a combinatorial aspect as
+well as a geometric aspect. the geometric aspect deals with the parameters of the
+GSP, while the combinatorial aspect deals with objects and constraints.

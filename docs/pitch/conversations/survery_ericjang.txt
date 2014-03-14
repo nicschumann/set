@@ -1,0 +1,31 @@
+Interview Eric Jang 
+
+What does your work with 3D modeling software consist of?
+
+-mostly uses Blender, also familiar with Maya
+-uses both for animation and graphics rendering purposes including modeling, shading, lighting and character rigging
+-makes scenes in Blender to use as test scenes for raytracing and path tracing 
+
+What aspects of your platform of choice do you find particularly intuitive and essential to your work?
+
+-Blender is less intuitive than Maya overall, but once get past learning curve provides for a great deal of control over scenes created
+-It’s great to have the functionality of Maya, After Effects, and ZBrush all rolled into one with Blender 
+-The notions of an “object” and a “mesh” are kept separate which makes modeling more flexible
+-Very well organized user interface 
+
+What aspects of your program of choice do you not like or would change?
+
+-Blender’s complete lack of redundancy in tools actually makes it harder to use—there is ofter only one way to approach a problem and this makes it harder for beginners (unlike Maya and most Adobe products in which there are multiple ways of doing the same thing). This also allows for less customization of the workflow
+
+Do you find yourself solving the same problems over and over or find a redundancy in the tools in your program?
+
+-There is some redundancy but it is helpful for picking your own workflow
+-Even though there are some features that I never use I wouldn’t want any of them removed because there is probably a task out there that they are better suited to than anything else
+-Would prefer redundancy over lack of control
+
+Do you have questions or comments for me?
+
+-What does the constraint solver do if there is more than one solution to a given CSP? What will get rendered?
+-Do users have to redefine constraints and problems every time they want to use them?
+-People like things they are familiar with, so you should be sure to study UI of other 3D modelers so as to make something that will resemble something intuitive for users 
+

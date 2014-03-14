@@ -1,0 +1,43 @@
+Q + A w/ GN
+
+
+	NS: 	Brief overview of the work:
+
+	GN:	There's probably a couple different categories of use, there's like a sketching to figure out formal or spacial ideas which is quick and dirty modeling which doesn't necessarily validate for fabrication or produce shop drawings or specifications, but just helps get ideas across, and then there's drawing for or modeling for making drawings and other types of representations like rendering or construction documents or schematic drawings, and then there's modeling for fabrication and production, which usually is some sort of modeling and then exporting to certain formats like STL or OBJ or some kind of mesh format -- and that has a sort of one way process that like you model something and then export it, so when you make another model or change the model you don't get a new output, you're kind of locked in to this single vertical chain of production.
+
+	NS: 	Do you use a specific program?
+
+	GN:	I use rhino almost all the time. I might use other things if I need to export a file or change a format, but I prefer rhino pretty much all the time.
+
+	NS:	Specific features?
+
+	GN:	the most basic reason why i like rhino is that I was trained in Autocad first, and there's a pretty distinct similarity in the command structure and the commands. There's a familiarity - its comprehensive in its operations, a lot of people use it, it is capable of extremely complex form and precise and accurate operations - it's basically just not missing anything I need, except for some kind of parametric workflow build in, but grasshopper, the plugin for rhino, allows parametric operations to occur. You have to write every single custom para operation every time you want to do it but its extremely powerful, and you can map it to fabrication, you can map it to documentation, whatever. And it can really change the way you think about producing something. The vertical chain of fabrication I was talking about is a downfall in rhino, you have a model and you're not always getting a producable output. Something that would be a similar thing but for rendering would be this program keyshot, where you have a model in keyshot and you can change it, adjust the view, and its always producing a rendering, you just say save view and it gives you a high quality rendering, whereas in a program like VRay in rhino or 3dstudio max or in Maya when you're producing a rendering you're setting up the shot, setting the materials, and so on and so on and then rendering, so keyshot is a real-time renderer, and if there was some kind of real time fabrication validation, or real time fabrication file production, if I'm looking at a model and always have a tool path, or looking at a model and always have a cut sheet for the laser, that would be extremely valuable. Even if ai had to work to make it happen, even if I had to set up all these parameters and define exactly how it should export, I would still want to use that.
+
+	NS: Pronlems?
+
+	GN:	Probably some sort of validation. Often with time crunches on projects you don't go back and double triple check everything, make sure things are properly aligned - and you have to decide what properly aligned means, what properly dimensioned means, what properly sized means,  but I don't have a way to set that up and make sure its constantly validating, make sure that things are square and perfectly measured. Thickness for 3D Printing, thickness of the shells, the walls, the wire, I have to keep remaking the model and keep almost fully rebuilding each time to make a change like that, instead of determining a thickness somewhere. 
+
+	Versioning is not great, but I guess that's never really solved properly, thats more of a user thing, I think.
+
+	I mean another thing that has to happen over and over and over, is if you have to change the profile of a cut, and you're tabbing that profile, at least in our current workflow we're exporting it into a second software and adding tabs, and then if we have to change that profile by one millimeter, we have to reexport and re-tab, which is crazy, I'd say I'm redoing more things on the tool path side than on the modeling side.
+
+	NS:	What's the greatest source of errors in your process?
+
+	GN:	Not modeling in 3D is the biggest source of errors. Drawing tool paths without making a 3d model and checking the validity of that part, is probably the biggest src of erros. but you know the fact that there is this waterfall workflow, is probably a source too, you know when you want change a tool path to redo all the models and properly version then is sometimes just not economical, especially when you're on a time crunch. To rebuild all that stuff just because you want to change one dimension is crazy.
+
+	NS: Specific qs. Peg in Hole
+
+	GN: I would decide that in my head, decide that lets say a leg has to fit into a whole and then i would model it with making each form separately. I'd make the solid and make the peg and then use a command like booleandifference to subtract the peg from the solid, and then I would just have decided that those two pieces are linked, but I wouldn't do something empirical to ensure that, and if I was just working with someone else i would just tell them that. so if i were handing off a file, I would have to write notes, write specifications that would prove that that thing stays where it is and the dimensions are linked.
+	If i really wanted to make sure it would happen, i would make a grasshopper definition, that would take the two forms as inputs and and intersect them to create the proper opening, and keep them linked, but then you have to hand off the grasshopper definition, so that's a two part process, not baked into rhino.
+
+	NS: Tesselation
+
+	GN: I'd write a grasshopper definition that takes the input surface and however it is to be divided, I would write a definition to handle that, if its triangulation, I'll divide the surface into U and V definitions, and then draw polygons that connect the grid that those coordinates form. once you have that, its fairly easy to fold in sliders or parameters that allow those shapes to be transformed or scaled consistently.
+
+	NS: Complex, replanarization
+
+	GN: Hmm. Sounds like I would rebuild it. I don't know, I mean it depends whether or not I feel like I can select the right parts - if I feel like I can get the right view of the object and select the bad parts with the right window, I would do that, but if I can't i'd just rebuild them. Hopefully, if its meshes I have some kind of NURBS surface that it came from, so I can adjust that and then remesh it, but if not, I guess I'd just have to rebuid. I don't know what else I could do.
+
+
+
+	
