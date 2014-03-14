@@ -4,6 +4,7 @@
 .project
 .metadata
 .settings
+.DS_Store
 
 **/.classpath
 **/.DS_Store
