@@ -3,6 +3,7 @@
 .classpath
 .project
 .metadata
+.idea
 .settings
 .DS_Store
 
