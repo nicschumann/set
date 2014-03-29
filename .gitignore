@@ -6,12 +6,15 @@
 .idea
 .settings
 .DS_Store
+set.iml
 
 **/.classpath
 **/.DS_Store
 
 # Java
 **/*.class
+
+/lib
 
 # C
 **/*.o
