@@ -1,22 +1,18 @@
 package com.workshop.set.lang.core;
 
-import com.workshop.set.interfaces.Environment;
-import com.workshop.set.interfaces.Context;
-import com.workshop.set.interfaces.Value;
-import com.workshop.set.interfaces.Term;
+import com.workshop.set.interfaces.*;
+import com.workshop.set.lang.judgements.HasType;
 
 /**
  * Created by nicschumann on 3/29/14.
  */
 public class TField implements Term {
 
-    public TField( long exponent ) { this.exponent = exponent; }
-    public final long exponent;
-
     @Override
     public boolean equals( Object o ) {
         try {
-            return ((TField)o).exponent == this.exponent;
+            TField _ = (TField)o;
+            return true;
         } catch ( ClassCastException _ ) {
             return false;
         }
@@ -24,16 +20,17 @@ public class TField implements Term {
 
     @Override
     public String toString() {
-        return ( exponent == 0L ) ? "F" : "F{"+ Long.toString( exponent ) + "}";
+        return "F";
     }
 
     @Override
     public Term type( Context gamma ) {
-        return null;
+        return new TUniverse( 0L );
     }
 
     @Override
     public Term step( Environment eta ) {
+        // TODO : define small step evaluation
         return null;
     }
 
@@ -41,4 +38,10 @@ public class TField implements Term {
     public Value evaluate( Environment eta ) {
         return null;
     }
+
+    @Override
+    public Term substitute( Term x, TNameGenerator.TName y ) {
+        return this;
+    }
+
 }

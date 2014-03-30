@@ -1,9 +1,7 @@
 package com.workshop.set.lang.core;
 
-import com.workshop.set.interfaces.Environment;
-import com.workshop.set.interfaces.Context;
-import com.workshop.set.interfaces.Value;
-import com.workshop.set.interfaces.Term;
+import com.workshop.set.interfaces.*;
+import com.workshop.set.lang.judgements.HasType;
 
 /**
  * Created by nicschumann on 3/29/14.
@@ -27,9 +25,16 @@ public class TUniverse implements Term {
         return  ( level == 0L ) ? "Univ" : "Univ{" + Long.toString( level ) + "}";
     }
 
+    public TUniverse max( TUniverse n ) {
+        return ( level > n.level ) ? this : n;
+    }
+
     @Override
+    /**
+     * All well-formed contexts prove that Univ{n} : Univ{n+1}
+     */
     public Term type( Context gamma ) {
-        return null;
+        return new TUniverse( level + 1L );
     }
 
     @Override

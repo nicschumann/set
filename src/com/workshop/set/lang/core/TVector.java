@@ -1,21 +1,22 @@
 package com.workshop.set.lang.core;
 
-import com.workshop.set.interfaces.*;
+import java.util.Set;
+import java.util.Vector;
 
-import java.util.ArrayList;
+import com.workshop.set.interfaces.*;
 
 /**
  * Created by nicschumann on 3/29/14.
  */
 public class TVector implements Pattern {
-    public TVector( java.util.Vector<TScalar> entries ) {
+    public TVector( Vector<TScalar> entries ) {
         this.entries = entries;
     }
 
-    private final java.util.Vector<TScalar> entries;
+    private final Vector<TScalar> entries;
 
-    public java.util.Vector<TScalar> components() {
-        return new java.util.Vector<TScalar>( entries );
+    public Vector<TScalar> components() {
+        return new Vector<TScalar>( entries );
     }
 
     @Override
@@ -37,7 +38,7 @@ public class TVector implements Pattern {
 
     @Override
     public Term type( Context gamma ) {
-        return null;
+        return new TExponential( new TField(), entries.size() );
     }
 
     @Override
@@ -47,6 +48,11 @@ public class TVector implements Pattern {
 
     @Override
     public Value evaluate( Environment eta ) {
+        return null;
+    }
+
+    @Override
+    public Set<Judgement> bind( Term value ) {
         return null;
     }
 }

@@ -1,6 +1,13 @@
-package com.workshop.set.lang;
+package com.workshop.set.lang.core;
 
 import com.workshop.set.interfaces.*;
+import com.workshop.set.lang.judgements.HasType;
+import com.workshop.set.lang.judgements.HasValue;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * The Gensym class implements a symbol generator for generic subclasses S
@@ -16,7 +23,7 @@ import com.workshop.set.interfaces.*;
  */
 public class TNameGenerator
     implements Gensym {
-    public class TName implements Symbol, Term {
+    public class TName implements Symbol, Term, Pattern {
         private TName( Gensym factory, long index, String hint ) {
             this.readable = hint;
             this.factory = factory;
@@ -57,13 +64,44 @@ public class TNameGenerator
         }
 
         @Override
-        public Term typesAs( Context gamma ) {
+        public Term type( Context gamma ) {
+            try {
+                TUniverse univ = ((TUniverse)gamma.proves( this ));
+                return univ;
+            } catch ( ClassCastException _ ) {
+                return null;
+            }
+        }
+
+        @Override
+        public Term step( Environment eta ) {
+            // TODO : define small step evaluation
             return null;
         }
 
         @Override
-        public Value evaluatesTo( Environment eta ) {
+        public Value evaluate( Environment eta ) {
             return null;
+        }
+
+        @Override
+        public Pattern substitute( Term x, TName y ) {
+            return null;
+        }
+
+        @Override
+        public Set<HasValue> bind( Term value ) {
+            return new HashSet<HasValue>(Arrays.asList( new HasValue( this, value ) ) );
+        }
+
+        @Override
+        public Set<TName> names( ) {
+            return new HashSet<TName>( Arrays.asList( this ) );
+        }
+
+        @Override
+        public boolean binds( TName n ) {
+            return n.equals( this );
         }
     }
 
