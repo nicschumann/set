@@ -45,16 +45,17 @@ public class TAbstraction implements Term {
 
             TUniverse U1            = (TUniverse)(type.type( gamma ));
 
-            Term T2                 = body.type( gamma.extend( new HasType( binder, type ) ) );
+            Set<Judgement> bound    = binder.decompose( gamma.extend( new HasType( binder,type ) ));
 
-            TUniverse U2            = (TUniverse)T2.type( gamma.extend( new HasType( binder, type )) );
+            Term T2                 = body.type( gamma.extend( bound ) );
+
+            TUniverse U2            = (TUniverse)T2.type( gamma.extend( bound ) );
 
             if ( U1.level >= U2.level ) {
                 return new TAll( binder, type, T2 );
             } else throw new TypecheckingException( this, gamma, "Universe Inconsistency - " + U1 + " does not contain " + U2 );
 
         } catch ( ClassCastException _ ) {
-            // TODO check this :::
             throw new TypecheckingException( this, gamma, "Ascription Inconsistency" );
         }
     }

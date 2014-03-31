@@ -1,43 +1,38 @@
 package com.workshop.set.lang.core;
 
-import com.workshop.set.interfaces.Context;
-import com.workshop.set.interfaces.Environment;
-import com.workshop.set.interfaces.Term;
-import com.workshop.set.interfaces.Value;
+import com.workshop.set.interfaces.*;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
+import com.workshop.set.lang.judgements.HasType;
 import com.workshop.set.lang.judgements.HasValue;
 
 import java.util.HashSet;
 import java.util.Set;
 
 /**
- * This class represents an Exponential Type :
- *
- *    G |- a : T            n in N
- * -------------------------------------------
- *              a ^ n : Univ0
- *
+ * Created by nicschumann on 3/31/14.
  */
-public class TExponential implements Term {
-    public TExponential( Term base, Integer exponent ) {
-        this.base   = base;
-        this.exp    = exponent;
+public class TSum implements Term {
+    public TSum( Pattern binder, Term type, Term body ) {
+        this.binder = binder;
+        this.type = type;
+        this.body = body;
     }
 
-    public final Term base;
-    public final Integer exp; // change to scalar?
+    public final Pattern binder;
+    public final Term type;
+    public final Term body;
 
     @Override
     public String toString() {
-        return base.toString() + "^" + exp.toString();
+        return "Sum " + binder.toString() + " : " + type.toString() + " . " + body.toString();
     }
 
     @Override
     public boolean equals( Object o ) {
         try {
-            return ((TExponential)o).base.equals( base )
-                && ((TExponential)o).exp.equals( exp );
+            return ((TSum)o).type.equals( type )
+                && ((TSum)o).body.equals( body );
         } catch ( ClassCastException _ ) {
             return false;
         }
@@ -45,10 +40,13 @@ public class TExponential implements Term {
 
     @Override
     public Term type( Context gamma )
-        throws TypecheckingException {
+            throws TypecheckingException {
         try {
-            Term t = base.type( gamma );
-            return t;
+            TUniverse U1 = (TUniverse)type.type( gamma );
+            TUniverse U2 = (TUniverse)body.type( gamma.extend( new HasType( binder, type )) );
+
+            return U1.max( U2 );
+
         } catch ( ClassCastException _ ) {
             throw new TypecheckingException( this, gamma );
         }
@@ -62,12 +60,15 @@ public class TExponential implements Term {
 
     @Override
     public Value evaluate( Environment eta ) {
+        // TODO : define big step evaluation
         return null;
     }
 
     @Override
     public Term substitute( Term x, TNameGenerator.TName y ) {
-        return new TExponential( base.substitute(x,y), exp );
+        if ( !binder.binds( y ) ) {
+            return new TSum( binder, type.substitute(x,y), body.substitute( x,y ) );
+        } else return this;
     }
 
     @Override

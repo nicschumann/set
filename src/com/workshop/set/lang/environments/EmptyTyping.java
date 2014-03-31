@@ -31,6 +31,6 @@ public class EmptyTyping implements Context {
 
     @Override
     public String toString() {
-        return "Empty Context";
+        return "[]";
     }
 }

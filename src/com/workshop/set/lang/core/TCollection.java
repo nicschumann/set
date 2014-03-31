@@ -20,7 +20,7 @@ public class TCollection implements Term {
         cardinality = l;
     }
 
-    private final Term contents;
+    public final Term contents;
     private final int cardinality;
 
     @Override

@@ -2,6 +2,7 @@ package com.workshop.set.lang.core;
 
 import com.workshop.set.interfaces.*;
 import com.workshop.set.lang.core.TNameGenerator.TName;
+import com.workshop.set.lang.judgements.HasType;
 import com.workshop.set.lang.judgements.HasValue;
 
 import java.util.Collection;
@@ -62,6 +63,11 @@ public class TScalar implements Pattern {
     @Override
     public boolean binds( TName n ) {
         return false;
+    }
+
+    @Override
+    public Set<Judgement> decompose( Context gamma ) {
+        return new HashSet<Judgement>();
     }
 
 }

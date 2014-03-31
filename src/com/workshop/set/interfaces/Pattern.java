@@ -1,8 +1,8 @@
 package com.workshop.set.interfaces;
 
 import com.workshop.set.lang.core.TNameGenerator;
-import com.workshop.set.lang.exceptions.PatternMatchException;
-import com.workshop.set.lang.judgements.HasValue;
+import com.workshop.set.lang.exceptions.TypecheckingException;
+import com.workshop.set.lang.judgements.HasType;
 
 import java.util.Set;
 
@@ -11,4 +11,5 @@ import java.util.Set;
  */
 public interface Pattern extends Term {
     public boolean binds( TNameGenerator.TName n );
+    public Set<Judgement> decompose( Context gamma ) throws TypecheckingException;
 }

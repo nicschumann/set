@@ -7,6 +7,7 @@ import java.util.Vector;
 import com.workshop.set.interfaces.*;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
+import com.workshop.set.lang.judgements.HasType;
 import com.workshop.set.lang.judgements.HasValue;
 
 /**
@@ -35,7 +36,7 @@ public class TVector implements Pattern {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("( ");
-        for ( Term comp : entries ) { s.append( comp.toString() ); }
+        for ( Term comp : entries ) { s.append( comp.toString() + " " ); }
         s.append( ")" );
         return s.toString();
     }
@@ -109,5 +110,27 @@ public class TVector implements Pattern {
             } catch ( ClassCastException _ ) {}
         }
         return fold;
+    }
+
+    public Set<Judgement> decompose( Context gamma )
+        throws TypecheckingException {
+        try {
+            Set<Judgement> j = new HashSet<Judgement>();
+
+            Term ty = gamma.proves( this ); // retrieve the type of this
+            Integer arity = ((TExponential)ty).exp;
+            Term base = ((TExponential)ty).base;
+
+            for ( int i = 0; i < arity; i++ ) {
+                try {
+                    j.addAll(((Pattern) entries.get(i)).decompose( gamma.extend( new HasType(entries.get(i), base ))));
+                } catch ( ClassCastException _ ) {}
+             }
+
+            return j;
+
+        } catch ( ArrayIndexOutOfBoundsException _ ) {
+            throw new TypecheckingException( this, gamma, "Decomposition Error" );
+        }
     }
 }

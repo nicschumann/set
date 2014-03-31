@@ -3,8 +3,10 @@ package com.workshop.set.lang.core;
 import com.workshop.set.interfaces.*;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
+import com.workshop.set.lang.judgements.HasType;
 import com.workshop.set.lang.judgements.HasValue;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -79,5 +81,16 @@ public class TAdditive implements Pattern {
     public Set<HasValue> bind( Term value )
         throws PatternMatchException {
         return addand.bind( value );
+    }
+
+    @Override
+    public Set<Judgement> decompose( Context gamma )
+            throws TypecheckingException {
+        try {
+            return ((Pattern)addand).decompose( gamma );
+        } catch ( ClassCastException _ ) {
+            return new HashSet<Judgement>();
+        }
+
     }
 }

@@ -3,22 +3,24 @@ package com.workshop.set.lang.core;
 import com.workshop.set.interfaces.*;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
+import com.workshop.set.lang.judgements.HasType;
 import com.workshop.set.lang.judgements.HasValue;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
  * Created by nicschumann on 3/29/14.
  */
 public class TMultiplicative implements Pattern {
-    public TMultiplicative( TScalar s, Pattern v ) {
+    public TMultiplicative( TScalar s, Term v ) {
         this.scalar = s;
         this.multiplicand = v;
     }
 
     public final TScalar scalar;
-    public final Pattern multiplicand;
+    public final Term multiplicand;
 
     @Override
     public boolean equals( Object o ) {
@@ -75,6 +77,17 @@ public class TMultiplicative implements Pattern {
     public Set<HasValue> bind( Term value )
         throws PatternMatchException {
         return multiplicand.bind( value );
+    }
+
+    @Override
+    public Set<Judgement> decompose( Context gamma )
+            throws TypecheckingException {
+        try {
+            return ((Pattern)multiplicand).decompose( gamma );
+        } catch ( ClassCastException _ ) {
+            return new HashSet<Judgement>();
+        }
+
     }
 
 }

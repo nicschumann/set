@@ -1,6 +1,7 @@
 package com.workshop.set.lang.core;
 
 import com.workshop.set.interfaces.*;
+import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
 import com.workshop.set.lang.judgements.HasType;
 import com.workshop.set.lang.judgements.HasValue;
@@ -98,6 +99,14 @@ public class TNameGenerator
         @Override
         public boolean binds( TName n ) {
             return n.equals( this );
+        }
+
+        @Override
+        public Set<Judgement> decompose( Context gamma )
+            throws TypecheckingException {
+            Term ty = gamma.proves( this );
+            if ( ty == null ) throw new TypecheckingException( this, gamma, "Decomposition Error" );
+            return new HashSet<Judgement>( Arrays.asList( new HasType( this, ty ) ) );
         }
     }
 

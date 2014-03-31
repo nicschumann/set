@@ -3,6 +3,7 @@ package com.workshop.set.lang.core;
 import com.workshop.set.interfaces.*;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
+import com.workshop.set.lang.judgements.HasType;
 import com.workshop.set.lang.judgements.HasValue;
 
 import java.util.HashSet;
@@ -43,8 +44,11 @@ public class TTuple implements Pattern {
                  b = range.type( gamma );
 
             if ( a!=null && b!=null ) {
-                // TODO : ascribe a type, and return it.
-                return null;
+
+               // TODO implement naming contexts
+               TNameGenerator g = new TNameGenerator();
+               return new TSum( g.generate("_"), a, b );
+
             } else throw new TypecheckingException( this, gamma );
         } catch ( ClassCastException _ ) {
             throw new TypecheckingException( this, gamma );
@@ -93,5 +97,28 @@ public class TTuple implements Pattern {
         } catch ( ClassCastException _ ) {}
         finally { return b; }
 
+    }
+
+    @Override
+    public Set<Judgement> decompose( Context gamma )
+        throws TypecheckingException {
+        try {
+            Set<Judgement> j = new HashSet<Judgement>();
+
+            Term ty = gamma.proves( this ); // retrieve the type of this
+            Term domTy = ((TSum)ty).type;
+            Term codTy = ((TSum)ty).body;
+
+            try { j.addAll( ((Pattern)domain).decompose( gamma.extend( new HasType(domain, domTy) ) ) ); }
+            catch ( ClassCastException _ ) {}
+
+            try { j.addAll( ((Pattern)range).decompose( gamma.extend( new HasType(range, codTy) ) ) ); }
+            catch ( ClassCastException _ ) {}
+
+            return j;
+
+        } catch ( ClassCastException _ ) {
+            throw new TypecheckingException( this, gamma, "Decomposition Error" );
+        }
     }
 }

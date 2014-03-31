@@ -8,6 +8,7 @@ import java.util.Set;
 import com.workshop.set.interfaces.*;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
+import com.workshop.set.lang.judgements.HasType;
 import com.workshop.set.lang.judgements.HasValue;
 
 /**
@@ -65,7 +66,7 @@ public class TSet implements Pattern {
             return (t == null) ? new TCollection( types.get( 0 ), elements.size() )
                                : new TCollection( t, elements.size() );
 
-        } throw new TypecheckingException( this, gamma );
+        } throw new TypecheckingException( this, gamma, "Heterogeneous Set" );
 
     }
 
@@ -117,6 +118,27 @@ public class TSet implements Pattern {
             } catch ( ClassCastException _ ) {}
         }
         return fold;
+    }
+
+    public Set<Judgement> decompose( Context gamma )
+        throws TypecheckingException {
+        try {
+            Set<Judgement> j = new HashSet<Judgement>();
+
+            Term ty = gamma.proves( this ); // retrieve the type of this
+            Term base = ((TCollection)ty).contents;
+
+            for ( int i = 0; i < elements.size(); i++ ) {
+                try {
+                    j.addAll(((Pattern) elements.get(i)).decompose( gamma.extend( new HasType(elements.get(i), base ))));
+                } catch ( ClassCastException _ ) {}
+            }
+
+            return j;
+
+        } catch ( ArrayIndexOutOfBoundsException _ ) {
+            throw new TypecheckingException( this, gamma, "Decomposition Error" );
+        }
     }
 
 }

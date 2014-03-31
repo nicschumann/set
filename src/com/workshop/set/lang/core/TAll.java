@@ -27,8 +27,7 @@ public class TAll implements Term {
     @Override
     public boolean equals( Object o ) {
         try {
-            return ((TAll)o).binder.equals( binder )
-                    && ((TAll)o).type.equals(type)
+            return  ((TAll)o).type.equals(type)
                     && ((TAll)o).body.equals( body );
         } catch ( ClassCastException _ ) {
             return false;
@@ -46,7 +45,7 @@ public class TAll implements Term {
         try {
 
             TUniverse U1 = (TUniverse)type.type( gamma );
-            TUniverse U2 = (TUniverse)body.type( gamma.extend( new HasType( binder, body )) );
+            TUniverse U2 = (TUniverse)body.type( gamma.extend( new HasType( binder, type )) );
 
             return U1.max( U2 );
 
