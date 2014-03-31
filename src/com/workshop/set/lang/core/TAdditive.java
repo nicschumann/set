@@ -1,6 +1,7 @@
 package com.workshop.set.lang.core;
 
 import com.workshop.set.interfaces.*;
+import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
 import com.workshop.set.lang.judgements.HasValue;
 
@@ -14,13 +15,13 @@ import java.util.Set;
  *
  */
 public class TAdditive implements Pattern {
-    public TAdditive( TScalar s, Pattern v ) {
+    public TAdditive( TScalar s, Term v ) {
         this.scalar = s;
         this.addand = v;
     }
 
     public final TScalar scalar;
-    public final Pattern addand;
+    public final Term addand;
 
 
     @Override
@@ -66,15 +67,17 @@ public class TAdditive implements Pattern {
     }
 
     @Override
-    public boolean binds( TNameGenerator.TName n ) { return addand.binds( n ); }
-
-    @Override
-    public Set<TNameGenerator.TName> names(  ) {
-        return null;
+    public boolean binds( TNameGenerator.TName n ) {
+        try {
+            return ((Pattern)addand).binds( n );
+        } catch ( ClassCastException _ ) {
+            return false;
+        }
     }
 
     @Override
-    public Set<HasValue> bind( Term value ) {
-        return null;
+    public Set<HasValue> bind( Term value )
+        throws PatternMatchException {
+        return addand.bind( value );
     }
 }

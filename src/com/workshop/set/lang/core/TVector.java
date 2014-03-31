@@ -1,22 +1,26 @@
 package com.workshop.set.lang.core;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
 import com.workshop.set.interfaces.*;
+import com.workshop.set.lang.exceptions.PatternMatchException;
+import com.workshop.set.lang.exceptions.TypecheckingException;
+import com.workshop.set.lang.judgements.HasValue;
 
 /**
  * Created by nicschumann on 3/29/14.
  */
 public class TVector implements Pattern {
-    public TVector( Vector<TScalar> entries ) {
+    public TVector( Vector<Term> entries ) {
         this.entries = entries;
     }
 
-    private final Vector<TScalar> entries;
+    private final Vector<Term> entries;
 
-    public Vector<TScalar> components() {
-        return new Vector<TScalar>( entries );
+    public Vector<Term> components() {
+        return new Vector<Term>( entries );
     }
 
     @Override
@@ -31,14 +35,31 @@ public class TVector implements Pattern {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("( ");
-        for ( TScalar scalar : entries ) { s.append( scalar.toString() ); }
+        for ( Term comp : entries ) { s.append( comp.toString() ); }
         s.append( ")" );
         return s.toString();
     }
 
     @Override
-    public Term type( Context gamma ) {
-        return new TExponential( new TField(), entries.size() );
+    public Term type( Context gamma )
+        throws TypecheckingException {
+        try {
+            boolean fold = true;
+            Term t = entries.get( 0 ).type( gamma );
+
+            for ( int i = 1; i < entries.size(); i++ ) {
+                Term tprime = entries.get( i ).type( gamma );
+
+                fold &= t.equals( tprime );
+                if ( !fold ) throw new TypecheckingException( this, gamma );
+                t = tprime;
+            }
+
+            return new TExponential( t, entries.size() );
+        } catch ( ClassCastException _ ) {
+            throw new TypecheckingException( this, gamma );
+        }
+
     }
 
     @Override
@@ -52,7 +73,41 @@ public class TVector implements Pattern {
     }
 
     @Override
-    public Set<Judgement> bind( Term value ) {
-        return null;
+    public Pattern substitute( Term x, TNameGenerator.TName y ) {
+        Vector<Term> t = new Vector<Term>();
+        for (Term e : entries ) {
+            t.add( e.substitute( x,y ) );
+        }
+        return new TVector( t );
+    }
+
+    @Override
+    public Set<HasValue> bind( Term value )
+        throws PatternMatchException {
+        try {
+            Vector<Term> v = ((TVector)value).components();
+            Set<HasValue> s = new HashSet<HasValue>();
+
+            for ( Term entry : entries ) { // duplicates?
+                s.addAll(entry.bind(v.remove(0)));
+            }
+
+            return s;
+
+        } catch ( ClassCastException _ ) {
+            throw new PatternMatchException( this, value );
+        }
+    }
+
+    @Override
+    public boolean binds( TNameGenerator.TName n ) {
+        boolean fold = false;
+        for ( Term t : entries ) {
+            try {
+                fold |= ((Pattern)t).binds( n );
+                if ( fold ) break;
+            } catch ( ClassCastException _ ) {}
+        }
+        return fold;
     }
 }

@@ -12,32 +12,27 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * This class represents an Exponential Type :
- *
- *    G |- a : T            n in N
- * -------------------------------------------
- *              a ^ n : Univ0
- *
+ * Created by nicschumann on 3/30/14.
  */
-public class TExponential implements Term {
-    public TExponential( Term base, Integer exponent ) {
-        this.base   = base;
-        this.exp    = exponent;
+public class TCollection implements Term {
+    public TCollection( Term t, int l ) {
+        contents = t;
+        cardinality = l;
     }
 
-    private final Term base;
-    private final Integer exp; // change to scalar?
+    private final Term contents;
+    private final int cardinality;
 
     @Override
     public String toString() {
-        return base.toString() + "^" + exp.toString();
+        return contents.toString();
     }
 
     @Override
     public boolean equals( Object o ) {
         try {
-            return ((TExponential)o).base.equals( base )
-                && ((TExponential)o).exp.equals( exp );
+            return ((TCollection)o).contents.equals( contents )
+                && ((TCollection)o).cardinality == cardinality;
         } catch ( ClassCastException _ ) {
             return false;
         }
@@ -46,12 +41,7 @@ public class TExponential implements Term {
     @Override
     public Term type( Context gamma )
         throws TypecheckingException {
-        try {
-            TUniverse t = (TUniverse)gamma.proves( base );
-            return t;
-        } catch ( ClassCastException _ ) {
-            throw new TypecheckingException( this, gamma );
-        }
+        return contents.type( gamma );
     }
 
     @Override
@@ -62,12 +52,13 @@ public class TExponential implements Term {
 
     @Override
     public Value evaluate( Environment eta ) {
+        // TODO : define big step evaluation
         return null;
     }
 
     @Override
     public Term substitute( Term x, TNameGenerator.TName y ) {
-        return new TExponential( base.substitute(x,y), exp );
+        return contents.substitute( x,y );
     }
 
     @Override

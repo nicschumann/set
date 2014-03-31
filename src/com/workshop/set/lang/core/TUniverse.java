@@ -1,7 +1,12 @@
 package com.workshop.set.lang.core;
 
 import com.workshop.set.interfaces.*;
+import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.judgements.HasType;
+import com.workshop.set.lang.judgements.HasValue;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by nicschumann on 3/29/14.
@@ -45,5 +50,15 @@ public class TUniverse implements Term {
     @Override
     public Value evaluate( Environment eta ) {
         return null;
+    }
+
+    @Override
+    public Term substitute( Term x, TNameGenerator.TName y ) {
+        return this;
+    }
+
+    @Override
+    public Set<HasValue> bind( Term value ) throws PatternMatchException {
+        return new HashSet<HasValue>();
     }
 }

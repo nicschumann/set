@@ -1,6 +1,7 @@
 package com.workshop.set.lang.core;
 
 import com.workshop.set.interfaces.*;
+import com.workshop.set.lang.exceptions.TypecheckingException;
 import com.workshop.set.lang.judgements.HasType;
 import com.workshop.set.lang.judgements.HasValue;
 
@@ -23,7 +24,7 @@ import java.util.Set;
  */
 public class TNameGenerator
     implements Gensym {
-    public class TName implements Symbol, Term, Pattern {
+    public class TName implements Symbol, Pattern {
         private TName( Gensym factory, long index, String hint ) {
             this.readable = hint;
             this.factory = factory;
@@ -60,17 +61,16 @@ public class TNameGenerator
         }
         @Override
         public String toString() {
-            return readable + Long.toString( index );
+            return ( readable.isEmpty() ) ? "x" + Long.toString( index ) : readable;
         }
 
         @Override
-        public Term type( Context gamma ) {
-            try {
-                TUniverse univ = ((TUniverse)gamma.proves( this ));
-                return univ;
-            } catch ( ClassCastException _ ) {
-                return null;
-            }
+        public Term type( Context gamma )
+            throws TypecheckingException {
+                Term Ty = gamma.proves( this );
+                if ( Ty == null ) throw new TypecheckingException( this, gamma, "Unbound Identifier" );
+                else return Ty;
+
         }
 
         @Override
@@ -85,18 +85,14 @@ public class TNameGenerator
         }
 
         @Override
-        public Pattern substitute( Term x, TName y ) {
-            return null;
+        public Term substitute( Term x, TName y ) {
+            if ( y.equals( this ) ) return x;
+            else return this;
         }
 
         @Override
         public Set<HasValue> bind( Term value ) {
             return new HashSet<HasValue>(Arrays.asList( new HasValue( this, value ) ) );
-        }
-
-        @Override
-        public Set<TName> names( ) {
-            return new HashSet<TName>( Arrays.asList( this ) );
         }
 
         @Override

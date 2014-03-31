@@ -1,6 +1,7 @@
 package com.workshop.set.lang.core;
 
 import com.workshop.set.interfaces.*;
+import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
 import com.workshop.set.lang.judgements.HasValue;
 
@@ -52,26 +53,28 @@ public class TMultiplicative implements Pattern {
 
     @Override
     public Value evaluate( Environment eta ) {
+        // TODO : define big step evaluation
         return null;
     }
 
     @Override
     public Pattern substitute( Term x, TNameGenerator.TName y ) {
-        return new TMultiplicative( scalar, multiplicand.substitute(x,y) );
-    }
-
-    @Override
-    public Set<HasValue> bind( Term value ) {
-        return null;
-    }
-
-    @Override
-    public Set<TNameGenerator.TName> names( ) {
-        return null;
+        return new TAdditive( scalar, multiplicand.substitute( x,y ) );
     }
 
     @Override
     public boolean binds( TNameGenerator.TName n ) {
-        return multiplicand.binds( n );
+        try {
+            return ((Pattern)multiplicand).binds( n );
+        } catch ( ClassCastException _ ) {
+            return false;
+        }
     }
+
+    @Override
+    public Set<HasValue> bind( Term value )
+        throws PatternMatchException {
+        return multiplicand.bind( value );
+    }
+
 }

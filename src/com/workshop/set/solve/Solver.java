@@ -5,8 +5,8 @@ import java.util.Collection;
 import com.workshop.set.interfaces.*;
 
 public class Solver
-             <V extends ISymbol,
-              C extends IConstraint> {
+             <V extends Symbol,
+              C extends Constraint> {
 
     /**
      * Each solver is parameterized over a
@@ -15,8 +15,8 @@ public class Solver
      */
     public Solver
     (
-            Collection<ISymbol> variables,
-            Collection<IConstraint> constraints
+            Collection<Symbol> variables,
+            Collection<Constraint> constraints
     ) {
 
     }

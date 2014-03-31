@@ -5,29 +5,29 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.google.common.collect.Sets;
 import com.workshop.set.interfaces.*;
+import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
 import com.workshop.set.lang.judgements.HasValue;
 
 /**
  * Created by nicschumann on 3/29/14.
  */
-public class TSet<V extends Pattern> implements Pattern {
-    public TSet( Collection<V> elements ) {
-        this.elements = new ArrayList<V>( elements );
+public class TSet implements Pattern {
+    public TSet( Collection<Term> elements ) {
+        this.elements = new ArrayList<Term>( elements );
     }
 
-    private ArrayList<V> elements;
+    private ArrayList<Term> elements;
 
-    private ArrayList<V> elements() {
-        return new ArrayList<V>( elements );
+    public ArrayList<Term> elements() {
+        return new ArrayList<Term>( elements );
     }
 
     @Override
     public boolean equals( Object o ) {
         try {
-            return ((TSet<V>)o).elements().equals( elements );
+            return ((TSet)o).elements().equals( elements );
         } catch ( ClassCastException _ ) {
             return false;
         }
@@ -54,14 +54,17 @@ public class TSet<V extends Pattern> implements Pattern {
         boolean fold = true;
         Term t = null;
 
-        for ( V e : elements ) { types.add( e.type( gamma ) ); }
+        for ( Term e : elements ) { types.add( e.type( gamma ) ); }
         for ( int i = 0; i < types.size() - 1; i++ ) {
             t = types.get( i );
             fold &= types.get( i ).equals( types.get( i+1 ) );
         }
 
         if ( fold ) {
-            return (t == null) ? types.get( 0 ) : t;
+
+            return (t == null) ? new TCollection( types.get( 0 ), elements.size() )
+                               : new TCollection( t, elements.size() );
+
         } throw new TypecheckingException( this, gamma );
 
     }
@@ -74,39 +77,46 @@ public class TSet<V extends Pattern> implements Pattern {
 
     @Override
     public Value evaluate( Environment eta ) {
+        // TODO : define big step evaluation
         return null;
     }
 
     @Override
     public Pattern substitute( Term x, TNameGenerator.TName y ) {
-        Collection<Pattern> es = new ArrayList<Pattern>();
-        for ( V e : elements ) {
+        Collection<Term> es = new ArrayList<Term>();
+        for ( Term e : elements ) {
             es.add( e.substitute( x,y ) );
         }
-        return new TSet<Pattern>( es );
+        return new TSet( es );
     }
 
     @Override
-    public Set<HasValue> bind( Term value ) {
-        return null;
+    public Set<HasValue> bind( Term value )
+        throws PatternMatchException {
+        try {
+            Set<HasValue> s = new HashSet<HasValue>();
+            TSet v = (TSet)value;
+
+            for ( int i = 0; i < elements.size(); i++ ) {
+                s.addAll( elements.get( i ).bind( v.elements().get( i ) ) );
+            }
+
+            return s;
+        } catch ( ClassCastException _ ) {
+            throw new PatternMatchException(this, value);
+        }
     }
 
     @Override
     public boolean binds( TNameGenerator.TName name ) {
         boolean fold = false;
-        for ( V e : elements ) {
-            fold |= e.binds( name );
-            if ( fold ) break;
+        for ( Term e : elements ) {
+            try {
+                fold |= ((Pattern)e).binds( name );
+                if ( fold ) break;
+            } catch ( ClassCastException _ ) {}
         }
         return fold;
     }
 
-    @Override
-    public Set<TNameGenerator.TName> names( ) {
-        HashSet<TNameGenerator.TName> union = new HashSet<TNameGenerator.TName>();
-        for ( V e : elements ) {
-            union.addAll( e.names() );
-        }
-        return union;
-    }
 }

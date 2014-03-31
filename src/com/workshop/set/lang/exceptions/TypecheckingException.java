@@ -22,4 +22,13 @@ public class TypecheckingException extends Exception {
     private final Context context;
     private String text = "";
 
+    @Override
+    public String getLocalizedMessage() {
+        StringBuilder s = new StringBuilder("Typechecking Failed : " + text + System.lineSeparator() );
+                      s.append( "\ton Term:\t" + term + "\n" );
+                      s.append( "\tin Context:\t" + context + "\n" );
+
+        return s.toString();
+    }
+
 }

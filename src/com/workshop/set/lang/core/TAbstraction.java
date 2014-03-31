@@ -1,9 +1,12 @@
 package com.workshop.set.lang.core;
 
 import com.workshop.set.interfaces.*;
+import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
 import com.workshop.set.lang.judgements.HasType;
+import com.workshop.set.lang.judgements.HasValue;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -32,7 +35,7 @@ public class TAbstraction implements Term {
 
     @Override
     public String toString() {
-        return "lambda " + binder.toString() + " -> " + body.toString();
+        return "lambda " + binder.toString() + " : " + type.toString() +" .[" + body.toString() + "]";
     }
 
     @Override
@@ -40,16 +43,19 @@ public class TAbstraction implements Term {
         throws TypecheckingException {
         try {
 
-            TUniverse U1            = (TUniverse)type.type( gamma );
-            Term T2                 = body.type( gamma.extend( new HasType( binder, type ) ) );
-            TUniverse U2            = (TUniverse)body.type( gamma.extend( new HasType( binder, type ) ) );
+            TUniverse U1            = (TUniverse)(type.type( gamma ));
 
-            if ( U1.equals( U2 ) ) {
+            Term T2                 = body.type( gamma.extend( new HasType( binder, type ) ) );
+
+            TUniverse U2            = (TUniverse)T2.type( gamma.extend( new HasType( binder, type )) );
+
+            if ( U1.level >= U2.level ) {
                 return new TAll( binder, type, T2 );
-            } else throw new TypecheckingException( this, gamma );
+            } else throw new TypecheckingException( this, gamma, "Universe Inconsistency - " + U1 + " does not contain " + U2 );
 
         } catch ( ClassCastException _ ) {
-            throw new TypecheckingException( this, gamma );
+            // TODO check this :::
+            throw new TypecheckingException( this, gamma, "Ascription Inconsistency" );
         }
     }
 
@@ -61,16 +67,22 @@ public class TAbstraction implements Term {
 
     @Override
     public Value evaluate( Environment eta ) {
+        // TODO : define big step evaluation
         return null;
     }
 
     @Override
     public Term substitute( Term x, TNameGenerator.TName y ) {
         if ( !binder.binds( y ) ) {
-            return new TAbstraction( binder, type, body.substitute(x,y) );
+            return new TAbstraction( binder, type.substitute(x,y), body.substitute(x,y) );
         } else {
             return this;
         }
+    }
+
+    @Override
+    public Set<HasValue> bind( Term value ) throws PatternMatchException {
+        return new HashSet<HasValue>();
     }
 
 }

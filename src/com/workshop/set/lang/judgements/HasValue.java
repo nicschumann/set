@@ -18,4 +18,9 @@ public class HasValue implements Judgement {
 
     public TNameGenerator.TName inhabitant() { return name; }
     public Term environment() { return term; }
+
+    @Override
+    public String toString() {
+        return name.toString() + " -> " + term.toString();
+    }
 }

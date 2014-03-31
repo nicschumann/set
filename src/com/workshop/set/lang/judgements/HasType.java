@@ -16,6 +16,21 @@ public class HasType implements Judgement {
     private final Term environment;
 
     @Override
+    public boolean equals( Object o ) {
+        try {
+            return ((HasType)o).environment().equals( environment )
+                && ((HasType)o).inhabitant().equals( inhabitant );
+        } catch ( ClassCastException _ ) {
+            return false;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return inhabitant().toString() + " : " + environment().toString();
+    }
+
+    @Override
     public Term inhabitant() { return inhabitant; }
 
     @Override

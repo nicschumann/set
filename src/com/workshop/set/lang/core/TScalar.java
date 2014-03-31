@@ -47,6 +47,7 @@ public class TScalar implements Pattern {
 
     @Override
     public Value evaluate( Environment eta ) {
+        // TODO : define big step evaluation
         return null;
     }
 
@@ -61,11 +62,6 @@ public class TScalar implements Pattern {
     @Override
     public boolean binds( TName n ) {
         return false;
-    }
-
-    @Override
-    public Set<TName> names( ) {
-        return new HashSet<TName>();
     }
 
 }

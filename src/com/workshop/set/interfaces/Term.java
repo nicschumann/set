@@ -1,7 +1,11 @@
 package com.workshop.set.interfaces;
 
 import com.workshop.set.lang.core.TNameGenerator.TName;
+import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
+import com.workshop.set.lang.judgements.HasValue;
+
+import java.util.Set;
 
 /**
  * Created by nicschumann on 3/29/14.
@@ -44,5 +48,7 @@ public interface Term {
      * @return the new term with y replaced by x
      */
     public Term substitute( Term x, TName y );
+
+    public Set<HasValue> bind( Term value ) throws PatternMatchException;
 
 }
