@@ -1,5 +1,7 @@
 package com.workshop.set.interfaces;
 
+import com.workshop.set.lang.core.TNameGenerator;
+
 import java.util.Set;
 
 /**
@@ -7,15 +9,7 @@ import java.util.Set;
  */
 public interface Context {
 
-    /**
-     * This method indicates whether this context contains the
-     * specified judgement, or not.
-     *
-     * @param e a judgement to test this context for membership of
-     * @return a boolean indicating whether this context contains e.
-     */
-    public boolean contains( Judgement e );
-
+    public boolean contains( Term t );
     /**
      * This methods extends this context with the supplied judgement.
      *
@@ -32,6 +26,8 @@ public interface Context {
      * @return a's type, or null
      */
     public Term proves( Term a );
+
+    public TNameGenerator.TName freshname( String s );
 
     public boolean wellformed();
 }

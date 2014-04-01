@@ -25,7 +25,7 @@ public class TSum implements Term {
 
     @Override
     public String toString() {
-        return "Sum " + binder.toString() + " : " + type.toString() + " . " + body.toString();
+        return "sum " + binder.toString() + " : " + type.toString() + " . " + body.toString();
     }
 
     @Override
@@ -39,13 +39,13 @@ public class TSum implements Term {
     }
 
     @Override
-    public Term type( Context gamma )
+    public Context type( Context gamma )
             throws TypecheckingException {
         try {
-            TUniverse U1 = (TUniverse)type.type( gamma );
-            TUniverse U2 = (TUniverse)body.type( gamma.extend( new HasType( binder, type )) );
+            TUniverse U1 = (TUniverse)(type.type( gamma )).proves( type );
+            TUniverse U2 = (TUniverse)(body.type( gamma.extend( new HasType( binder, type )) )).proves( body );
 
-            return U1.max( U2 );
+            return gamma.extend(new HasType( this, U1.max(U2) ));
 
         } catch ( ClassCastException _ ) {
             throw new TypecheckingException( this, gamma );
@@ -68,12 +68,28 @@ public class TSum implements Term {
     public Term substitute( Term x, TNameGenerator.TName y ) {
         if ( !binder.binds( y ) ) {
             return new TSum( binder, type.substitute(x,y), body.substitute( x,y ) );
-        } else return this;
+        } else return new TSum( binder, type.substitute(x,y), body );
     }
 
     @Override
     public Set<HasValue> bind( Term value ) throws PatternMatchException {
         return new HashSet<HasValue>();
+    }
+
+    @Override
+    public boolean kind( Term t ) {
+        return t instanceof TSum;
+    }
+
+    @Override
+    public int hashCode() {
+
+        int a   = binder.hashCode();
+        int b   = type.hashCode();
+        int c   = body.hashCode();
+
+        return 37 * (37 * ( (a ^ (a >>> 32))) + (b ^ (b >>> 32))) + (c ^ (c >>> 32)) + 3;
+
     }
 
 }

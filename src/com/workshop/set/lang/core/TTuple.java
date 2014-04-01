@@ -37,17 +37,15 @@ public class TTuple implements Pattern {
     }
 
     @Override
-    public Term type( Context gamma )
+    public Context type( Context gamma )
         throws TypecheckingException {
         try {
-            Term a = domain.type( gamma ),
-                 b = range.type( gamma );
+            Term a = (domain.type( gamma )).proves( domain ),
+                 b = (range.type( gamma )).proves( range );
 
             if ( a!=null && b!=null ) {
 
-               // TODO implement naming contexts
-               TNameGenerator g = new TNameGenerator();
-               return new TSum( g.generate("_"), a, b );
+               return gamma.extend( new HasType(this, new TSum( gamma.freshname("_"), a, b ) ) );
 
             } else throw new TypecheckingException( this, gamma );
         } catch ( ClassCastException _ ) {
@@ -120,5 +118,32 @@ public class TTuple implements Pattern {
         } catch ( ClassCastException _ ) {
             throw new TypecheckingException( this, gamma, "Decomposition Error" );
         }
+    }
+
+    @Override
+    public boolean kind( Term t ) {
+        return t instanceof TTuple;
+    }
+
+    @Override
+    public int hashCode() {
+
+        int a   = domain.hashCode();
+        int b   = range.hashCode();
+
+        return 37 * (37 * ( (a ^ (a >>> 32))) + (b ^ (b >>> 32))) + 1;
+
+    }
+
+    @Override
+    public Set<TNameGenerator.TName> names() {
+        Set<TNameGenerator.TName> n = new HashSet<TNameGenerator.TName>();
+        try {
+            n.addAll( ((Pattern)domain).names() );
+        } catch ( ClassCastException _ ) {}
+        try {
+            n.addAll( ((Pattern)range).names() );
+        } catch ( ClassCastException _ ) {}
+        return n;
     }
 }

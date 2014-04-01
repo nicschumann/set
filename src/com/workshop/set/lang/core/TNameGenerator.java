@@ -32,7 +32,7 @@ public class TNameGenerator
             this.index = index;
         }
 
-        private final String readable;
+        public final String readable;
         private final Gensym factory;
         private final long index;
 
@@ -62,16 +62,14 @@ public class TNameGenerator
         }
         @Override
         public String toString() {
-            return ( readable.isEmpty() ) ? "x" + Long.toString( index ) : readable;
+            return ( readable.isEmpty() ) ? "?" + Long.toString( index ) : readable + Long.toString( index );
         }
 
         @Override
-        public Term type( Context gamma )
+        public Context type( Context gamma )
             throws TypecheckingException {
-                Term Ty = gamma.proves( this );
-                if ( Ty == null ) throw new TypecheckingException( this, gamma, "Unbound Identifier" );
-                else return Ty;
-
+                if ( gamma.proves( this ) == null ) throw new TypecheckingException( this, gamma, "Unbound Identifier" );
+                else return gamma;
         }
 
         @Override
@@ -108,6 +106,26 @@ public class TNameGenerator
             if ( ty == null ) throw new TypecheckingException( this, gamma, "Decomposition Error" );
             return new HashSet<Judgement>( Arrays.asList( new HasType( this, ty ) ) );
         }
+
+        @Override
+        public boolean kind( Term t ) {
+            return t instanceof TName;
+        }
+
+        @Override
+        public int hashCode() {
+
+            int a   = (int)index;
+            int b   = (( readable.isEmpty() ) ? "" : readable).hashCode();
+
+            return 37 * (37 * ( (a ^ (a >>> 32))) + (b ^ (b >>> 32)));
+
+        }
+
+        @Override
+        public Set<TName> names() {
+            return new HashSet<TName>( Arrays.asList(this) );
+        }
     }
 
     public TNameGenerator() { state = 0L; }
@@ -123,4 +141,6 @@ public class TNameGenerator
      */
     public TName generate() { return new TName( this, state++, "" ); }
     public TName generate( String h ) { return new TName( this, state++, h ); }
+
+
 }

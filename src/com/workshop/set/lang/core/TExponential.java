@@ -6,6 +6,7 @@ import com.workshop.set.interfaces.Term;
 import com.workshop.set.interfaces.Value;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
+import com.workshop.set.lang.judgements.HasType;
 import com.workshop.set.lang.judgements.HasValue;
 
 import java.util.HashSet;
@@ -44,14 +45,10 @@ public class TExponential implements Term {
     }
 
     @Override
-    public Term type( Context gamma )
+    public Context type( Context gamma )
         throws TypecheckingException {
-        try {
-            Term t = base.type( gamma );
-            return t;
-        } catch ( ClassCastException _ ) {
-            throw new TypecheckingException( this, gamma );
-        }
+        Context gamma1 = base.type( gamma );
+        return gamma1.extend( new HasType( this, gamma1.proves( base ) ) );
     }
 
     @Override
@@ -73,6 +70,21 @@ public class TExponential implements Term {
     @Override
     public Set<HasValue> bind( Term value ) throws PatternMatchException {
         return new HashSet<HasValue>();
+    }
+
+    @Override
+    public boolean kind( Term t ) {
+        return t instanceof TExponential;
+    }
+
+    @Override
+    public int hashCode() {
+
+        int a   = base.hashCode();
+        int b   = exp;
+
+        return 37 * (37 * ( (a ^ (a >>> 32))) + (b ^ (b >>> 32)));
+
     }
 
 }

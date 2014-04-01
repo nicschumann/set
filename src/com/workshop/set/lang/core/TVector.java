@@ -42,21 +42,21 @@ public class TVector implements Pattern {
     }
 
     @Override
-    public Term type( Context gamma )
+    public Context type( Context gamma )
         throws TypecheckingException {
         try {
             boolean fold = true;
-            Term t = entries.get( 0 ).type( gamma );
+            Term t = (entries.get( 0 ).type( gamma )).proves( entries.get( 0 ) );
 
             for ( int i = 1; i < entries.size(); i++ ) {
-                Term tprime = entries.get( i ).type( gamma );
+                Term tprime = (entries.get( i ).type( gamma )).proves( entries.get( i ) );
 
                 fold &= t.equals( tprime );
                 if ( !fold ) throw new TypecheckingException( this, gamma );
                 t = tprime;
             }
 
-            return new TExponential( t, entries.size() );
+            return gamma.extend( new HasType( this, new TExponential( t, entries.size() ) ) );
         } catch ( ClassCastException _ ) {
             throw new TypecheckingException( this, gamma );
         }
@@ -132,5 +132,30 @@ public class TVector implements Pattern {
         } catch ( ArrayIndexOutOfBoundsException _ ) {
             throw new TypecheckingException( this, gamma, "Decomposition Error" );
         }
+    }
+
+    @Override
+    public boolean kind( Term t ) {
+        return t instanceof TVector;
+    }
+
+    @Override
+    public int hashCode() {
+
+        int a   = entries.hashCode();
+
+        return 37 * (37 * (a ^ (a >>> 32))) + 1;
+
+    }
+
+    @Override
+    public Set<TNameGenerator.TName> names() {
+        Set<TNameGenerator.TName> n = new HashSet<TNameGenerator.TName>();
+        for ( Term t : entries ) {
+            try {
+                n.addAll( ((Pattern)t).names() );
+            } catch ( ClassCastException _ ) {}
+        }
+        return n;
     }
 }

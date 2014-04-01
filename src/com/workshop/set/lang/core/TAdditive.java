@@ -42,16 +42,22 @@ public class TAdditive implements Pattern {
     }
 
     @Override
-    public Term type( Context gamma )
+    public Context type( Context gamma )
         throws TypecheckingException {
         try {
-            TField f = ((TField)addand.type( gamma ));
-            return f;
+            // the type of an additive operation is the type of its vector addand.
+            return addand.type( gamma );
         } catch ( ClassCastException _ ) {
             return null;
         }
     }
 
+    /**
+     *
+     *
+     * @param eta, the environment to evaluate this term in
+     * @return
+     */
     @Override
     public Term step( Environment eta ) {
         // TODO : define small step evaluation
@@ -92,5 +98,29 @@ public class TAdditive implements Pattern {
             return new HashSet<Judgement>();
         }
 
+    }
+
+    @Override
+    public boolean kind( Term t ) {
+        return t instanceof TAdditive;
+    }
+
+
+    @Override
+    public int hashCode() {
+
+        int a   = addand.hashCode();
+
+        return 37 * (37 * ( (a ^ (a >>> 32))));
+
+    }
+
+    @Override
+    public Set<TNameGenerator.TName> names() {
+        try {
+            return ((Pattern)addand).names();
+        } catch ( ClassCastException _ ) {
+            return new HashSet<TNameGenerator.TName>();
+        }
     }
 }

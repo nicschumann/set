@@ -48,14 +48,14 @@ public class TSet implements Pattern {
     }
 
     @Override
-    public Term type( Context gamma )
+    public Context type( Context gamma )
         throws TypecheckingException {
 
         ArrayList<Term> types = new ArrayList<Term>();
         boolean fold = true;
         Term t = null;
 
-        for ( Term e : elements ) { types.add( e.type( gamma ) ); }
+        for ( Term e : elements ) { types.add( (e.type( gamma )).proves( e ) ); }
         for ( int i = 0; i < types.size() - 1; i++ ) {
             t = types.get( i );
             fold &= types.get( i ).equals( types.get( i+1 ) );
@@ -63,8 +63,10 @@ public class TSet implements Pattern {
 
         if ( fold ) {
 
-            return (t == null) ? new TCollection( types.get( 0 ), elements.size() )
-                               : new TCollection( t, elements.size() );
+            TCollection ty = (t == null) ? new TCollection( types.get( 0 ), elements.size() )
+                                         : new TCollection( t, elements.size() );
+
+            return gamma.extend( new HasType( this, ty ) );
 
         } throw new TypecheckingException( this, gamma, "Heterogeneous Set" );
 
@@ -139,6 +141,30 @@ public class TSet implements Pattern {
         } catch ( ArrayIndexOutOfBoundsException _ ) {
             throw new TypecheckingException( this, gamma, "Decomposition Error" );
         }
+    }
+
+    @Override
+    public boolean kind( Term t ) {
+        return t instanceof TSet;
+    }
+
+    @Override
+    public int hashCode() {
+
+        int a   = elements.hashCode();
+        return 37 * (37 * (a ^ (a >>> 32)));
+
+    }
+
+    @Override
+    public Set<TNameGenerator.TName> names() {
+        Set<TNameGenerator.TName> n = new HashSet<TNameGenerator.TName>();
+        for ( Term t : elements ) {
+            try {
+                n.addAll( ((Pattern)t).names() );
+            } catch ( ClassCastException _ ) {}
+        }
+        return n;
     }
 
 }

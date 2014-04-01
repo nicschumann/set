@@ -1,6 +1,7 @@
 package com.workshop.set.interfaces;
 
 import com.workshop.set.lang.core.TNameGenerator.TName;
+import com.workshop.set.lang.exceptions.EvaluationException;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
 import com.workshop.set.lang.judgements.HasValue;
@@ -16,11 +17,11 @@ public interface Term {
      * the type that this Term has with respect to the specified IContext.
      *
      * @param gamma, the context to check this Term's type against
-     * @return this term's type in gamma
+     * @return gamma, extended with the type of this term and all of its dependencies
      * @throws com.workshop.set.lang.exceptions.TypecheckingException,
      *         in case the typechecker is unable to derive a type for this term
      */
-    public Term type( Context gamma ) throws TypecheckingException;
+    public Context type( Context gamma ) throws TypecheckingException;
 
     /**
      * The term that this term produces under one step of evaluation
@@ -28,7 +29,7 @@ public interface Term {
      * @param eta, the environment to evaluate this term in
      * @return this term's next step in eta.
      */
-    public Term step( Environment eta );
+    public Term step( Environment eta ) throws TypecheckingException, EvaluationException;
 
     /**
      *
@@ -49,6 +50,15 @@ public interface Term {
      */
     public Term substitute( Term x, TName y );
 
+    /**
+     * the bind routine binds a pattern to a term, if such a binding is possible.
+     *
+     * @param value
+     * @return
+     * @throws PatternMatchException
+     */
     public Set<HasValue> bind( Term value ) throws PatternMatchException;
+
+    public boolean kind( Term t );
 
 }

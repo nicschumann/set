@@ -38,13 +38,8 @@ public class TMultiplicative implements Pattern {
     }
 
     @Override
-    public Term type( Context gamma ) throws TypecheckingException {
-        try {
-            TField f = ((TField)multiplicand.type( gamma ));
-            return f;
-        } catch ( ClassCastException _ ) {
-            return null;
-        }
+    public Context type( Context gamma ) throws TypecheckingException {
+            return multiplicand.type( gamma );
     }
 
     @Override
@@ -88,6 +83,30 @@ public class TMultiplicative implements Pattern {
             return new HashSet<Judgement>();
         }
 
+    }
+
+    @Override
+    public boolean kind( Term t ) {
+        return t instanceof TMultiplicative;
+    }
+
+    @Override
+    public int hashCode() {
+
+        int a   = multiplicand.hashCode();
+        int b   = (int)scalar.index;
+
+        return 37 * (37 * ( (a ^ (a >>> 32))) + (b ^ (b >>> 32)));
+
+    }
+
+    @Override
+    public Set<TNameGenerator.TName> names() {
+        try {
+            return ((Pattern)multiplicand).names();
+        } catch ( ClassCastException _ ) {
+            return new HashSet<TNameGenerator.TName>();
+        }
     }
 
 }

@@ -6,6 +6,7 @@ import com.workshop.set.interfaces.Term;
 import com.workshop.set.interfaces.Value;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
+import com.workshop.set.lang.judgements.HasType;
 import com.workshop.set.lang.judgements.HasValue;
 
 import java.util.HashSet;
@@ -25,7 +26,7 @@ public class TCollection implements Term {
 
     @Override
     public String toString() {
-        return contents.toString();
+        return "Set["+contents.toString()+"]";
     }
 
     @Override
@@ -39,9 +40,10 @@ public class TCollection implements Term {
     }
 
     @Override
-    public Term type( Context gamma )
+    public Context type( Context gamma )
         throws TypecheckingException {
-        return contents.type( gamma );
+        Context gamma1 = contents.type( gamma );
+        return gamma1.extend( new HasType( this, gamma1.proves( contents ) ) );
     }
 
     @Override
@@ -64,6 +66,20 @@ public class TCollection implements Term {
     @Override
     public Set<HasValue> bind( Term value ) throws PatternMatchException {
         return new HashSet<HasValue>();
+    }
+
+    @Override
+    public boolean kind( Term t ) {
+        return t instanceof TCollection;
+    }
+
+    @Override
+    public int hashCode() {
+
+        int a   = contents.hashCode();
+
+        return 37 * (37 * ( (a ^ (a >>> 32))) + (cardinality ^ (cardinality >>> 32)));
+
     }
 
 }

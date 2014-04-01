@@ -3,6 +3,7 @@ package com.workshop.set.lang.core;
 import com.workshop.set.interfaces.*;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
+import com.workshop.set.lang.judgements.HasType;
 import com.workshop.set.lang.judgements.HasValue;
 
 import java.util.HashSet;
@@ -35,13 +36,13 @@ public class TJudgement implements Term {
     }
 
     @Override
-    public Term type( Context gamma )
+    public Context type( Context gamma )
         throws TypecheckingException {
         try {
-            Term T1 = left.type( gamma );
-            Term T2 = right.type( gamma );
+            Term T1 = (left.type( gamma )).proves( left );
+            Term T2 = (right.type( gamma )).proves( right );
             if ( T1.equals( T2 ) ) {
-                return T1;
+                return gamma.extend( new HasType( this, T1 ) );
             } throw new TypecheckingException( this, gamma );
         } catch ( ClassCastException _ ) {
             throw new TypecheckingException( this, gamma );
@@ -69,4 +70,18 @@ public class TJudgement implements Term {
         return new HashSet<HasValue>();
     }
 
+    @Override
+    public boolean kind( Term t ) {
+        return t instanceof TJudgement;
+    }
+
+    @Override
+    public int hashCode() {
+
+        int a   = left.hashCode();
+        int b   = right.hashCode();
+
+        return 37 * (37 * ( (a ^ (a >>> 32))) + (b ^ (b >>> 32)));
+
+    }
 }

@@ -15,12 +15,7 @@ public class TField implements Term {
 
     @Override
     public boolean equals( Object o ) {
-        try {
-            TField _ = (TField)o;
-            return true;
-        } catch ( ClassCastException _ ) {
-            return false;
-        }
+        return o instanceof TField;
     }
 
     @Override
@@ -29,8 +24,8 @@ public class TField implements Term {
     }
 
     @Override
-    public Term type( Context gamma ) {
-        return new TUniverse( 0L );
+    public Context type( Context gamma ) {
+        return gamma.extend(new HasType( this, new TUniverse(0L) ) );
     }
 
     @Override
@@ -52,6 +47,16 @@ public class TField implements Term {
     @Override
     public Set<HasValue> bind( Term value ) throws PatternMatchException {
         return new HashSet<HasValue>();
+    }
+
+    @Override
+    public boolean kind( Term t ) {
+        return t instanceof TField;
+    }
+
+    @Override
+    public int hashCode() {
+        return 1;
     }
 
 }

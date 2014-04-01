@@ -38,8 +38,8 @@ public class TUniverse implements Term {
     /**
      * All well-formed contexts prove that Univ{n} : Univ{n+1}
      */
-    public Term type( Context gamma ) {
-        return new TUniverse( level + 1L );
+    public Context type( Context gamma ) {
+        return gamma.extend( new HasType( this, new TUniverse( level + 1L ) ) );
     }
 
     @Override
@@ -60,5 +60,19 @@ public class TUniverse implements Term {
     @Override
     public Set<HasValue> bind( Term value ) throws PatternMatchException {
         return new HashSet<HasValue>();
+    }
+
+    @Override
+    public boolean kind( Term t ) {
+        return t instanceof TUniverse;
+    }
+
+    @Override
+    public int hashCode() {
+
+        int a   = (int)level;
+
+        return 37 * (37 * (a ^ (a >>> 32)));
+
     }
 }

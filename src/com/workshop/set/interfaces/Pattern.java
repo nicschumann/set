@@ -12,4 +12,5 @@ import java.util.Set;
 public interface Pattern extends Term {
     public boolean binds( TNameGenerator.TName n );
     public Set<Judgement> decompose( Context gamma ) throws TypecheckingException;
+    public Set<TNameGenerator.TName> names();
 }

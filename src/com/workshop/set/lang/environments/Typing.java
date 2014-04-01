@@ -3,6 +3,7 @@ package com.workshop.set.lang.environments;
 import com.workshop.set.interfaces.Context;
 import com.workshop.set.interfaces.Judgement;
 import com.workshop.set.interfaces.Term;
+import com.workshop.set.lang.core.TNameGenerator;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -13,23 +14,28 @@ import java.util.Set;
  * Created by nicschumann on 3/30/14.
  */
 public class Typing implements Context {
-    public Typing() {
+    public Typing( TNameGenerator g ) {
+        this.g = g;
         typeset = new HashSet<Judgement>();
         typing = new LinkedHashMap<Term, Term>();
     }
+
+    private TNameGenerator g;
 
     private Set<Judgement> typeset;
     private Map<Term,Term> typing;
 
     @Override
-    public boolean contains( Judgement e ) {
-        return typeset.contains( e );
+    public boolean contains( Term t ) {
+        return typing.containsKey( t );
     }
 
     @Override
     public Context extend( Judgement e ) {
-        typing.put( e.inhabitant(), e.environment() );
+
         typeset.add( e );
+        typing.put( e.inhabitant(), e.environment() );
+
         return this;
     }
 
@@ -51,6 +57,15 @@ public class Typing implements Context {
 
     @Override
     public String toString() {
-        return typeset.toString();
+        StringBuilder s = new StringBuilder( "Context |-\t");
+        for ( Map.Entry<Term,Term> e : typing.entrySet() ) {
+            s.append( "\n\t\t"+ e.getKey() + " : " + e.getValue() );
+        }
+        return s.append( System.lineSeparator() ).toString();
+    }
+
+    @Override
+    public TNameGenerator.TName freshname( String s ) {
+        return g.generate( s );
     }
 }

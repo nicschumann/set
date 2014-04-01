@@ -36,8 +36,8 @@ public class TScalar implements Pattern {
     }
 
     @Override
-    public Term type( Context gamma ) {
-        return new TField( );
+    public Context type( Context gamma ) {
+        return gamma.extend(new HasType( this, new TField() ) );
     }
 
     @Override
@@ -68,6 +68,26 @@ public class TScalar implements Pattern {
     @Override
     public Set<Judgement> decompose( Context gamma ) {
         return new HashSet<Judgement>();
+    }
+
+    @Override
+    public boolean kind( Term t ) {
+        return t instanceof TScalar;
+    }
+
+    @Override
+    public int hashCode() {
+
+        int a   = (int)index;
+
+
+        return 37 * (37 * (a ^ (a >>> 32)));
+
+    }
+
+    @Override
+    public Set<TName> names() {
+        return new HashSet<TName>();
     }
 
 }
