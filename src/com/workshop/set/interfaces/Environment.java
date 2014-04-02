@@ -8,6 +8,7 @@ import com.workshop.set.lang.judgements.HasValue;
  * A mapping of values to to scalar coordinates, and a
  */
 public interface Environment {
+
     public Context typing();
 
     public Environment extend( Context gamma );
@@ -15,4 +16,7 @@ public interface Environment {
 
     public Environment extend( HasType a );
     public Environment extend( HasValue a );
+
+    public Environment pairs( Term t, Term T );
+
 }

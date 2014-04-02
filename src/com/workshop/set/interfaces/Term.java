@@ -1,5 +1,6 @@
 package com.workshop.set.interfaces;
 
+import com.sun.tools.javac.comp.Env;
 import com.workshop.set.lang.core.TNameGenerator.TName;
 import com.workshop.set.lang.exceptions.EvaluationException;
 import com.workshop.set.lang.exceptions.PatternMatchException;
@@ -29,7 +30,7 @@ public interface Term {
      * @param eta, the environment to evaluate this term in
      * @return this term's next step in eta.
      */
-    public Term step( Environment eta ) throws TypecheckingException, EvaluationException;
+    public Term step( Environment eta ) throws EvaluationException;
 
     /**
      *

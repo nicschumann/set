@@ -1,5 +1,6 @@
 package com.workshop.set.lang.core;
 
+import com.sun.tools.javac.comp.Env;
 import com.workshop.set.interfaces.*;
 import com.workshop.set.lang.exceptions.EvaluationException;
 import com.workshop.set.lang.exceptions.PatternMatchException;
@@ -98,7 +99,7 @@ public class TAbstraction implements Term {
      * with the assumption of its parameter have a certain type, while maintaining the structure
      * of its abstraction:
      *
-     *                     t -[e]-> t'
+     *                     t -[e,x:T]-> t'
      * -------------------------------------------------------        (TAbs)
      *    lambda x : T . t   -[e]->   lambda x : T . t'
      *
@@ -107,13 +108,15 @@ public class TAbstraction implements Term {
      * @return the term t' that this term t steps to under reduction.
      */
     @Override
-    public Term step( Environment eta ) {
-//        throws TypecheckingException, EvaluationException {
-//        // 1: Extend eta with the type of this term.
-//        Environment etaPrime = eta.extend( new HasType( this, this.type( eta.typing() ) ) );
-//        // 2: Step the body of the abstraction, in the new eta.
-//        return new TAbstraction( binder, type, body.step( etaPrime ) );
-            return null;
+    public Term step( Environment eta )
+          throws EvaluationException {
+
+          Term TY = eta.typing().proves( this );
+          Term tprime = new TAbstraction( binder, type, body.step( eta ) );
+
+          eta.pairs( tprime, TY );
+
+          return tprime;
     }
 
     @Override

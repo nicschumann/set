@@ -70,7 +70,7 @@ public class TAll implements Term {
      */
     @Override
     public Term step( Environment eta )
-        throws TypecheckingException, EvaluationException {
+        throws EvaluationException {
         // extend the environment with the type of this term.
         //Environment etaPrime = eta.extend( new HasType( this, this.type( eta.typing() ) ) );
         // return this abstraction after the body has taken one step.

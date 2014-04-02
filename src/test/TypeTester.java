@@ -137,38 +137,41 @@ public class TypeTester {
         Term lam4_app = new TApplication( lam4, field );
         Term lam4_univerr = new TApplication( lam4, univ0 );
         Term shadow = new TAbstraction( a, univ0, new TAbstraction( a, a, a ) );
+        Term shadow_app = new TApplication( shadow, field );
+        Term shadow_app_app = new TApplication( new TApplication( shadow, field ), scalar );
 
             // TESTS
-            u.trial( shadow );
 
-             //u
-//             .header("Initial Typechecking Tests")
-//             .trial(field)
-//             .trial(univ0)
-//             .trial(scalar)
-//             .trial( idA )
-//             .trial( eq )
-//             .trial( dep )
-//             .trial( idA_app )
-//             .trial( eq_app_h )
-//             .trial( eq_app_f )
-//             .trial( dep_app )
-//             .trial( dep_app_f )
-//             .error(dep_app_bot)
-//             .header("Pattern Checking Tests")
-//             .trial(pat1)
-//             .trial( pat2 )
-//             .trial( pat3 )
-//             .trial(pat5)
-//             .error(pat4)
-//             .header("Pattern-Based Lambdas")
-//             .trial( lam1 )
-//             .trial( lam1_app )
-//             .trial( lam2 )
-//             .trial( lam3 )
-//             .trial( lam4 )
-//             .trial( lam4_app )
-             // .trial( shadow );
+             u
+             .header("Initial Typechecking Tests")
+             .trial(field)
+             .trial(univ0)
+             .trial(scalar)
+             .trial( idA )
+             .trial( eq )
+             .trial( dep )
+             .trial( idA_app )
+             .trial( eq_app_h )
+             .trial( eq_app_f )
+             .trial( dep_app )
+             .trial( dep_app_f )
+             .error(dep_app_bot)
+             .header("Pattern Checking Tests")
+             .trial(pat1)
+             .trial( pat2 )
+             .trial( pat3 )
+             .trial(pat5)
+             .error(pat4)
+             .header("Pattern-Based Lambdas")
+             .trial( lam1 )
+             .trial( lam1_app )
+             .trial( lam2 )
+             .trial( lam3 )
+             .trial( lam4 )
+             .trial( lam4_app )
+             .trial( shadow )
+             .trial( shadow_app )
+             .trial( shadow_app_app );
 //             .error( lam4_univerr )
 //             .error(lam2_err)
 //             .error( lam3_bot );
