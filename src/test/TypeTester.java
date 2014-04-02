@@ -1,10 +1,10 @@
 package test;
 
-import com.workshop.set.interfaces.Context;
+
 import com.workshop.set.interfaces.Environment;
 import com.workshop.set.interfaces.Term;
 import com.workshop.set.lang.core.*;
-import com.workshop.set.lang.engines.TypeUnifier;
+
 import com.workshop.set.lang.engines.Typechecker;
 import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
@@ -34,6 +34,7 @@ public class TypeTester {
             try {
                 //System.out.println("Trying to type " + a + ", expecting " + b );
                 Environment<Term> c = tc.type(a);
+
                 System.out.println( "Trying " + a + m + "\n==> " + a + " : " + c.proves( a ) +" [" + c.proves( a ).equals( b ) + "]"  );
             } catch ( TypecheckingException e ) {
                 System.out.println("Failure, Caught TypecheckingException: ");
@@ -66,13 +67,15 @@ public class TypeTester {
         public UnitTest trial( Term a ) {
             try {
                 System.out.println( "Trying " + a + "," );
-                Context c = tc.type( a );
+                Environment<Term> c = tc.type( a );
                 System.out.println( a + " : " + c.proves(a) );
-                System.out.println( "In Context : " + c );
+                System.out.println( "In Context : \n" + c );
             } catch ( TypecheckingException e ) {
                 System.out.println( e.getLocalizedMessage() );
             } catch ( ProofFailureException e ) {
                 System.out.println( e.getLocalizedMessage() );
+            } catch ( ArrayIndexOutOfBoundsException e ) {
+                System.out.println( "ORDERING ERROR: " + e.getLocalizedMessage() );
             } finally {
                 System.out.print( System.lineSeparator() );
                 return this;
@@ -85,7 +88,6 @@ public class TypeTester {
         TNameGenerator g = new TNameGenerator();
 
         Typechecker t = new Typechecker();
-        TypeUnifier HM = new TypeUnifier( g );
         UnitTest u = new UnitTest( t );
 
 
@@ -100,7 +102,7 @@ public class TypeTester {
         Term scalar = new TScalar(4.5);
         Term idA = new TAbstraction( a,new TField(),a );
         Term idB = new TAbstraction( a,new TScalar(1.0),a );
-        Term judge = new TJudgement( a, b);
+        Term judge = new TJudgement( a, b );
         Term eq = new TAbstraction( a,field,new TAbstraction( b,field,judge ) );
         Term dep = new TAbstraction( a,univ0,new TAbstraction(b,a,b));
 
@@ -152,31 +154,28 @@ public class TypeTester {
 
             // TESTS
 
+            u
+                    .header("Initial Typechecking Tests")
+                    .trial(field).trial( univ0 ).trial( scalar )
+                    .trial(idA  ).trial( eq    ).trial( dep    )
+                    .trial( idA_app ).trial( eq_app_h ).trial( eq_app_f )
+                    .trial( dep_app ).trial( dep_app_f )
 
+                    .error( dep_app_bot ).error( judge ).error(idB)
 
+                    .header("Pattern Checking Tests")
+                    .trial( pat1 ).trial( pat2 ).trial( pat3 ).trial( pat5 )
 
+                    .error( pat4 )
 
+                    .header("Pattern Based Lambdas")
+                    .trial( lam1 ).trial( lam1_app ).trial( lam2 )
+                    .trial( lam3 ).trial( lam4 ).trial( lam4_app )
+                    .trial( shadow ).trial( shadow_app )
+                    .trial( shadow_app_app )
 
-//             u
-//             .header("Initial Typechecking Tests")
-//             .trial(field)
-//             .trial(univ0)
-//             .trial(scalar)
-//             .trial( idA )
-//             .trial( eq )
-//             .trial( dep )
-//             .trial( idA_app )
-//             .trial( eq_app_h )
-//             .trial( eq_app_f )
-//             .trial( dep_app )
-//             .trial( dep_app_f )
-//             .error(dep_app_bot)
-//             .header("Pattern Checking Tests")
-//             .trial(pat1)
-//             .trial( pat2 )
-//             .trial( pat3 )
-//             .trial(pat5)
-//             .error(pat4)
+                    .error( lam4_univerr ).error( lam2_err ).error( lam3_bot );
+
 //             .header("Pattern-Based Lambdas")
 //             .trial( lam1 )
 //             .trial( lam1_app )

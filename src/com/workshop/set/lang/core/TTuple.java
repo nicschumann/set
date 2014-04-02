@@ -42,16 +42,10 @@ public class TTuple implements Pattern {
         throws ProofFailureException, TypecheckingException {
         try {
 
-            gamma.step();
-
             Term a = (domain.type( gamma )).proves( domain ),
                  b = (range.type( gamma )).proves( range );
 
-            gamma.unstep();
-
             if ( a!=null && b!=null ) {
-
-               gamma.unstep();
 
                return gamma.extend( this, new TSum( gamma.freshname("_"), a, b ) );
 

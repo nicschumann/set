@@ -46,7 +46,6 @@ public class TVector implements Pattern {
     public Environment<Term> type( Environment<Term> gamma )
         throws ProofFailureException, TypecheckingException {
         try {
-            gamma.step();
 
             boolean fold = true;
             Term t = (entries.get( 0 ).type( gamma )).proves( entries.get( 0 ) );
@@ -58,8 +57,6 @@ public class TVector implements Pattern {
                 if ( !fold ) throw new TypecheckingException( this, gamma );
                 t = tprime;
             }
-
-            gamma.unstep();
 
             return gamma.extend( this, new TExponential( t, entries.size() ) );
         } catch ( ClassCastException _ ) {

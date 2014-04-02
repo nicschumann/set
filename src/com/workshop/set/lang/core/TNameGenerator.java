@@ -69,8 +69,12 @@ public class TNameGenerator
         @Override
         public Environment<Term> type( Environment<Term> gamma )
             throws ProofFailureException, TypecheckingException {
-                if ( gamma.proves( this ) == null ) throw new TypecheckingException( this, gamma, "Unbound Identifier" );
-                else return gamma;
+                try {
+                    gamma.proves( this );
+                    return gamma;
+                } catch ( ProofFailureException e ) {
+                    throw new TypecheckingException( this, gamma, "Unbound Identifier" );
+                }
         }
 
         @Override

@@ -46,11 +46,7 @@ public class TExponential implements Term {
     public Environment<Term> type( Environment<Term> gamma )
         throws ProofFailureException, TypecheckingException {
 
-        gamma.step();
-
         gamma = base.type( gamma );
-
-        gamma.unstep();
 
         return gamma.extend( this, gamma.proves( base ) );
     }

@@ -40,11 +40,8 @@ public class TCollection implements Term {
     @Override
     public Environment<Term> type( Environment<Term> gamma )
         throws ProofFailureException, TypecheckingException {
-        gamma.step();
 
         gamma = contents.type( gamma );
-
-        gamma.unstep();
 
         return gamma.extend( this, gamma.proves( contents ) );
     }

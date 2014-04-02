@@ -25,7 +25,8 @@ public class TField implements Term {
 
     @Override
     public Environment<Term> type( Environment<Term> gamma ) {
-        return gamma.extend( this, new TUniverse(0L) );
+         return gamma.extend( this, new TUniverse(0L) );
+
     }
 
     @Override

@@ -58,11 +58,15 @@ public class TAbstraction implements Term {
         throws ProofFailureException, TypecheckingException {
 
             try {
+                    //System.out.println( "Typing an Abstraction" );
 
                                                     gamma.step();                           // step the current environment
+                    System.out.print( gamma );
 
                 gamma                               = type.type( gamma );                   // type the type of the formal parameter in the current environment -
                                                                                             // at this point the environment should prove that the type of type is Univ{n}
+                    System.out.println( gamma );
+
                 TUniverse U1                        = (TUniverse)((gamma).proves( type ));
 
                 rename( gamma );                                                            // at this point, we rename any shadowed variables, as required

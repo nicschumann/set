@@ -69,8 +69,6 @@ public class TApplication implements Term {
         throws ProofFailureException, TypecheckingException {
         try {
 
-            gamma.step();
-
             TAll All = (TAll)(implication.type( gamma )).proves( implication );
             Term T1 = (argument.type( gamma )).proves( argument );
 
@@ -84,8 +82,6 @@ public class TApplication implements Term {
                 } catch ( PatternMatchException _ ) {
                    throw new TypecheckingException( this, gamma, "Pattern Exception - " + All.binder.toString() + " cannot bind " + argument );
                 }
-
-                gamma.unstep();
 
                 return gamma.extend( this, T2 );
             } else throw new TypecheckingException( this, gamma, "\n\tIncompatible types for application: " + All.toString() + " and " + T1.toString() + "\n\t" + T1.toString() + " is not an element of " + All.type.toString() );

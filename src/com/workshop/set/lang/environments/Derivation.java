@@ -13,6 +13,7 @@ import java.util.*;
 public class Derivation<T> implements Context<T> {
     public Derivation( Gensym g ) {
         derivation = new ArrayList<Map<T, T>>();
+        derivation.add( 0, new LinkedHashMap<T, T>());
         gensym = g;
         steps = 0;
         currentStep = 0;
@@ -45,18 +46,22 @@ public class Derivation<T> implements Context<T> {
 
     @Override
     public Context<T> extend( T x, T T ) {
-        Map<T,T> currentState;
+        Map<T,T> currentState = new LinkedHashMap<T, T>();
         try {
-            currentState = derivation.get( currentStep() );
-            if ( !currentState.containsKey( x ) ) {
-                currentState.put( x, T );
-                derivation.add( currentStep(), currentState );
+            if ( derivation.isEmpty() ) {
+                currentState = new LinkedHashMap<T, T>();
+                currentState.put(x, T);
+                derivation.add(currentStep(), currentState);
+            } else if ( !currentState.containsKey( x ) ) {
+                currentState = derivation.get( currentStep() );
+                currentState.put(x, T);
+                derivation.set(currentStep(), currentState);
             }
-        } catch ( ArrayIndexOutOfBoundsException _ ) {
+            return this;
+        } catch ( IndexOutOfBoundsException _ ) {
             currentState = new LinkedHashMap<T, T>();
             currentState.put( x, T );
-            derivation.add( currentStep(), currentState );
-        } finally {
+            derivation.add(currentStep(), currentState);
             return this;
         }
     }
@@ -73,7 +78,7 @@ public class Derivation<T> implements Context<T> {
     public T proves( T a )
         throws ProofFailureException {
 
-        for ( int i = 0; i < currentStep; i++ ) {
+        for ( int i = 0; i <= currentStep; i++ ) {
             Map<T,T> step = derivation.get( i );
             if ( step.containsKey( a ) ) return step.get( a );
         }
@@ -88,7 +93,7 @@ public class Derivation<T> implements Context<T> {
             Map<T,T> step = derivation.get( i );
             if ( step.containsKey( a ) ) { return step.get( a ); }
             throw new ProofFailureException( "Proof Failure in Context, blaming " + a + "\n in " + this   );
-        } catch ( ArrayIndexOutOfBoundsException _ ) {
+        } catch ( IndexOutOfBoundsException _ ) {
             throw new ProofFailureException( "Proof Failure in Context, blaming " + a + "\n in " + this   );
         }
     }
@@ -102,7 +107,10 @@ public class Derivation<T> implements Context<T> {
     @Override
     public Context step() {
         currentStep += 1;
-        if ( currentStep > steps ) steps += 1;
+        if ( currentStep > steps ) {
+            derivation.add( currentStep, new LinkedHashMap<T, T>() );
+            steps += 1;
+        }
         return this;
     }
     @Override
@@ -116,8 +124,10 @@ public class Derivation<T> implements Context<T> {
         StringBuilder s = new StringBuilder( );
         int line = 0;
 
+        if ( derivation.isEmpty() ) return "Empty Derivation";
+
         for ( Map<T,T> step : derivation ) {
-            s.append( "Derivation[ " + line + " ] |- " );
+            s.append( "Derivation[ " + line + " ] |- " + System.lineSeparator() );
             for ( Map.Entry<T,T> judgement : step.entrySet() ) {
                 s.append( "\t\t" + judgement.getKey() + " : " + judgement.getValue() + System.lineSeparator()  );
             }

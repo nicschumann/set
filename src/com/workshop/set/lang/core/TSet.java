@@ -54,8 +54,6 @@ public class TSet implements Pattern {
         boolean fold = true;
         Term t = null;
 
-        gamma.step();
-
         for ( Term e : elements ) { types.add( (e.type( gamma )).proves( e ) ); }
 
         for ( int i = 0; i < types.size() - 1; i++ ) {
@@ -67,8 +65,6 @@ public class TSet implements Pattern {
 
             TCollection ty = (t == null) ? new TCollection( types.get( 0 ), elements.size() )
                                          : new TCollection( t, elements.size() );
-
-            gamma.unstep();
 
             return gamma.extend(  this, ty );
 

@@ -16,6 +16,9 @@ public class Evaluation implements Environment<Term> {
         typings = new ArrayList<Derivation<Term>>();
         evaluations = new ArrayList<Derivation<Term>>();
 
+        typings.add( 0, new Derivation<Term>( g ) );
+        evaluations.add( 0, new Derivation<Term>( g ) );
+
         deriving = 0;
         gensym = g;
     }
@@ -68,28 +71,50 @@ public class Evaluation implements Environment<Term> {
 
     @Override
     public Environment<Term> extend( Term x, Term t ) {
-        Derivation<Term> current = typings.get( deriving );
+        Derivation<Term> current;
+        if ( typings.isEmpty() ) {
+            current = new Derivation<Term>( gensym );
+        } else {
+            current = typings.get( deriving );
+
+        }
         current.extend( x, t );
+        typings.set(deriving, current);
         return this;
     }
 
     @Override
     public Environment<Term> extend( Set<Judgement<Term>> js ) {
-        Derivation<Term> current = typings.get( deriving );
+
+        Derivation<Term> current;
+        if ( typings.isEmpty() ) {
+            current = new Derivation<Term>( gensym );
+        } else {
+            current = typings.get( deriving );
+        }
         current.extend( js );
+        typings.set(deriving, current);
         return this;
     }
 
     @Override
     public boolean contains( Term t ) {
-        Derivation<Term> current = typings.get( deriving );
-        return current.contains( t );
+        try {
+            Derivation<Term> current = typings.get( deriving );
+            return current.contains( t );
+        } catch ( ArrayIndexOutOfBoundsException _ ) {
+            return false;
+        }
     }
 
     @Override
     public boolean wellformed() {
-        Derivation<Term> current = typings.get( deriving );
-        return current.wellformed();
+        try {
+            Derivation<Term> current = typings.get( deriving );
+            return current.wellformed();
+        } catch ( ArrayIndexOutOfBoundsException _ ) {
+            return false;
+        }
     }
 
     @Override
@@ -117,7 +142,17 @@ public class Evaluation implements Environment<Term> {
     }
 
 
-    public Evaluation page() { deriving += 1; return this; }
+    public Evaluation page() {
+        deriving += 1;
+        typings.add( deriving, new Derivation<Term>( gensym ) );
+        evaluations.add( deriving, new Derivation<Term>( gensym ) );
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return typing().toString();
+    }
 
 
 

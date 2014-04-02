@@ -40,14 +40,12 @@ public class TJudgement implements Term {
     public Environment<Term> type( Environment<Term> gamma )
         throws ProofFailureException, TypecheckingException {
         try {
-            gamma.step();
 
             Term T1 = (left.type( gamma )).proves( left );
             Term T2 = (right.type( gamma )).proves( right );
 
 
             if ( T1.equals( T2 ) ) {
-                gamma.unstep();
                 return gamma.extend( this, T1 );
             } throw new TypecheckingException( this, gamma );
         } catch ( ClassCastException _ ) {
