@@ -38,22 +38,12 @@ public class TUniverse implements Term {
     /**
      * All well-formed contexts prove that Univ{n} : Univ{n+1}
      */
-    public Context type( Context gamma ) {
-        return gamma.extend( new HasType( this, new TUniverse( level + 1L ) ) );
+    public Environment<Term> type( Environment<Term> gamma ) {
+        return gamma.extend( this, new TUniverse( level + 1L ) );
     }
 
     @Override
-    public Term step( Environment eta ) {
-        return null;
-    }
-
-    @Override
-    public Value evaluate( Environment eta ) {
-        return null;
-    }
-
-    @Override
-    public Term substitute( Term x, TNameGenerator.TName y ) {
+    public Term substitute( Term x, Symbol y ) {
         return this;
     }
 

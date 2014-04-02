@@ -1,13 +1,14 @@
 package com.workshop.set.lang.core;
 
 import com.workshop.set.interfaces.*;
-import com.workshop.set.lang.exceptions.PatternMatchException;
+
+import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
 import com.workshop.set.lang.judgements.HasType;
 import com.workshop.set.lang.judgements.HasValue;
 
 import java.util.Arrays;
-import java.util.Collection;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -66,25 +67,14 @@ public class TNameGenerator
         }
 
         @Override
-        public Context type( Context gamma )
-            throws TypecheckingException {
+        public Environment<Term> type( Environment<Term> gamma )
+            throws ProofFailureException, TypecheckingException {
                 if ( gamma.proves( this ) == null ) throw new TypecheckingException( this, gamma, "Unbound Identifier" );
                 else return gamma;
         }
 
         @Override
-        public Term step( Environment eta ) {
-            // TODO : define small step evaluation
-            return null;
-        }
-
-        @Override
-        public Value evaluate( Environment eta ) {
-            return null;
-        }
-
-        @Override
-        public Term substitute( Term x, TName y ) {
+        public Term substitute( Term x, Symbol y ) {
             if ( y.equals( this ) ) return x;
             else return this;
         }
@@ -95,16 +85,16 @@ public class TNameGenerator
         }
 
         @Override
-        public boolean binds( TName n ) {
+        public boolean binds( Symbol n ) {
             return n.equals( this );
         }
 
         @Override
-        public Set<Judgement> decompose( Context gamma )
-            throws TypecheckingException {
+        public Set<Judgement<Term>> decompose( Environment<Term> gamma )
+            throws ProofFailureException, TypecheckingException {
             Term ty = gamma.proves( this );
             if ( ty == null ) throw new TypecheckingException( this, gamma, "Decomposition Error" );
-            return new HashSet<Judgement>( Arrays.asList( new HasType( this, ty ) ) );
+            return new HashSet<Judgement<Term>>( Arrays.asList( new HasType( this, ty ) ) );
         }
 
         @Override
@@ -118,7 +108,7 @@ public class TNameGenerator
             int a   = (int)index;
             int b   = (( readable.isEmpty() ) ? "" : readable).hashCode();
 
-            return 37 * (37 * ( (a ^ (a >>> 32))) + (b ^ (b >>> 32)));
+            return 37 * (37 * ( (a ^ (a >>> 31))) + (b ^ (b >>> 31)));
 
         }
 

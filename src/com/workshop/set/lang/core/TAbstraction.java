@@ -1,11 +1,11 @@
 package com.workshop.set.lang.core;
 
-import com.sun.tools.javac.comp.Env;
 import com.workshop.set.interfaces.*;
-import com.workshop.set.lang.exceptions.EvaluationException;
+
 import com.workshop.set.lang.exceptions.PatternMatchException;
+import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
-import com.workshop.set.lang.judgements.HasType;
+
 import com.workshop.set.lang.judgements.HasValue;
 
 import java.util.HashSet;
@@ -40,60 +40,6 @@ public class TAbstraction implements Term {
         return "fn " + binder.toString() + " : " + type.toString() +" .[" + body.toString() + "]";
     }
 
-    @Override
-    public Context type( Context gamma )
-        throws TypecheckingException {
-
-            try {
-                // the type of the formal parameter to the abstraction should be univ[n]
-
-                Context gamma1          = type.type( gamma );
-               // System.out.println("====>" +gamma1 );
-
-               // System.out.println("====>" + gamma1.proves( type ));
-                TUniverse U1            = (TUniverse)((gamma1).proves( type ));
-
-                rename( gamma1 );
-                System.out.println( this );
-
-                //System.out.println("====>" + U1 );
-                // the binder implies a set of judgements inferrable from its structure and the binder's type.
-
-                gamma1                  = gamma1.extend( new HasType( binder,type ) );
-                Set<Judgement> bound    = binder.decompose( gamma1 );
-                // the body should type soundly in a context extended with the decomposition of the binder.
-                gamma1                  = gamma1.extend( bound );
-
-                //System.out.println("G====>" +gamma1 );
-                Term T2                 = (body.type( gamma1 )).proves( body );
-                //System.out.println("====>" + T2 );
-                // the body should type in univ[n+k]
-                TUniverse U2            = (TUniverse)(T2.type( gamma1 )).proves( T2 );
-                //System.out.println("====>" + U2 );
-
-                  if ( U1.level >= U2.level ) {
-                    return gamma1.extend( new HasType( this, new TAll( binder, type, T2 ) ) );
-                } else throw new TypecheckingException( this, gamma, "Universe Inconsistency - " + U1 + " does not contain " + U2 );
-
-            } catch ( ClassCastException _ ) {
-                throw new TypecheckingException( this, gamma, "Ascription Inconsistency" );
-            }
-
-    }
-
-    public TAbstraction rename( Context gamma ) {
-        Set<TNameGenerator.TName> names = binder.names();
-        for (TNameGenerator.TName name : names ) {
-            if ( gamma.contains( name ) ) {
-                TNameGenerator.TName f = gamma.freshname( name.readable+"'" );
-                binder = (Pattern)binder.substitute( f, name );
-                body = body.substitute( f, name );
-            }
-        }
-        return this;
-    }
-
-
     /**
      * A TAbstraction takes a step of evaluation by evaluating the terms inside its body,
      * with the assumption of its parameter have a certain type, while maintaining the structure
@@ -104,29 +50,60 @@ public class TAbstraction implements Term {
      *    lambda x : T . t   -[e]->   lambda x : T . t'
      *
      *
-     * @param eta, the environment to evaluate this term in
+     * @param gamma, the environment to evaluate this term in
      * @return the term t' that this term t steps to under reduction.
      */
     @Override
-    public Term step( Environment eta )
-          throws EvaluationException {
+    public Environment<Term> type( Environment<Term> gamma )
+        throws ProofFailureException, TypecheckingException {
 
-          Term TY = eta.typing().proves( this );
-          Term tprime = new TAbstraction( binder, type, body.step( eta ) );
+            try {
 
-          eta.pairs( tprime, TY );
+                                                    gamma.step();                           // step the current environment
 
-          return tprime;
+                gamma                               = type.type( gamma );                   // type the type of the formal parameter in the current environment -
+                                                                                            // at this point the environment should prove that the type of type is Univ{n}
+                TUniverse U1                        = (TUniverse)((gamma).proves( type ));
+
+                rename( gamma );                                                            // at this point, we rename any shadowed variables, as required
+
+                gamma                               = gamma.extend( binder, type );         // we extend the binder with the ascribed type TODO ensure that binder has structure reflecting type
+
+                Set<Judgement<Term>> bound          = binder.decompose( gamma );            // infer the types of the symbols in the binder, from the binder's type.
+
+                gamma                               = gamma.extend( bound );                // extend gamma with those types.
+
+                Term T2                             = (body.type( gamma )).proves( body );  //
+
+                TUniverse U2                        = (TUniverse)(T2.type( gamma )).proves( T2 );
+
+
+                if ( U1.level >= U2.level ) {
+                           gamma.unstep();
+                    return gamma.extend(  this, new TAll( binder, type, T2 ) );
+                } else throw new TypecheckingException( this, gamma, "Universe Inconsistency - " + U1 + " does not contain " + U2 );
+
+            } catch ( ClassCastException _ ) {
+                throw new TypecheckingException( this, gamma, "Ascription Inconsistency" );
+            }
+
     }
 
-    @Override
-    public Value evaluate( Environment eta ) {
-        // TODO : define big step evaluation
-        return null;
+    public TAbstraction rename( Environment<Term> gamma ) {
+        Set<TNameGenerator.TName> names = binder.names();
+        for (TNameGenerator.TName name : names ) {
+            if ( gamma.contains( name ) ) {
+                Symbol f = gamma.freshname( name.readable+"'" );
+                binder = (Pattern)binder.substitute( f, name );
+                body = body.substitute( f, name );
+            }
+        }
+        return this;
     }
 
+
     @Override
-    public Term substitute( Term x, TNameGenerator.TName y ) {
+    public Term substitute( Term x, Symbol y ) {
         if ( !binder.binds( y ) ) {
             return new TAbstraction( binder, type.substitute(x,y), body.substitute(x,y) );
         } else {

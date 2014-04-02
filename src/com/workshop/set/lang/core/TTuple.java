@@ -2,8 +2,9 @@ package com.workshop.set.lang.core;
 
 import com.workshop.set.interfaces.*;
 import com.workshop.set.lang.exceptions.PatternMatchException;
+import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
-import com.workshop.set.lang.judgements.HasType;
+
 import com.workshop.set.lang.judgements.HasValue;
 
 import java.util.HashSet;
@@ -37,15 +38,22 @@ public class TTuple implements Pattern {
     }
 
     @Override
-    public Context type( Context gamma )
-        throws TypecheckingException {
+    public Environment<Term> type( Environment<Term> gamma )
+        throws ProofFailureException, TypecheckingException {
         try {
+
+            gamma.step();
+
             Term a = (domain.type( gamma )).proves( domain ),
                  b = (range.type( gamma )).proves( range );
 
+            gamma.unstep();
+
             if ( a!=null && b!=null ) {
 
-               return gamma.extend( new HasType(this, new TSum( gamma.freshname("_"), a, b ) ) );
+               gamma.unstep();
+
+               return gamma.extend( this, new TSum( gamma.freshname("_"), a, b ) );
 
             } else throw new TypecheckingException( this, gamma );
         } catch ( ClassCastException _ ) {
@@ -54,19 +62,7 @@ public class TTuple implements Pattern {
     }
 
     @Override
-    public Term step( Environment eta ) {
-        // TODO : define small step evaluation
-        return null;
-    }
-
-    @Override
-    public Value evaluate( Environment eta ) {
-        // TODO : define big step evaluation
-        return null;
-    }
-
-    @Override
-    public Term substitute( Term x, TNameGenerator.TName y ) {
+    public Term substitute( Term x, Symbol y ) {
         return new TTuple( domain.substitute(x,y), range.substitute(x,y) );
     }
 
@@ -87,7 +83,7 @@ public class TTuple implements Pattern {
         }
     }
     @Override
-    public boolean binds( TNameGenerator.TName n ) {
+    public boolean binds( Symbol n ) {
         boolean b = false;
         try {
             b = ((Pattern)domain).binds( n );
@@ -98,19 +94,19 @@ public class TTuple implements Pattern {
     }
 
     @Override
-    public Set<Judgement> decompose( Context gamma )
-        throws TypecheckingException {
+    public Set<Judgement<Term>> decompose( Environment<Term> gamma )
+        throws ProofFailureException, TypecheckingException {
         try {
-            Set<Judgement> j = new HashSet<Judgement>();
+            Set<Judgement<Term>> j = new HashSet<Judgement<Term>>();
 
             Term ty = gamma.proves( this ); // retrieve the type of this
             Term domTy = ((TSum)ty).type;
             Term codTy = ((TSum)ty).body;
 
-            try { j.addAll( ((Pattern)domain).decompose( gamma.extend( new HasType(domain, domTy) ) ) ); }
+            try { j.addAll( ((Pattern)domain).decompose( gamma.extend( domain, domTy ) ) ); }
             catch ( ClassCastException _ ) {}
 
-            try { j.addAll( ((Pattern)range).decompose( gamma.extend( new HasType(range, codTy) ) ) ); }
+            try { j.addAll( ((Pattern)range).decompose( gamma.extend( range, codTy ) ) ); }
             catch ( ClassCastException _ ) {}
 
             return j;
@@ -131,7 +127,7 @@ public class TTuple implements Pattern {
         int a   = domain.hashCode();
         int b   = range.hashCode();
 
-        return 37 * (37 * ( (a ^ (a >>> 32))) + (b ^ (b >>> 32))) + 1;
+        return 37 * (37 * ( (a ^ (a >>> 31))) + (b ^ (b >>> 31))) + 1;
 
     }
 

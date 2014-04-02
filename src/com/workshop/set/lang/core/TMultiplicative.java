@@ -2,11 +2,12 @@ package com.workshop.set.lang.core;
 
 import com.workshop.set.interfaces.*;
 import com.workshop.set.lang.exceptions.PatternMatchException;
+import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
-import com.workshop.set.lang.judgements.HasType;
+
 import com.workshop.set.lang.judgements.HasValue;
 
-import java.util.Collection;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,29 +39,18 @@ public class TMultiplicative implements Pattern {
     }
 
     @Override
-    public Context type( Context gamma ) throws TypecheckingException {
+    public Environment<Term> type( Environment<Term> gamma )
+            throws ProofFailureException, TypecheckingException {
             return multiplicand.type( gamma );
     }
 
     @Override
-    public Term step( Environment eta ) {
-        // TODO : define small step evaluation
-        return null;
-    }
-
-    @Override
-    public Value evaluate( Environment eta ) {
-        // TODO : define big step evaluation
-        return null;
-    }
-
-    @Override
-    public Pattern substitute( Term x, TNameGenerator.TName y ) {
+    public Pattern substitute( Term x, Symbol y ) {
         return new TAdditive( scalar, multiplicand.substitute( x,y ) );
     }
 
     @Override
-    public boolean binds( TNameGenerator.TName n ) {
+    public boolean binds( Symbol n ) {
         try {
             return ((Pattern)multiplicand).binds( n );
         } catch ( ClassCastException _ ) {
@@ -75,12 +65,12 @@ public class TMultiplicative implements Pattern {
     }
 
     @Override
-    public Set<Judgement> decompose( Context gamma )
-            throws TypecheckingException {
+    public Set<Judgement<Term>> decompose( Environment<Term> gamma )
+            throws TypecheckingException, ProofFailureException {
         try {
             return ((Pattern)multiplicand).decompose( gamma );
         } catch ( ClassCastException _ ) {
-            return new HashSet<Judgement>();
+            return new HashSet<Judgement<Term>>();
         }
 
     }
@@ -96,7 +86,7 @@ public class TMultiplicative implements Pattern {
         int a   = multiplicand.hashCode();
         int b   = (int)scalar.index;
 
-        return 37 * (37 * ( (a ^ (a >>> 32))) + (b ^ (b >>> 32)));
+        return 37 * (37 * ( (a ^ (a >>> 31))) + (b ^ (b >>> 31)));
 
     }
 

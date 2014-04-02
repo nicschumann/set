@@ -7,13 +7,12 @@ import java.util.Set;
 
 import com.workshop.set.interfaces.*;
 import com.workshop.set.lang.exceptions.PatternMatchException;
+import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
-import com.workshop.set.lang.judgements.HasType;
+
 import com.workshop.set.lang.judgements.HasValue;
 
-/**
- * Created by nicschumann on 3/29/14.
- */
+
 public class TSet implements Pattern {
     public TSet( Collection<Term> elements ) {
         this.elements = new ArrayList<Term>( elements );
@@ -48,14 +47,17 @@ public class TSet implements Pattern {
     }
 
     @Override
-    public Context type( Context gamma )
-        throws TypecheckingException {
+    public Environment<Term> type( Environment<Term> gamma )
+        throws ProofFailureException, TypecheckingException {
 
         ArrayList<Term> types = new ArrayList<Term>();
         boolean fold = true;
         Term t = null;
 
+        gamma.step();
+
         for ( Term e : elements ) { types.add( (e.type( gamma )).proves( e ) ); }
+
         for ( int i = 0; i < types.size() - 1; i++ ) {
             t = types.get( i );
             fold &= types.get( i ).equals( types.get( i+1 ) );
@@ -66,26 +68,16 @@ public class TSet implements Pattern {
             TCollection ty = (t == null) ? new TCollection( types.get( 0 ), elements.size() )
                                          : new TCollection( t, elements.size() );
 
-            return gamma.extend( new HasType( this, ty ) );
+            gamma.unstep();
+
+            return gamma.extend(  this, ty );
 
         } throw new TypecheckingException( this, gamma, "Heterogeneous Set" );
 
     }
 
     @Override
-    public Term step( Environment eta ) {
-        // TODO : define small step evaluation
-        return null;
-    }
-
-    @Override
-    public Value evaluate( Environment eta ) {
-        // TODO : define big step evaluation
-        return null;
-    }
-
-    @Override
-    public Pattern substitute( Term x, TNameGenerator.TName y ) {
+    public Pattern substitute( Term x, Symbol y ) {
         Collection<Term> es = new ArrayList<Term>();
         for ( Term e : elements ) {
             es.add( e.substitute( x,y ) );
@@ -111,7 +103,7 @@ public class TSet implements Pattern {
     }
 
     @Override
-    public boolean binds( TNameGenerator.TName name ) {
+    public boolean binds( Symbol name ) {
         boolean fold = false;
         for ( Term e : elements ) {
             try {
@@ -122,17 +114,17 @@ public class TSet implements Pattern {
         return fold;
     }
 
-    public Set<Judgement> decompose( Context gamma )
-        throws TypecheckingException {
+    public Set<Judgement<Term>> decompose( Environment<Term> gamma )
+        throws ProofFailureException, TypecheckingException {
         try {
-            Set<Judgement> j = new HashSet<Judgement>();
+            Set<Judgement<Term>> j = new HashSet<Judgement<Term>>();
 
             Term ty = gamma.proves( this ); // retrieve the type of this
             Term base = ((TCollection)ty).contents;
 
             for ( int i = 0; i < elements.size(); i++ ) {
                 try {
-                    j.addAll(((Pattern) elements.get(i)).decompose( gamma.extend( new HasType(elements.get(i), base ))));
+                    j.addAll(((Pattern) elements.get(i)).decompose( gamma.extend( elements.get(i), base )));
                 } catch ( ClassCastException _ ) {}
             }
 
@@ -152,7 +144,7 @@ public class TSet implements Pattern {
     public int hashCode() {
 
         int a   = elements.hashCode();
-        return 37 * (37 * (a ^ (a >>> 32)));
+        return 37 * (37 * (a ^ (a >>> 31)));
 
     }
 

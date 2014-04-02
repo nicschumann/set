@@ -2,7 +2,8 @@ package com.workshop.set.lang.engines;
 
 import com.workshop.set.interfaces.*;
 import com.workshop.set.lang.core.*;
-import com.workshop.set.lang.environments.EmptyTyping;
+import com.workshop.set.lang.environments.Evaluation;
+import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
 
 /**
@@ -18,8 +19,8 @@ public class TypeUnifier {
                 \ a . a             ==>             \x : Univ . \ a : x . a
                 \( a,b ) . a        ==>             \x : Univ . \ (a,b) : x . a
      */
-    public Term unify( TAbstraction lambda, Context gamma )
-        throws TypecheckingException {
+    public Term unify( TAbstraction lambda, Environment<Term> gamma )
+        throws TypecheckingException, ProofFailureException {
         if ( lambda.type == null ) {
             return new TAbstraction( lambda.binder, lambda.binder.type( gamma ).proves( lambda.binder ), lambda.body );
         } else return lambda;
@@ -34,7 +35,7 @@ public class TypeUnifier {
     public TypeUnifier trial( TAbstraction t ) {
             try {
                 System.out.println( "Trying " + t + "," );
-                System.out.println( t + " : " + unify( t, new EmptyTyping( new TNameGenerator() ) ) );
+                System.out.println( t + " : " + unify( t, new Evaluation( new TNameGenerator() ) ) );
             } catch ( TypecheckingException e ) {
                 System.out.println( e.getLocalizedMessage() );
             } finally {

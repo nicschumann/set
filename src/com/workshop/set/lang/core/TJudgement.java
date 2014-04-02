@@ -2,8 +2,9 @@ package com.workshop.set.lang.core;
 
 import com.workshop.set.interfaces.*;
 import com.workshop.set.lang.exceptions.PatternMatchException;
+import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
-import com.workshop.set.lang.judgements.HasType;
+
 import com.workshop.set.lang.judgements.HasValue;
 
 import java.util.HashSet;
@@ -36,13 +37,18 @@ public class TJudgement implements Term {
     }
 
     @Override
-    public Context type( Context gamma )
-        throws TypecheckingException {
+    public Environment<Term> type( Environment<Term> gamma )
+        throws ProofFailureException, TypecheckingException {
         try {
+            gamma.step();
+
             Term T1 = (left.type( gamma )).proves( left );
             Term T2 = (right.type( gamma )).proves( right );
+
+
             if ( T1.equals( T2 ) ) {
-                return gamma.extend( new HasType( this, T1 ) );
+                gamma.unstep();
+                return gamma.extend( this, T1 );
             } throw new TypecheckingException( this, gamma );
         } catch ( ClassCastException _ ) {
             throw new TypecheckingException( this, gamma );
@@ -50,18 +56,7 @@ public class TJudgement implements Term {
     }
 
     @Override
-    public Term step( Environment eta ) {
-        // TODO : define small step evaluation
-        return null;
-    }
-
-    @Override
-    public Value evaluate( Environment eta ) {
-        return null;
-    }
-
-    @Override
-    public Term substitute( Term x, TNameGenerator.TName y ) {
+    public Term substitute( Term x, Symbol y ) {
         return new TJudgement( left.substitute(x,y), right.substitute(x,y) );
     }
 
@@ -81,7 +76,7 @@ public class TJudgement implements Term {
         int a   = left.hashCode();
         int b   = right.hashCode();
 
-        return 37 * (37 * ( (a ^ (a >>> 32))) + (b ^ (b >>> 32)));
+        return 37 * (37 * ( (a ^ (a >>> 31))) + (b ^ (b >>> 31)));
 
     }
 }

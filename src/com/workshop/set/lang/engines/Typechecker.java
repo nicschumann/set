@@ -1,9 +1,10 @@
 package com.workshop.set.lang.engines;
 
+import com.workshop.set.interfaces.Environment;
 import com.workshop.set.interfaces.Term;
-import com.workshop.set.interfaces.Context;
 import com.workshop.set.lang.core.TNameGenerator;
-import com.workshop.set.lang.environments.EmptyTyping;
+import com.workshop.set.lang.environments.Evaluation;
+import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
 
 /**
@@ -16,13 +17,13 @@ public class Typechecker {
 
     private TNameGenerator g;
 
-    public Context type( Term term )
-        throws TypecheckingException {
-        return term.type( new EmptyTyping( g ) );
+    public Environment<Term> type( Term term )
+        throws TypecheckingException, ProofFailureException {
+        return term.type( new Evaluation( g ) );
     }
 
-    public Context type( Term term, Context gamma )
-        throws TypecheckingException {
+    public Environment<Term> type( Term term, Environment<Term> gamma )
+        throws TypecheckingException, ProofFailureException {
         return term.type( gamma );
     }
 

@@ -1,12 +1,10 @@
 package com.workshop.set.lang.core;
 
-import com.workshop.set.interfaces.Context;
-import com.workshop.set.interfaces.Environment;
-import com.workshop.set.interfaces.Term;
-import com.workshop.set.interfaces.Value;
+import com.workshop.set.interfaces.*;
 import com.workshop.set.lang.exceptions.PatternMatchException;
+import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
-import com.workshop.set.lang.judgements.HasType;
+
 import com.workshop.set.lang.judgements.HasValue;
 
 import java.util.HashSet;
@@ -45,25 +43,20 @@ public class TExponential implements Term {
     }
 
     @Override
-    public Context type( Context gamma )
-        throws TypecheckingException {
-        Context gamma1 = base.type( gamma );
-        return gamma1.extend( new HasType( this, gamma1.proves( base ) ) );
+    public Environment<Term> type( Environment<Term> gamma )
+        throws ProofFailureException, TypecheckingException {
+
+        gamma.step();
+
+        gamma = base.type( gamma );
+
+        gamma.unstep();
+
+        return gamma.extend( this, gamma.proves( base ) );
     }
 
     @Override
-    public Term step( Environment eta ) {
-        // TODO : define small step evaluation
-        return null;
-    }
-
-    @Override
-    public Value evaluate( Environment eta ) {
-        return null;
-    }
-
-    @Override
-    public Term substitute( Term x, TNameGenerator.TName y ) {
+    public Term substitute( Term x, Symbol y ) {
         return new TExponential( base.substitute(x,y), exp );
     }
 

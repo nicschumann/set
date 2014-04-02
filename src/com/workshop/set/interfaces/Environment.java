@@ -1,22 +1,19 @@
 package com.workshop.set.interfaces;
 
-import com.workshop.set.lang.judgements.HasType;
-import com.workshop.set.lang.judgements.HasValue;
+import java.util.Set;
 
 /**
  * An environment maintains a mapping of variable names to values,
  * A mapping of values to to scalar coordinates, and a
  */
-public interface Environment {
+public interface Environment<T> extends Context<T> {
 
-    public Context typing();
+    public Context<T> typing();
 
-    public Environment extend( Context gamma );
-    public Environment extend( Environment eta );
-
-    public Environment extend( HasType a );
-    public Environment extend( HasValue a );
-
-    public Environment pairs( Term t, Term T );
+    /* Override the Context's methods to return the more specified type */
+    public Environment<T> extend( T x, T T );
+    public Environment<T> extend( Set<Judgement<T>> es );
+    public Environment<T> step();
+    public Environment<T> unstep();
 
 }

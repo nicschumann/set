@@ -6,7 +6,7 @@ import com.workshop.set.interfaces.Term;
 /**
  * Created by nicschumann on 3/29/14.
  */
-public class HasType implements Judgement {
+public class HasType implements Judgement<Term> {
     public HasType( Term inh, Term env ) {
         inhabitant = inh;
         environment = env;

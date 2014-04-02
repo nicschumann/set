@@ -2,10 +2,9 @@ package com.workshop.set.lang.core;
 
 import com.workshop.set.interfaces.*;
 import com.workshop.set.lang.core.TNameGenerator.TName;
-import com.workshop.set.lang.judgements.HasType;
+
 import com.workshop.set.lang.judgements.HasValue;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,24 +35,12 @@ public class TScalar implements Pattern {
     }
 
     @Override
-    public Context type( Context gamma ) {
-        return gamma.extend(new HasType( this, new TField() ) );
+    public Environment<Term> type( Environment<Term> gamma ) {
+        return gamma.extend( this, new TField() );
     }
 
     @Override
-    public Term step( Environment eta ) {
-        // TODO : define small step evaluation
-        return null;
-    }
-
-    @Override
-    public Value evaluate( Environment eta ) {
-        // TODO : define big step evaluation
-        return null;
-    }
-
-    @Override
-    public Pattern substitute( Term x, TName y ) { return this; }
+    public Pattern substitute( Term x, Symbol y ) { return this; }
 
     @Override
     public Set<HasValue> bind( Term t ) {
@@ -61,13 +48,13 @@ public class TScalar implements Pattern {
     }
 
     @Override
-    public boolean binds( TName n ) {
+    public boolean binds( Symbol n ) {
         return false;
     }
 
     @Override
-    public Set<Judgement> decompose( Context gamma ) {
-        return new HashSet<Judgement>();
+    public Set<Judgement<Term>> decompose( Environment<Term> gamma ) {
+        return new HashSet<Judgement<Term>>();
     }
 
     @Override
@@ -81,7 +68,7 @@ public class TScalar implements Pattern {
         int a   = (int)index;
 
 
-        return 37 * (37 * (a ^ (a >>> 32)));
+        return 37 * (37 * (a ^ (a >>> 31)));
 
     }
 

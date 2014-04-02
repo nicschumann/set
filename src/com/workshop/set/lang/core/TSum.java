@@ -2,8 +2,9 @@ package com.workshop.set.lang.core;
 
 import com.workshop.set.interfaces.*;
 import com.workshop.set.lang.exceptions.PatternMatchException;
+import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
-import com.workshop.set.lang.judgements.HasType;
+
 import com.workshop.set.lang.judgements.HasValue;
 
 import java.util.HashSet;
@@ -39,13 +40,18 @@ public class TSum implements Term {
     }
 
     @Override
-    public Context type( Context gamma )
-            throws TypecheckingException {
+    public Environment<Term> type( Environment<Term> gamma )
+            throws ProofFailureException, TypecheckingException {
         try {
-            TUniverse U1 = (TUniverse)(type.type( gamma )).proves( type );
-            TUniverse U2 = (TUniverse)(body.type( gamma.extend( new HasType( binder, type )) )).proves( body );
 
-            return gamma.extend(new HasType( this, U1.max(U2) ));
+            gamma.step();
+
+            TUniverse U1 = (TUniverse)(type.type( gamma )).proves( type );
+            TUniverse U2 = (TUniverse)(body.type( gamma.extend( binder, type ) )).proves( body );
+
+            gamma.unstep();
+
+            return gamma.extend( this, U1.max(U2) );
 
         } catch ( ClassCastException _ ) {
             throw new TypecheckingException( this, gamma );
@@ -53,19 +59,7 @@ public class TSum implements Term {
     }
 
     @Override
-    public Term step( Environment eta ) {
-        // TODO : define small step evaluation
-        return null;
-    }
-
-    @Override
-    public Value evaluate( Environment eta ) {
-        // TODO : define big step evaluation
-        return null;
-    }
-
-    @Override
-    public Term substitute( Term x, TNameGenerator.TName y ) {
+    public Term substitute( Term x, Symbol y ) {
         if ( !binder.binds( y ) ) {
             return new TSum( binder, type.substitute(x,y), body.substitute( x,y ) );
         } else return new TSum( binder, type.substitute(x,y), body );

@@ -5,5 +5,6 @@ package com.workshop.set.interfaces;
  */
 public interface Gensym {
     public Symbol generate();
+    public Symbol generate( String hint );
 
 }

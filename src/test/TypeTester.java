@@ -1,10 +1,12 @@
 package test;
 
 import com.workshop.set.interfaces.Context;
+import com.workshop.set.interfaces.Environment;
 import com.workshop.set.interfaces.Term;
 import com.workshop.set.lang.core.*;
 import com.workshop.set.lang.engines.TypeUnifier;
 import com.workshop.set.lang.engines.Typechecker;
+import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
 
 import java.util.Arrays;
@@ -24,18 +26,21 @@ public class TypeTester {
         private Typechecker tc;
 
         public UnitTest header( String s ) {
-            System.out.println( System.lineSeparator() + "===" + s + "===" + System.lineSeparator() );
+            System.out.println( System.lineSeparator() + "===| " + s + " |===" + System.lineSeparator() );
             return this;
         }
 
         public UnitTest reflexivity( Term a, Term b ) {
             try {
                 //System.out.println("Trying to type " + a + ", expecting " + b );
-                Context c = tc.type(a);
+                Environment<Term> c = tc.type(a);
                 System.out.println( "Trying " + a + m + "\n==> " + a + " : " + c.proves( a ) +" [" + c.proves( a ).equals( b ) + "]"  );
             } catch ( TypecheckingException e ) {
                 System.out.println("Failure, Caught TypecheckingException: ");
                 System.out.print( e.getLocalizedMessage() );
+            } catch ( ProofFailureException e ) {
+                System.out.println("Failure, Caught ProofFailureException: ");
+                System.out.println( e.getLocalizedMessage() );
             } finally {
                 //System.out.print( System.lineSeparator() );
                 return this;
@@ -49,6 +54,9 @@ public class TypeTester {
             } catch ( TypecheckingException e ) {
                 System.out.println("Success, Caught TypecheckingException: ");
                 System.out.print( e.getLocalizedMessage() );
+            } catch ( ProofFailureException e ) {
+                System.out.println("Success, Caught ProofFailureException: ");
+                System.out.println( e.getLocalizedMessage() );
             } finally {
                 //System.out.print( System.lineSeparator() );
                 return this;
@@ -62,6 +70,8 @@ public class TypeTester {
                 System.out.println( a + " : " + c.proves(a) );
                 System.out.println( "In Context : " + c );
             } catch ( TypecheckingException e ) {
+                System.out.println( e.getLocalizedMessage() );
+            } catch ( ProofFailureException e ) {
                 System.out.println( e.getLocalizedMessage() );
             } finally {
                 System.out.print( System.lineSeparator() );
@@ -142,36 +152,41 @@ public class TypeTester {
 
             // TESTS
 
-             u
-             .header("Initial Typechecking Tests")
-             .trial(field)
-             .trial(univ0)
-             .trial(scalar)
-             .trial( idA )
-             .trial( eq )
-             .trial( dep )
-             .trial( idA_app )
-             .trial( eq_app_h )
-             .trial( eq_app_f )
-             .trial( dep_app )
-             .trial( dep_app_f )
-             .error(dep_app_bot)
-             .header("Pattern Checking Tests")
-             .trial(pat1)
-             .trial( pat2 )
-             .trial( pat3 )
-             .trial(pat5)
-             .error(pat4)
-             .header("Pattern-Based Lambdas")
-             .trial( lam1 )
-             .trial( lam1_app )
-             .trial( lam2 )
-             .trial( lam3 )
-             .trial( lam4 )
-             .trial( lam4_app )
-             .trial( shadow )
-             .trial( shadow_app )
-             .trial( shadow_app_app );
+
+
+
+
+
+//             u
+//             .header("Initial Typechecking Tests")
+//             .trial(field)
+//             .trial(univ0)
+//             .trial(scalar)
+//             .trial( idA )
+//             .trial( eq )
+//             .trial( dep )
+//             .trial( idA_app )
+//             .trial( eq_app_h )
+//             .trial( eq_app_f )
+//             .trial( dep_app )
+//             .trial( dep_app_f )
+//             .error(dep_app_bot)
+//             .header("Pattern Checking Tests")
+//             .trial(pat1)
+//             .trial( pat2 )
+//             .trial( pat3 )
+//             .trial(pat5)
+//             .error(pat4)
+//             .header("Pattern-Based Lambdas")
+//             .trial( lam1 )
+//             .trial( lam1_app )
+//             .trial( lam2 )
+//             .trial( lam3 )
+//             .trial( lam4 )
+//             .trial( lam4_app )
+//             .trial( shadow )
+//             .trial( shadow_app )
+//             .trial( shadow_app_app );
 //             .error( lam4_univerr )
 //             .error(lam2_err)
 //             .error( lam3_bot );

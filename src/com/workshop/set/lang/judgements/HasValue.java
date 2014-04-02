@@ -7,7 +7,7 @@ import com.workshop.set.lang.core.TNameGenerator;
 /**
  * Created by nicschumann on 3/30/14.
  */
-public class HasValue implements Judgement {
+public class HasValue implements Judgement<Term> {
     public HasValue( TNameGenerator.TName n, Term t ) {
         name = n;
         term = t;

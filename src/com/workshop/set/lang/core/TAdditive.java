@@ -1,9 +1,11 @@
 package com.workshop.set.lang.core;
 
 import com.workshop.set.interfaces.*;
+
 import com.workshop.set.lang.exceptions.PatternMatchException;
+import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
-import com.workshop.set.lang.judgements.HasType;
+
 import com.workshop.set.lang.judgements.HasValue;
 
 import java.util.HashSet;
@@ -42,8 +44,8 @@ public class TAdditive implements Pattern {
     }
 
     @Override
-    public Context type( Context gamma )
-        throws TypecheckingException {
+    public Environment<Term> type( Environment<Term> gamma )
+        throws ProofFailureException, TypecheckingException {
         try {
             // the type of an additive operation is the type of its vector addand.
             return addand.type( gamma );
@@ -52,30 +54,13 @@ public class TAdditive implements Pattern {
         }
     }
 
-    /**
-     *
-     *
-     * @param eta, the environment to evaluate this term in
-     * @return
-     */
     @Override
-    public Term step( Environment eta ) {
-        // TODO : define small step evaluation
-        return null;
-    }
-
-    @Override
-    public Value evaluate( Environment eta ) {
-        return null;
-    }
-
-    @Override
-    public Pattern substitute( Term x, TNameGenerator.TName y ) {
+    public Pattern substitute( Term x, Symbol y ) {
         return new TAdditive( scalar, addand.substitute( x,y ) );
     }
 
     @Override
-    public boolean binds( TNameGenerator.TName n ) {
+    public boolean binds( Symbol n ) {
         try {
             return ((Pattern)addand).binds( n );
         } catch ( ClassCastException _ ) {
@@ -90,12 +75,12 @@ public class TAdditive implements Pattern {
     }
 
     @Override
-    public Set<Judgement> decompose( Context gamma )
-            throws TypecheckingException {
+    public Set<Judgement<Term>> decompose( Environment<Term> gamma )
+            throws TypecheckingException, ProofFailureException {
         try {
             return ((Pattern)addand).decompose( gamma );
         } catch ( ClassCastException _ ) {
-            return new HashSet<Judgement>();
+            return new HashSet<Judgement<Term>>();
         }
 
     }
@@ -111,7 +96,7 @@ public class TAdditive implements Pattern {
 
         int a   = addand.hashCode();
 
-        return 37 * (37 * ( (a ^ (a >>> 32))));
+        return 37 * (37 * ( (a ^ (a >>> 31))));
 
     }
 

@@ -6,8 +6,9 @@ import java.util.Vector;
 
 import com.workshop.set.interfaces.*;
 import com.workshop.set.lang.exceptions.PatternMatchException;
+import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
-import com.workshop.set.lang.judgements.HasType;
+
 import com.workshop.set.lang.judgements.HasValue;
 
 /**
@@ -42,9 +43,11 @@ public class TVector implements Pattern {
     }
 
     @Override
-    public Context type( Context gamma )
-        throws TypecheckingException {
+    public Environment<Term> type( Environment<Term> gamma )
+        throws ProofFailureException, TypecheckingException {
         try {
+            gamma.step();
+
             boolean fold = true;
             Term t = (entries.get( 0 ).type( gamma )).proves( entries.get( 0 ) );
 
@@ -56,7 +59,9 @@ public class TVector implements Pattern {
                 t = tprime;
             }
 
-            return gamma.extend( new HasType( this, new TExponential( t, entries.size() ) ) );
+            gamma.unstep();
+
+            return gamma.extend( this, new TExponential( t, entries.size() ) );
         } catch ( ClassCastException _ ) {
             throw new TypecheckingException( this, gamma );
         }
@@ -64,17 +69,7 @@ public class TVector implements Pattern {
     }
 
     @Override
-    public Term step( Environment eta ) {
-        return null;
-    }
-
-    @Override
-    public Value evaluate( Environment eta ) {
-        return null;
-    }
-
-    @Override
-    public Pattern substitute( Term x, TNameGenerator.TName y ) {
+    public Pattern substitute( Term x, Symbol y ) {
         Vector<Term> t = new Vector<Term>();
         for (Term e : entries ) {
             t.add( e.substitute( x,y ) );
@@ -101,7 +96,7 @@ public class TVector implements Pattern {
     }
 
     @Override
-    public boolean binds( TNameGenerator.TName n ) {
+    public boolean binds( Symbol n ) {
         boolean fold = false;
         for ( Term t : entries ) {
             try {
@@ -112,10 +107,10 @@ public class TVector implements Pattern {
         return fold;
     }
 
-    public Set<Judgement> decompose( Context gamma )
-        throws TypecheckingException {
+    public Set<Judgement<Term>> decompose( Environment<Term> gamma )
+        throws ProofFailureException, TypecheckingException {
         try {
-            Set<Judgement> j = new HashSet<Judgement>();
+            Set<Judgement<Term>> j = new HashSet<Judgement<Term>>();
 
             Term ty = gamma.proves( this ); // retrieve the type of this
             Integer arity = ((TExponential)ty).exp;
@@ -123,7 +118,7 @@ public class TVector implements Pattern {
 
             for ( int i = 0; i < arity; i++ ) {
                 try {
-                    j.addAll(((Pattern) entries.get(i)).decompose( gamma.extend( new HasType(entries.get(i), base ))));
+                    j.addAll(((Pattern) entries.get(i)).decompose( gamma.extend( entries.get(i), base )));
                 } catch ( ClassCastException _ ) {}
              }
 
@@ -144,7 +139,7 @@ public class TVector implements Pattern {
 
         int a   = entries.hashCode();
 
-        return 37 * (37 * (a ^ (a >>> 32))) + 1;
+        return 37 * (37 * (a ^ (a >>> 31))) + 1;
 
     }
 
