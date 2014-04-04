@@ -1,5 +1,7 @@
 package com.workshop.set.interfaces;
 
+import com.workshop.set.lang.exceptions.ProofFailureException;
+
 import java.util.Set;
 
 /**
@@ -9,6 +11,10 @@ import java.util.Set;
 public interface Environment<T> extends Context<T> {
 
     public Context<T> typing();
+    public Context<T> evaluation();
+
+    public Term compute( Term t, Term TY ) throws ProofFailureException;
+    public Term value() throws ProofFailureException;
 
     /* Override the Context's methods to return the more specified type */
     public Environment<T> extend( T x, T T );

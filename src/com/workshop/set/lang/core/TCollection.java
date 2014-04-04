@@ -1,5 +1,6 @@
 package com.workshop.set.lang.core;
 
+import com.google.common.collect.Sets;
 import com.workshop.set.interfaces.*;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.ProofFailureException;
@@ -42,8 +43,15 @@ public class TCollection implements Term {
         throws ProofFailureException, TypecheckingException {
 
         gamma = contents.type( gamma );
+        Term t = gamma.proves(contents);
 
-        return gamma.extend( this, gamma.proves( contents ) );
+               gamma.compute(this, t);
+        return gamma.extend( this, t );
+    }
+
+    @Override
+    public Set<Symbol> free() {
+        return contents.free();
     }
 
     @Override
@@ -54,11 +62,6 @@ public class TCollection implements Term {
     @Override
     public Set<HasValue> bind( Term value ) throws PatternMatchException {
         return new HashSet<HasValue>();
-    }
-
-    @Override
-    public boolean kind( Term t ) {
-        return t instanceof TCollection;
     }
 
     @Override

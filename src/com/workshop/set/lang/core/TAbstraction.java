@@ -1,7 +1,9 @@
 package com.workshop.set.lang.core;
 
+import com.google.common.collect.Sets;
 import com.workshop.set.interfaces.*;
 
+import com.workshop.set.lang.engines.Decide;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
@@ -9,6 +11,8 @@ import com.workshop.set.lang.exceptions.TypecheckingException;
 import com.workshop.set.lang.judgements.HasValue;
 
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -28,8 +32,7 @@ public class TAbstraction implements Term {
     @Override
     public boolean equals( Object o ) {
         try {
-            return ((TAbstraction)o).binder.equals( binder )
-                && ((TAbstraction)o).body.equals( body );
+            return Decide.alpha_equivalence( this, (TAbstraction)o, new HashSet<Symbol>(), new HashSet<Symbol>() );
         } catch ( ClassCastException _ ) {
             return false;
         }
@@ -37,7 +40,7 @@ public class TAbstraction implements Term {
 
     @Override
     public String toString() {
-        return "fn " + binder.toString() + " : " + type.toString() +" .[" + body.toString() + "]";
+        return "lambda " + binder.toString() + " : " + type.toString() +" => [" + body.toString() + "]";
     }
 
     /**
@@ -61,11 +64,10 @@ public class TAbstraction implements Term {
                     //System.out.println( "Typing an Abstraction" );
 
                                                     gamma.step();                           // step the current environment
-                    System.out.print( gamma );
+
 
                 gamma                               = type.type( gamma );                   // type the type of the formal parameter in the current environment -
                                                                                             // at this point the environment should prove that the type of type is Univ{n}
-                    System.out.println( gamma );
 
                 TUniverse U1                        = (TUniverse)((gamma).proves( type ));
 
@@ -84,7 +86,9 @@ public class TAbstraction implements Term {
 
                 if ( U1.level >= U2.level ) {
                            gamma.unstep();
-                    return gamma.extend(  this, new TAll( binder, type, T2 ) );
+                           TAll TY = new TAll( binder, type, T2 );
+                           gamma.compute( this, TY );
+                    return gamma.extend(  this, TY );
                 } else throw new TypecheckingException( this, gamma, "Universe Inconsistency - " + U1 + " does not contain " + U2 );
 
             } catch ( ClassCastException _ ) {
@@ -94,10 +98,10 @@ public class TAbstraction implements Term {
     }
 
     public TAbstraction rename( Environment<Term> gamma ) {
-        Set<TNameGenerator.TName> names = binder.names();
-        for (TNameGenerator.TName name : names ) {
+        Set<Symbol> names = binder.names();
+        for (Symbol name : names ) {
             if ( gamma.contains( name ) ) {
-                Symbol f = gamma.freshname( name.readable+"'" );
+                Symbol f = gamma.freshname( name.name()+"'" );
                 binder = (Pattern)binder.substitute( f, name );
                 body = body.substitute( f, name );
             }
@@ -121,8 +125,10 @@ public class TAbstraction implements Term {
     }
 
     @Override
-    public boolean kind( Term t ) {
-        return t instanceof TAbstraction;
+    public Set<Symbol> free() {
+        Set<Symbol> bound = binder.free();
+        Set<Symbol> free = body.free();
+        return Sets.difference( free, bound );
     }
 
     @Override

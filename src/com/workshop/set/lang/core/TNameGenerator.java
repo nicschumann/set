@@ -1,5 +1,6 @@
 package com.workshop.set.lang.core;
 
+import com.google.common.collect.Sets;
 import com.workshop.set.interfaces.*;
 
 import com.workshop.set.lang.exceptions.ProofFailureException;
@@ -7,10 +8,7 @@ import com.workshop.set.lang.exceptions.TypecheckingException;
 import com.workshop.set.lang.judgements.HasType;
 import com.workshop.set.lang.judgements.HasValue;
 
-import java.util.Arrays;
-
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * The Gensym class implements a symbol generator for generic subclasses S
@@ -70,7 +68,8 @@ public class TNameGenerator
         public Environment<Term> type( Environment<Term> gamma )
             throws ProofFailureException, TypecheckingException {
                 try {
-                    gamma.proves( this );
+                    Term t =  gamma.proves( this );
+                           gamma.compute( this, t );
                     return gamma;
                 } catch ( ProofFailureException e ) {
                     throw new TypecheckingException( this, gamma, "Unbound Identifier" );
@@ -81,6 +80,11 @@ public class TNameGenerator
         public Term substitute( Term x, Symbol y ) {
             if ( y.equals( this ) ) return x;
             else return this;
+        }
+
+        @Override
+        public Set<Symbol> free() {
+            return new HashSet<Symbol>( Arrays.asList( this ) );
         }
 
         @Override
@@ -102,8 +106,8 @@ public class TNameGenerator
         }
 
         @Override
-        public boolean kind( Term t ) {
-            return t instanceof TName;
+        public String name() {
+            return readable;
         }
 
         @Override
@@ -117,8 +121,8 @@ public class TNameGenerator
         }
 
         @Override
-        public Set<TName> names() {
-            return new HashSet<TName>( Arrays.asList(this) );
+        public Set<Symbol> names() {
+            return new LinkedHashSet<Symbol>( Arrays.asList(this) );
         }
     }
 

@@ -1,5 +1,6 @@
 package com.workshop.set.lang.core;
 
+import com.google.common.collect.Sets;
 import com.workshop.set.interfaces.*;
 
 import com.workshop.set.lang.exceptions.PatternMatchException;
@@ -20,8 +21,8 @@ public class TApplication implements Term {
         argument = T2;
     }
 
-    public final Term implication;
-    public final Term argument;
+    public Term implication;
+    public Term argument;
 
     @Override
     public boolean equals( Object o ) {
@@ -69,21 +70,37 @@ public class TApplication implements Term {
         throws ProofFailureException, TypecheckingException {
         try {
 
-            TAll All = (TAll)(implication.type( gamma )).proves( implication );
+
+            Term t13 = implication.type( gamma ).proves(implication);
+
+            TAll All = (TAll)t13;
+            Term T2 = All.body;
+
+            Term f = gamma.value();
+
             Term T1 = (argument.type( gamma )).proves( argument );
+            Term t1 = implication;
 
             if ( All.type.equals( T1 ) ) {
-                Term T2 = All.body;
 
                 try{
                     for (HasValue j : All.binder.bind( argument ) ) {
                         T2 = T2.substitute( j.environment(), j.inhabitant() );
                     }
+                    try {
+                        TAbstraction Lam = (TAbstraction) f ;
+                        t1 = Lam.body;
+                        for (HasValue j : Lam.binder.bind( argument ) ) {
+                            t1 = t1.substitute( j.environment(), j.inhabitant() );
+                        }
+                    } catch ( ClassCastException _ ) {}
+
                 } catch ( PatternMatchException _ ) {
                    throw new TypecheckingException( this, gamma, "Pattern Exception - " + All.binder.toString() + " cannot bind " + argument );
                 }
 
-                return gamma.extend( this, T2 );
+                       gamma.extend( this, T2 );
+                return gamma.extend( gamma.compute( t1, T2 ), T2 );
             } else throw new TypecheckingException( this, gamma, "\n\tIncompatible types for application: " + All.toString() + " and " + T1.toString() + "\n\t" + T1.toString() + " is not an element of " + All.type.toString() );
 
         } catch ( ClassCastException _ ) {
@@ -91,6 +108,10 @@ public class TApplication implements Term {
         }
     }
 
+    @Override
+    public Set<Symbol> free() {
+        return Sets.union(implication.free(), argument.free());
+    }
 
     @Override
     public Term substitute( Term x, Symbol y) {
@@ -100,11 +121,6 @@ public class TApplication implements Term {
     @Override
     public Set<HasValue> bind( Term value ) throws PatternMatchException {
         return new HashSet<HasValue>();
-    }
-
-    @Override
-    public boolean kind( Term t ) {
-        return t instanceof TApplication;
     }
 
     @Override

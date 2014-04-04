@@ -2,6 +2,7 @@ package com.workshop.set.lang.core;
 
 import com.workshop.set.interfaces.*;
 import com.workshop.set.lang.exceptions.PatternMatchException;
+import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.judgements.HasType;
 import com.workshop.set.lang.judgements.HasValue;
 
@@ -27,7 +28,7 @@ public class TUniverse implements Term {
 
     @Override
     public String toString() {
-        return  ( level == 0L ) ? "Univ" : "Univ{" + Long.toString( level ) + "}";
+        return  ( level == 0L ) ? "type" : "type{" + Long.toString( level ) + "}";
     }
 
     public TUniverse max( TUniverse n ) {
@@ -38,8 +39,10 @@ public class TUniverse implements Term {
     /**
      * All well-formed contexts prove that Univ{n} : Univ{n+1}
      */
-    public Environment<Term> type( Environment<Term> gamma ) {
-        return gamma.extend( this, new TUniverse( level + 1L ) );
+    public Environment<Term> type( Environment<Term> gamma )
+        throws ProofFailureException {
+        TUniverse t = new TUniverse( level + 1L );
+        return gamma.extend( gamma.compute( this, t ), t );
     }
 
     @Override
@@ -48,13 +51,13 @@ public class TUniverse implements Term {
     }
 
     @Override
-    public Set<HasValue> bind( Term value ) throws PatternMatchException {
-        return new HashSet<HasValue>();
+    public Set<Symbol> free() {
+        return new HashSet<Symbol>();
     }
 
     @Override
-    public boolean kind( Term t ) {
-        return t instanceof TUniverse;
+    public Set<HasValue> bind( Term value ) throws PatternMatchException {
+        return new HashSet<HasValue>();
     }
 
     @Override

@@ -8,8 +8,7 @@ import com.workshop.set.lang.exceptions.TypecheckingException;
 
 import com.workshop.set.lang.judgements.HasValue;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  *
@@ -46,12 +45,16 @@ public class TAdditive implements Pattern {
     @Override
     public Environment<Term> type( Environment<Term> gamma )
         throws ProofFailureException, TypecheckingException {
-        try {
-            // the type of an additive operation is the type of its vector addand.
-            return addand.type( gamma );
-        } catch ( ClassCastException _ ) {
-            return null;
-        }
+
+            Term t = gamma.proves( addand );
+                   gamma.compute( this, t );
+            return gamma.extend( this, t );
+
+    }
+
+    @Override
+    public Set<Symbol> free() {
+        return addand.free();
     }
 
     @Override
@@ -85,11 +88,6 @@ public class TAdditive implements Pattern {
 
     }
 
-    @Override
-    public boolean kind( Term t ) {
-        return t instanceof TAdditive;
-    }
-
 
     @Override
     public int hashCode() {
@@ -101,11 +99,11 @@ public class TAdditive implements Pattern {
     }
 
     @Override
-    public Set<TNameGenerator.TName> names() {
+    public Set<Symbol> names() {
         try {
             return ((Pattern)addand).names();
         } catch ( ClassCastException _ ) {
-            return new HashSet<TNameGenerator.TName>();
+            return new LinkedHashSet<Symbol>();
         }
     }
 }

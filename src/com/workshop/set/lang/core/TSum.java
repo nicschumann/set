@@ -1,5 +1,6 @@
 package com.workshop.set.lang.core;
 
+import com.google.common.collect.Sets;
 import com.workshop.set.interfaces.*;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.ProofFailureException;
@@ -26,7 +27,9 @@ public class TSum implements Term {
 
     @Override
     public String toString() {
-        return "sum " + binder.toString() + " : " + type.toString() + " . " + body.toString();
+        if ( Sets.intersection(binder.free(),body.free()).isEmpty() ) {
+            return "(" + type.toString() + " * " + body.toString() + ")";
+        } else return "sum " + binder.toString() + " : " + type.toString() + " . " + body.toString();
     }
 
     @Override
@@ -47,14 +50,22 @@ public class TSum implements Term {
             gamma.step();
 
             TUniverse U1 = (TUniverse)(type.type( gamma )).proves( type );
-            TUniverse U2 = (TUniverse)(body.type( gamma.extend( binder, type ) )).proves( body );
+
+            gamma.extend( binder, type );
+
+            Set<Judgement<Term>> bound          = binder.decompose( gamma );
+
+            TUniverse U2 = (TUniverse)(body.type( gamma.extend( bound ) )).proves( body );
 
             gamma.unstep();
 
-            return gamma.extend( this, U1.max(U2) );
+            TUniverse max = U1.max( U2 );
+
+                   gamma.compute( this, max );
+            return gamma.extend( this, max );
 
         } catch ( ClassCastException _ ) {
-            throw new TypecheckingException( this, gamma );
+            throw new TypecheckingException( this, gamma, "!!!" );
         }
     }
 
@@ -71,8 +82,11 @@ public class TSum implements Term {
     }
 
     @Override
-    public boolean kind( Term t ) {
-        return t instanceof TSum;
+    public Set<Symbol> free() {
+        Set<Symbol> bound = binder.free();
+        Set<Symbol> ty = type.free();
+        Set<Symbol> bd = body.free();
+        return Sets.difference( Sets.union( ty, bd ), bound );
     }
 
     @Override
@@ -82,7 +96,7 @@ public class TSum implements Term {
         int b   = type.hashCode();
         int c   = body.hashCode();
 
-        return 37 * (37 * ( (a ^ (a >>> 32))) + (b ^ (b >>> 32))) + (c ^ (c >>> 32)) + 3;
+        return 37 * (37 * ( (a ^ (a >>> 31))) + (b ^ (b >>> 31))) + (c ^ (c >>> 31)) + 3;
 
     }
 

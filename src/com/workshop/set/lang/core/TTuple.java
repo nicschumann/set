@@ -46,8 +46,10 @@ public class TTuple implements Pattern {
                  b = (range.type( gamma )).proves( range );
 
             if ( a!=null && b!=null ) {
+               TSum t = new TSum( gamma.freshname("_"), a, b );
 
-               return gamma.extend( this, new TSum( gamma.freshname("_"), a, b ) );
+                      gamma.compute( this, t );
+               return gamma.extend( this, t );
 
             } else throw new TypecheckingException( this, gamma );
         } catch ( ClassCastException _ ) {
@@ -111,8 +113,8 @@ public class TTuple implements Pattern {
     }
 
     @Override
-    public boolean kind( Term t ) {
-        return t instanceof TTuple;
+    public Set<Symbol> free() {
+        return names();
     }
 
     @Override
@@ -126,8 +128,8 @@ public class TTuple implements Pattern {
     }
 
     @Override
-    public Set<TNameGenerator.TName> names() {
-        Set<TNameGenerator.TName> n = new HashSet<TNameGenerator.TName>();
+    public Set<Symbol> names() {
+        Set<Symbol> n = new HashSet<Symbol>();
         try {
             n.addAll( ((Pattern)domain).names() );
         } catch ( ClassCastException _ ) {}

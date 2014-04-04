@@ -1,5 +1,6 @@
 package com.workshop.set.lang.core;
 
+import com.google.common.collect.Sets;
 import com.workshop.set.interfaces.*;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.ProofFailureException;
@@ -44,9 +45,9 @@ public class TJudgement implements Term {
             Term T1 = (left.type( gamma )).proves( left );
             Term T2 = (right.type( gamma )).proves( right );
 
-
             if ( T1.equals( T2 ) ) {
-                return gamma.extend( this, T1 );
+                       gamma.compute( this, T1 );
+                return gamma.extend( this,  T1 );
             } throw new TypecheckingException( this, gamma );
         } catch ( ClassCastException _ ) {
             throw new TypecheckingException( this, gamma );
@@ -58,14 +59,15 @@ public class TJudgement implements Term {
         return new TJudgement( left.substitute(x,y), right.substitute(x,y) );
     }
 
+
     @Override
-    public Set<HasValue> bind( Term value ) throws PatternMatchException {
-        return new HashSet<HasValue>();
+    public Set<Symbol> free() {
+        return Sets.union(left.free(), right.free());
     }
 
     @Override
-    public boolean kind( Term t ) {
-        return t instanceof TJudgement;
+    public Set<HasValue> bind( Term value ) throws PatternMatchException {
+        return new HashSet<HasValue>();
     }
 
     @Override

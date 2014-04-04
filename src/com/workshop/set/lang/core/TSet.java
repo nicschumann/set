@@ -1,16 +1,15 @@
 package com.workshop.set.lang.core;
 
-import java.util.Collection;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
+import com.google.common.collect.Sets;
 import com.workshop.set.interfaces.*;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
 
 import com.workshop.set.lang.judgements.HasValue;
+import sun.jvm.hotspot.debugger.cdbg.Sym;
 
 
 public class TSet implements Pattern {
@@ -66,6 +65,7 @@ public class TSet implements Pattern {
             TCollection ty = (t == null) ? new TCollection( types.get( 0 ), elements.size() )
                                          : new TCollection( t, elements.size() );
 
+                   gamma.compute( this, ty );
             return gamma.extend(  this, ty );
 
         } throw new TypecheckingException( this, gamma, "Heterogeneous Set" );
@@ -96,6 +96,11 @@ public class TSet implements Pattern {
         } catch ( ClassCastException _ ) {
             throw new PatternMatchException(this, value);
         }
+    }
+
+    @Override
+    public Set<Symbol> free() {
+        return names();
     }
 
     @Override
@@ -132,11 +137,6 @@ public class TSet implements Pattern {
     }
 
     @Override
-    public boolean kind( Term t ) {
-        return t instanceof TSet;
-    }
-
-    @Override
     public int hashCode() {
 
         int a   = elements.hashCode();
@@ -145,10 +145,11 @@ public class TSet implements Pattern {
     }
 
     @Override
-    public Set<TNameGenerator.TName> names() {
-        Set<TNameGenerator.TName> n = new HashSet<TNameGenerator.TName>();
+    public Set<Symbol> names() {
+        Set<Symbol> n = new LinkedHashSet<Symbol>();
         for ( Term t : elements ) {
             try {
+                Set<Symbol> a = ((Pattern)t).names();
                 n.addAll( ((Pattern)t).names() );
             } catch ( ClassCastException _ ) {}
         }

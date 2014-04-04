@@ -1,5 +1,6 @@
 package com.workshop.set.lang.core;
 
+import com.google.common.collect.Sets;
 import com.workshop.set.interfaces.*;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.ProofFailureException;
@@ -47,8 +48,15 @@ public class TExponential implements Term {
         throws ProofFailureException, TypecheckingException {
 
         gamma = base.type( gamma );
+        Term t = gamma.proves( base );
 
-        return gamma.extend( this, gamma.proves( base ) );
+               gamma.compute( this, t );
+        return gamma.extend( this, t );
+    }
+
+    @Override
+    public Set<Symbol> free() {
+        return base.free();
     }
 
     @Override
@@ -59,11 +67,6 @@ public class TExponential implements Term {
     @Override
     public Set<HasValue> bind( Term value ) throws PatternMatchException {
         return new HashSet<HasValue>();
-    }
-
-    @Override
-    public boolean kind( Term t ) {
-        return t instanceof TExponential;
     }
 
     @Override

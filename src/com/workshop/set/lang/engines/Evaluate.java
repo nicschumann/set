@@ -10,7 +10,7 @@ import com.workshop.set.lang.exceptions.TypecheckingException;
 /**
  * Created by nicschumann on 4/1/14.
  */
-public class Evaluator {
+public class Evaluate {
 //    public Evaluator() {
 //        eta = new Evaluation();
 //    }

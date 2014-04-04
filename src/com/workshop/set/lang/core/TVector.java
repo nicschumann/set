@@ -57,8 +57,9 @@ public class TVector implements Pattern {
                 if ( !fold ) throw new TypecheckingException( this, gamma );
                 t = tprime;
             }
-
-            return gamma.extend( this, new TExponential( t, entries.size() ) );
+            TExponential ty = new TExponential( t, entries.size() );
+                   gamma.compute( this,ty );
+            return gamma.extend( this,ty  );
         } catch ( ClassCastException _ ) {
             throw new TypecheckingException( this, gamma );
         }
@@ -127,8 +128,8 @@ public class TVector implements Pattern {
     }
 
     @Override
-    public boolean kind( Term t ) {
-        return t instanceof TVector;
+    public Set<Symbol> free() {
+        return names();
     }
 
     @Override
@@ -141,8 +142,8 @@ public class TVector implements Pattern {
     }
 
     @Override
-    public Set<TNameGenerator.TName> names() {
-        Set<TNameGenerator.TName> n = new HashSet<TNameGenerator.TName>();
+    public Set<Symbol> names() {
+        Set<Symbol> n = new HashSet<Symbol>();
         for ( Term t : entries ) {
             try {
                 n.addAll( ((Pattern)t).names() );

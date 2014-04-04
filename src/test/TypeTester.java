@@ -2,22 +2,25 @@ package test;
 
 
 import com.workshop.set.interfaces.Environment;
+import com.workshop.set.interfaces.Symbol;
 import com.workshop.set.interfaces.Term;
 import com.workshop.set.lang.core.*;
 
+import com.workshop.set.lang.engines.Decide;
 import com.workshop.set.lang.engines.Typechecker;
 import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Vector;
 
 /**
  * Created by nicschumann on 3/30/14.
  */
 public class TypeTester {
-    public static class UnitTest {
-        public UnitTest( Typechecker t ) {
+    public static class EvalUnitTest {
+        public EvalUnitTest( Typechecker t ) {
             tc = t;
         }
 
@@ -25,12 +28,79 @@ public class TypeTester {
 
         private Typechecker tc;
 
-        public UnitTest header( String s ) {
+        public EvalUnitTest header( String s ) {
             System.out.println( System.lineSeparator() + "===| " + s + " |===" + System.lineSeparator() );
             return this;
         }
 
-        public UnitTest reflexivity( Term a, Term b ) {
+        public EvalUnitTest reflexivity( Term a, Term b ) {
+            try {
+                //System.out.println("Trying to type " + a + ", expecting " + b );
+                Environment<Term> c = tc.type(a);
+
+                System.out.println( "Trying " + a + m + "\n==> " + a + " : " + c.proves( a ) +" [" + c.proves( a ).equals( b ) + "]"  );
+            } catch ( TypecheckingException e ) {
+                System.out.println("Failure, Caught TypecheckingException: ");
+                System.out.print( e.getLocalizedMessage() );
+            } catch ( ProofFailureException e ) {
+                System.out.println("Failure, Caught ProofFailureException: ");
+                System.out.println( e.getLocalizedMessage() );
+            } finally {
+                System.out.print( System.lineSeparator() );
+                return this;
+            }
+        }
+
+        public EvalUnitTest error( Term a ) {
+            try {
+                System.out.println("Trying " + a + ", expecting error :");
+                System.out.println( m + "Failure, returned " + a + " : " + tc.type( a ).proves( a ) );
+            } catch ( TypecheckingException e ) {
+                System.out.println("Success, Caught TypecheckingException: ");
+                System.out.print( e.getLocalizedMessage() );
+            } catch ( ProofFailureException e ) {
+                System.out.println("Success, Caught ProofFailureException: ");
+                System.out.println( e.getLocalizedMessage() );
+            } finally {
+                System.out.print( System.lineSeparator() );
+                return this;
+            }
+        }
+
+        public EvalUnitTest trial( Term a ) {
+            try {
+                System.out.println( "Trying " + a + "," );
+                Environment<Term> c = tc.type( a );
+                System.out.println( a + " \n\t=beta=> " + c.value() );
+                System.out.println( "Evaluation Sequence : \n" + c.evaluation() );
+            } catch ( TypecheckingException e ) {
+                System.out.println( e.getLocalizedMessage() );
+            } catch ( ProofFailureException e ) {
+                System.out.println( e.getLocalizedMessage() );
+            } catch ( ArrayIndexOutOfBoundsException e ) {
+                System.out.println( "ORDERING ERROR: " + e.getLocalizedMessage() );
+            } finally {
+                System.out.print( System.lineSeparator() );
+                return this;
+            }
+        }
+    }
+
+    public static class TypeUnitTest {
+        public TypeUnitTest( Typechecker t ) {
+            tc = t;
+        }
+
+        private String m = "\t\t\t";
+
+        private Typechecker tc;
+
+        public TypeUnitTest header( String s ) {
+            System.out.println( System.lineSeparator() + "===| " + s + " |===" + System.lineSeparator() );
+            return this;
+        }
+
+        public TypeUnitTest reflexivity( Term a, Term b ) {
             try {
                 //System.out.println("Trying to type " + a + ", expecting " + b );
                 Environment<Term> c = tc.type(a);
@@ -48,7 +118,7 @@ public class TypeTester {
             }
         }
 
-        public UnitTest error( Term a ) {
+        public TypeUnitTest error( Term a ) {
             try {
                 System.out.println("Trying " + a + ", expecting error :");
                 System.out.println( m + "Failure, returned " + a + " : " + tc.type( a ).proves( a ) );
@@ -64,12 +134,12 @@ public class TypeTester {
             }
         }
 
-        public UnitTest trial( Term a ) {
+        public TypeUnitTest trial( Term a ) {
             try {
                 System.out.println( "Trying " + a + "," );
                 Environment<Term> c = tc.type( a );
                 System.out.println( a + " : " + c.proves(a) );
-                System.out.println( "In Context : \n" + c );
+                System.out.println( "In Context : \n" + c.typing() );
             } catch ( TypecheckingException e ) {
                 System.out.println( e.getLocalizedMessage() );
             } catch ( ProofFailureException e ) {
@@ -88,7 +158,8 @@ public class TypeTester {
         TNameGenerator g = new TNameGenerator();
 
         Typechecker t = new Typechecker();
-        UnitTest u = new UnitTest( t );
+        TypeUnitTest u = new TypeUnitTest( t );
+        EvalUnitTest eval = new EvalUnitTest( t );
 
 
         TNameGenerator.TName a = g.generate("a");
@@ -96,6 +167,7 @@ public class TypeTester {
         TNameGenerator.TName c = g.generate("c");
         TNameGenerator.TName d = g.generate("d");
         TNameGenerator.TName e = g.generate("e");
+        TNameGenerator.TName f = g.generate("f");
 
         Term field = new TField();
         Term univ0 = new TUniverse( 0l );
@@ -107,6 +179,8 @@ public class TypeTester {
         Term dep = new TAbstraction( a,univ0,new TAbstraction(b,a,b));
 
         Term idA_app = new TApplication( idA, new TScalar( 1.0 ) );
+        Term idA_app2 = new TApplication( idA, new TScalar( 2.0 ) );
+        Term idA_app3 = new TApplication( idA, new TScalar( -45.2312 ) );
         Term eq_app_h = new TApplication( eq, new TScalar( 1.0 ) );
         Term eq_app_f = new TApplication( eq_app_h, new TScalar( 2.0 ) );
         Term dep_app = new TApplication( dep, field );
@@ -131,6 +205,12 @@ public class TypeTester {
 
         Term lam2_err = new TApplication( lam2, new TTuple( scalar, scalar ) );
 
+        Term lam2_err2 = new TAbstraction(
+                new TTuple( new TVector( new Vector<Term>(Arrays.asList( a,b ) ) ),new TVector( new Vector<Term>(Arrays.asList( c,d ) ) ) ),
+                new TSum( a, field, field ),
+                c
+        );
+
         Term lam3 = new TAbstraction( new TVector( new Vector<Term>(Arrays.asList( a,b,c ))),
                                       new TExponential(field,3),
                                       new TVector( new Vector<Term>(Arrays.asList( c,b ))));
@@ -152,44 +232,65 @@ public class TypeTester {
         Term shadow_app = new TApplication( shadow, field );
         Term shadow_app_app = new TApplication( new TApplication( shadow, field ), scalar );
 
+        // ASCRIPTION ERRORS
+
+        Term app_err = new TAbstraction( new TTuple( a,b ), new TExponential( field, 2 ), a ); // ( a,b ) : F^2 , wrong, should be ( a,b ) : F * F
+        Term app_succ = new TAbstraction( new TVector( new Vector<Term>( Arrays.asList( a, b ) ) ), new TSum( a, field, field ), a ); // ( a b ) : F * F , wrong, should be ( a b ) : F^2
+        Term rank2 = new TAbstraction( f, new TAll( a, univ0, new TAll( b, a, a ) ),
+                     new TAbstraction( b, univ0, new TAbstraction( c, b, new TApplication( new TApplication( f, b ), c ) )  ));
+
+        Term rank2_app = new TApplication( rank2, dep );
+
             // TESTS
 
-            u
-                    .header("Initial Typechecking Tests")
-                    .trial(field).trial( univ0 ).trial( scalar )
-                    .trial(idA  ).trial( eq    ).trial( dep    )
-                    .trial( idA_app ).trial( eq_app_h ).trial( eq_app_f )
-                    .trial( dep_app ).trial( dep_app_f )
+//            eval
+//                    .header("Initial Typechecking Tests")
+//                    .trial(field)
+//                    .trial( univ0 )
+//                    .trial( scalar )
+//                    .trial(idA  )
+//                    .trial( eq    )
+//                    .trial( dep    )
+//                    .trial( idA_app )
+//                    .trial( idA_app2 )
+//                    .trial( idA_app3 )
+//                    .trial( eq_app_h )
+//                    .trial( eq_app_f )
+//                    .trial( dep_app )
+//                    .trial( dep_app_f )
+//
+//                    .error(dep_app_bot).error(judge).error(idB)
+//
+//                    .header("Pattern Checking Tests")
+//                    .trial(pat1)
+//                    .trial( pat2 )
+//                    .trial( pat3 )
+//                    .trial( pat5 )
+//
+//                    .error(pat4)
+//
+//                    .header("Pattern Based Lambdas")
+//                    .trial(lam1)
+//                    .trial( lam1_app )
+//                    .trial( lam2 )
+//                    .trial( lam3 )
+//                    .trial( lam4 )
+//                    .trial( lam4_app )
+//                    .trial( shadow )
+//                    .trial( shadow_app )
+//                    .trial( shadow_app_app )
+//                      .error(lam4_univerr).error(lam2_err).error( lam3_bot ).error(lam2_err2)
+//
+//                    .error(app_err).error(app_succ)
+//
+//                    .trial(rank2).trial( rank2_app );
 
-                    .error( dep_app_bot ).error( judge ).error(idB)
+            // EQUALITY TESTS
 
-                    .header("Pattern Checking Tests")
-                    .trial( pat1 ).trial( pat2 ).trial( pat3 ).trial( pat5 )
+            Term la_id = new TAbstraction( a,field,new TApplication( a,b ) );
+            Term lb_id = new TAbstraction( a,field,new TApplication( a,b ) );
 
-                    .error( pat4 )
-
-                    .header("Pattern Based Lambdas")
-                    .trial( lam1 ).trial( lam1_app ).trial( lam2 )
-                    .trial( lam3 ).trial( lam4 ).trial( lam4_app )
-                    .trial( shadow ).trial( shadow_app )
-                    .trial( shadow_app_app )
-
-                    .error( lam4_univerr ).error( lam2_err ).error( lam3_bot );
-
-//             .header("Pattern-Based Lambdas")
-//             .trial( lam1 )
-//             .trial( lam1_app )
-//             .trial( lam2 )
-//             .trial( lam3 )
-//             .trial( lam4 )
-//             .trial( lam4_app )
-//             .trial( shadow )
-//             .trial( shadow_app )
-//             .trial( shadow_app_app );
-//             .error( lam4_univerr )
-//             .error(lam2_err)
-//             .error( lam3_bot );
-
+            System.out.println( "Equality on identity functions: " + Decide.alpha_equivalence( la_id, lb_id, new HashSet<Symbol>(), new HashSet<Symbol>()));
 
 
 

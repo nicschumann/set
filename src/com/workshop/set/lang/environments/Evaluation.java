@@ -35,6 +35,8 @@ public class Evaluation implements Environment<Term> {
     private List<Derivation<Term>> typings;
     private List<Derivation<Term>> evaluations;
 
+    private Term value;
+
     // Context<Term> Methods
 
     /**
@@ -141,6 +143,41 @@ public class Evaluation implements Environment<Term> {
         return typings.get( deriving );
     }
 
+    @Override
+    public Context<Term> evaluation() {
+        return evaluations.get( deriving );
+    }
+
+    /**
+     * The compute function in an environment stores a step of beta reduction in
+     * the current -- welltyped -- context. Note that axioms are not included in the
+     * reduction - these are judgements that are always true, such as F : Univ, or univ{n} : univ{n+1}
+     *
+     * @param exp
+     * @param type
+     * @return
+     */
+    @Override
+    public Term compute( Term exp, Term type ) throws ProofFailureException {
+        try {
+            Derivation<Term> eta = evaluations.get( deriving );
+            //if ( !eta.contains( exp ) ) {
+                eta.extend( exp, type );
+                eta.step();
+            //}
+            value = exp;
+            return exp;
+
+        } catch ( IndexOutOfBoundsException e ) {
+            throw new ProofFailureException( "No Recorded Derivation on this page" );
+        }
+    }
+
+    @Override
+    public Term value() throws ProofFailureException {
+        if ( value == null ) throw new ProofFailureException( "No Recorded Value in this Environment" );
+        else return value;
+    }
 
     public Evaluation page() {
         deriving += 1;
@@ -151,7 +188,8 @@ public class Evaluation implements Environment<Term> {
 
     @Override
     public String toString() {
-        return typing().toString();
+        Derivation<Term> t = evaluations.get( deriving );
+        return t.toString();
     }
 
 

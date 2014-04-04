@@ -1,12 +1,13 @@
 package com.workshop.set.lang.core;
 
+import com.google.common.collect.Sets;
 import com.workshop.set.interfaces.*;
 import com.workshop.set.lang.core.TNameGenerator.TName;
 
+import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.judgements.HasValue;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Implements a Scalar value of some Field indexed by the Real Numbers
@@ -35,12 +36,21 @@ public class TScalar implements Pattern {
     }
 
     @Override
-    public Environment<Term> type( Environment<Term> gamma ) {
-        return gamma.extend( this, new TField() );
+    public Environment<Term> type( Environment<Term> gamma )
+        throws ProofFailureException {
+               TField f = new TField();
+
+               gamma.compute( this, f );
+        return gamma.extend( this, f );
     }
 
     @Override
     public Pattern substitute( Term x, Symbol y ) { return this; }
+
+    @Override
+    public Set<Symbol> free() {
+        return new HashSet<Symbol>();
+    }
 
     @Override
     public Set<HasValue> bind( Term t ) {
@@ -58,11 +68,6 @@ public class TScalar implements Pattern {
     }
 
     @Override
-    public boolean kind( Term t ) {
-        return t instanceof TScalar;
-    }
-
-    @Override
     public int hashCode() {
 
         int a   = (int)index;
@@ -73,8 +78,8 @@ public class TScalar implements Pattern {
     }
 
     @Override
-    public Set<TName> names() {
-        return new HashSet<TName>();
+    public Set<Symbol> names() {
+        return new LinkedHashSet<Symbol>();
     }
 
 }

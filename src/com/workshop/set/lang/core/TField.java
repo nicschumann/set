@@ -1,8 +1,10 @@
 package com.workshop.set.lang.core;
 
+import com.google.common.collect.Sets;
 import com.workshop.set.interfaces.*;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 
+import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.judgements.HasValue;
 
 import java.util.HashSet;
@@ -24,8 +26,10 @@ public class TField implements Term {
     }
 
     @Override
-    public Environment<Term> type( Environment<Term> gamma ) {
-         return gamma.extend( this, new TUniverse(0L) );
+    public Environment<Term> type( Environment<Term> gamma )
+        throws ProofFailureException {
+         TUniverse ty = new TUniverse(0L);
+         return gamma.extend( gamma.compute( this, ty ), ty );
 
     }
 
@@ -35,13 +39,13 @@ public class TField implements Term {
     }
 
     @Override
-    public Set<HasValue> bind( Term value ) throws PatternMatchException {
-        return new HashSet<HasValue>();
+    public Set<Symbol> free() {
+        return new HashSet<Symbol>();
     }
 
     @Override
-    public boolean kind( Term t ) {
-        return t instanceof TField;
+    public Set<HasValue> bind( Term value ) throws PatternMatchException {
+        return new HashSet<HasValue>();
     }
 
     @Override

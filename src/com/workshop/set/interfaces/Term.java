@@ -7,6 +7,7 @@ import com.workshop.set.lang.exceptions.TypecheckingException;
 
 import com.workshop.set.lang.judgements.HasValue;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -14,6 +15,7 @@ import java.util.Set;
  */
 public interface Term {
 
+    //public boolean alpha_equivalent( Term t2, Set<Symbol> g1, Set<Symbol> g2 );
     /**
      * the type that this Term has with respect to the specified IContext.
      *
@@ -43,6 +45,8 @@ public interface Term {
      */
     public Set<HasValue> bind( Term value ) throws PatternMatchException;
 
-    public boolean kind( Term t );
+    public Set<Symbol> free();
+
+
 
 }

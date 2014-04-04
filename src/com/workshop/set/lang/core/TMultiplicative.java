@@ -1,5 +1,6 @@
 package com.workshop.set.lang.core;
 
+import com.google.common.collect.Sets;
 import com.workshop.set.interfaces.*;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.ProofFailureException;
@@ -8,8 +9,7 @@ import com.workshop.set.lang.exceptions.TypecheckingException;
 import com.workshop.set.lang.judgements.HasValue;
 
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by nicschumann on 3/29/14.
@@ -41,7 +41,9 @@ public class TMultiplicative implements Pattern {
     @Override
     public Environment<Term> type( Environment<Term> gamma )
             throws ProofFailureException, TypecheckingException {
-            return multiplicand.type( gamma );
+                Term t = gamma.proves( multiplicand );
+                       gamma.compute( this, t );
+                return gamma.extend(this, t);
     }
 
     @Override
@@ -56,6 +58,11 @@ public class TMultiplicative implements Pattern {
         } catch ( ClassCastException _ ) {
             return false;
         }
+    }
+
+    @Override
+    public Set<Symbol> free() {
+        return multiplicand.free();
     }
 
     @Override
@@ -76,11 +83,6 @@ public class TMultiplicative implements Pattern {
     }
 
     @Override
-    public boolean kind( Term t ) {
-        return t instanceof TMultiplicative;
-    }
-
-    @Override
     public int hashCode() {
 
         int a   = multiplicand.hashCode();
@@ -91,11 +93,11 @@ public class TMultiplicative implements Pattern {
     }
 
     @Override
-    public Set<TNameGenerator.TName> names() {
+    public Set<Symbol> names() {
         try {
             return ((Pattern)multiplicand).names();
         } catch ( ClassCastException _ ) {
-            return new HashSet<TNameGenerator.TName>();
+            return new LinkedHashSet<Symbol>();
         }
     }
 

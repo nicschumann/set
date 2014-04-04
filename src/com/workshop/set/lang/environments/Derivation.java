@@ -127,7 +127,7 @@ public class Derivation<T> implements Context<T> {
         if ( derivation.isEmpty() ) return "Empty Derivation";
 
         for ( Map<T,T> step : derivation ) {
-            s.append( "Derivation[ " + line + " ] |- " + System.lineSeparator() );
+            s.append( "Derivation[ " + line + " ] |- " );
             for ( Map.Entry<T,T> judgement : step.entrySet() ) {
                 s.append( "\t\t" + judgement.getKey() + " : " + judgement.getValue() + System.lineSeparator()  );
             }
