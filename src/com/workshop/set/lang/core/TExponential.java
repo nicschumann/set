@@ -2,6 +2,8 @@ package com.workshop.set.lang.core;
 
 import com.google.common.collect.Sets;
 import com.workshop.set.interfaces.*;
+import com.workshop.set.lang.engines.Decide;
+import com.workshop.set.lang.exceptions.EvaluationException;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
@@ -36,8 +38,7 @@ public class TExponential implements Term {
     @Override
     public boolean equals( Object o ) {
         try {
-            return ((TExponential)o).base.equals( base )
-                && ((TExponential)o).exp.equals( exp );
+            return Decide.alpha_equivalence(this, (TExponential) o, new HashSet<Symbol>(), new HashSet<Symbol>());
         } catch ( ClassCastException _ ) {
             return false;
         }
@@ -51,7 +52,12 @@ public class TExponential implements Term {
         Term t = gamma.proves( base );
 
                gamma.compute( this, t );
-        return gamma.extend( this, t );
+        return gamma.extend(this, t);
+    }
+
+    @Override
+    public Term reduce() throws EvaluationException {
+        return new TExponential( base.reduce(), exp );
     }
 
     @Override

@@ -2,6 +2,8 @@ package com.workshop.set.lang.core;
 
 import com.google.common.collect.Sets;
 import com.workshop.set.interfaces.*;
+import com.workshop.set.lang.engines.Decide;
+import com.workshop.set.lang.exceptions.EvaluationException;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
@@ -14,29 +16,28 @@ import java.util.Set;
 /**
  * Created by nicschumann on 3/31/14.
  */
-public class TSum implements Term {
+public class TSum implements Term,Value {
     public TSum( Pattern binder, Term type, Term body ) {
         this.binder = binder;
         this.type = type;
         this.body = body;
     }
 
-    public final Pattern binder;
-    public final Term type;
-    public final Term body;
+    public Pattern binder;
+    public Term type;
+    public Term body;
 
     @Override
     public String toString() {
         if ( Sets.intersection(binder.free(),body.free()).isEmpty() ) {
-            return "(" + type.toString() + " * " + body.toString() + ")";
-        } else return "sum " + binder.toString() + " : " + type.toString() + " . " + body.toString();
+            return "(" + type.toString() + " \u2A2F " + body.toString() + ")";
+        } else return "\u03A3 " + binder.toString() + " : " + type.toString() + " . " + body.toString();
     }
 
     @Override
     public boolean equals( Object o ) {
         try {
-            return ((TSum)o).type.equals( type )
-                && ((TSum)o).body.equals( body );
+            return Decide.alpha_equivalence(this, (TSum) o, new HashSet<Symbol>(), new HashSet<Symbol>());
         } catch ( ClassCastException _ ) {
             return false;
         }
@@ -67,6 +68,11 @@ public class TSum implements Term {
         } catch ( ClassCastException _ ) {
             throw new TypecheckingException( this, gamma, "!!!" );
         }
+    }
+
+    @Override
+    public Term reduce() throws EvaluationException {
+        return new TAll( binder,type,body.reduce() );
     }
 
     @Override

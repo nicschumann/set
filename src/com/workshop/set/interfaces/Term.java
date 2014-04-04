@@ -1,6 +1,7 @@
 package com.workshop.set.interfaces;
 
 
+import com.workshop.set.lang.exceptions.EvaluationException;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
@@ -25,7 +26,7 @@ public interface Term {
      *         in case the typechecker is unable to derive a type for this term
      */
     public Environment<Term> type( Environment<Term> gamma ) throws TypecheckingException, ProofFailureException;
-
+    public Term reduce() throws EvaluationException;
     /**
      * The term that this term produces when all instances of y
      * are replaced with x.

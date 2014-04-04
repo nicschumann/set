@@ -2,6 +2,7 @@ package com.workshop.set.lang.environments;
 
 import com.workshop.set.interfaces.*;
 
+import com.workshop.set.lang.exceptions.EvaluationException;
 import com.workshop.set.lang.exceptions.ProofFailureException;
 
 import java.util.*;
@@ -161,15 +162,16 @@ public class Evaluation implements Environment<Term> {
     public Term compute( Term exp, Term type ) throws ProofFailureException {
         try {
             Derivation<Term> eta = evaluations.get( deriving );
-            //if ( !eta.contains( exp ) ) {
-                eta.extend( exp, type );
+                eta.extend( exp.reduce(), type );
                 eta.step();
-            //}
+
             value = exp;
             return exp;
 
         } catch ( IndexOutOfBoundsException e ) {
             throw new ProofFailureException( "No Recorded Derivation on this page" );
+        } catch ( EvaluationException e ) {
+            throw new ProofFailureException( "Pattern Failure" );
         }
     }
 

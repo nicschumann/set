@@ -127,7 +127,7 @@ public class Derivation<T> implements Context<T> {
         if ( derivation.isEmpty() ) return "Empty Derivation";
 
         for ( Map<T,T> step : derivation ) {
-            s.append( "Derivation[ " + line + " ] |- " );
+            s.append( "[ " + line + " ] \u0393 \u22A2 " );
             for ( Map.Entry<T,T> judgement : step.entrySet() ) {
                 s.append( "\t\t" + judgement.getKey() + " : " + judgement.getValue() + System.lineSeparator()  );
             }
@@ -139,9 +139,5 @@ public class Derivation<T> implements Context<T> {
 
     @Override
     public boolean wellformed() { return true; }
-
-    public static void main( String[] args ) {
-        Derivation<Term> gamma = new Derivation<Term>( new TNameGenerator() );
-    }
 
 }

@@ -2,6 +2,8 @@ package com.workshop.set.lang.core;
 
 import com.workshop.set.interfaces.*;
 
+import com.workshop.set.lang.engines.Decide;
+import com.workshop.set.lang.exceptions.EvaluationException;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
@@ -17,7 +19,7 @@ import java.util.*;
  *
  *
  */
-public class TAdditive implements Pattern {
+public class TAdditive implements Pattern, Value {
     public TAdditive( TScalar s, Term v ) {
         this.scalar = s;
         this.addand = v;
@@ -30,8 +32,7 @@ public class TAdditive implements Pattern {
     @Override
     public boolean equals( Object o ) {
         try {
-            return ((TAdditive)o).scalar.equals(this.scalar)
-                && ((TAdditive)o).addand.equals(this.addand);
+            return Decide.alpha_equivalence(this, (TAdditive) o, new HashSet<Symbol>(), new HashSet<Symbol>());
         } catch ( ClassCastException _ ) {
             return false;
         }
@@ -60,6 +61,11 @@ public class TAdditive implements Pattern {
     @Override
     public Pattern substitute( Term x, Symbol y ) {
         return new TAdditive( scalar, addand.substitute( x,y ) );
+    }
+
+    @Override
+    public Term reduce() throws EvaluationException {
+        return new TAdditive( scalar, addand.reduce() );
     }
 
     @Override

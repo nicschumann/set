@@ -3,6 +3,8 @@ package com.workshop.set.lang.core;
 import com.google.common.collect.Sets;
 import com.workshop.set.interfaces.*;
 
+import com.workshop.set.lang.engines.Decide;
+import com.workshop.set.lang.exceptions.EvaluationException;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
@@ -15,7 +17,7 @@ import java.util.Set;
 /**
  * Created by nicschumann on 3/29/14.
  */
-public class TApplication implements Term {
+public class TApplication implements Term,Value {
     public TApplication( Term T1, Term T2 ) {
         implication = T1;
         argument = T2;
@@ -27,8 +29,7 @@ public class TApplication implements Term {
     @Override
     public boolean equals( Object o ) {
         try {
-            return ((TApplication)o).implication.equals( implication )
-                && ((TApplication)o).argument.equals( argument );
+            return Decide.alpha_equivalence(this, (TApplication) o, new HashSet<Symbol>(), new HashSet<Symbol>());
         } catch ( ClassCastException _ ) {
             return false;
         }
@@ -79,7 +80,7 @@ public class TApplication implements Term {
             Term f = gamma.value();
 
             Term T1 = (argument.type( gamma )).proves( argument );
-            Term t1 = implication;
+            Term t1 = this;
 
             if ( All.type.equals( T1 ) ) {
 
@@ -98,13 +99,36 @@ public class TApplication implements Term {
                 } catch ( PatternMatchException _ ) {
                    throw new TypecheckingException( this, gamma, "Pattern Exception - " + All.binder.toString() + " cannot bind " + argument );
                 }
-
-                       gamma.extend( this, T2 );
-                return gamma.extend( gamma.compute( t1, T2 ), T2 );
+                       gamma.extend( this, T2);
+                return gamma.extend( gamma.compute( this, T2 ), T2 );
             } else throw new TypecheckingException( this, gamma, "\n\tIncompatible types for application: " + All.toString() + " and " + T1.toString() + "\n\t" + T1.toString() + " is not an element of " + All.type.toString() );
 
         } catch ( ClassCastException _ ) {
             throw new TypecheckingException( this, gamma, implication.toString() + " cannot be applied" );
+        }
+    }
+
+    @Override
+    public Term reduce() throws EvaluationException {
+        System.out.println( this );
+
+        TApplication t = new TApplication( implication.reduce(), argument.reduce() );
+
+        System.out.println( t );
+        try {
+            TAbstraction f = ((TAbstraction)t.implication);
+            Term t1 = f.body;
+            try {
+                for (HasValue j : f.binder.bind( t.argument ) ) {
+                    t1 = t1.substitute( j.environment(), j.inhabitant() );
+                }
+                System.out.println( t1 );
+                return t1;
+            } catch ( PatternMatchException _ ) {
+                throw new EvaluationException();
+            }
+        } catch ( ClassCastException _ ) {
+            return t;
         }
     }
 

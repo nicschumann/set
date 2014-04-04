@@ -1,10 +1,10 @@
 package com.workshop.set.lang.core;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
 import com.workshop.set.interfaces.*;
+import com.workshop.set.lang.engines.Decide;
+import com.workshop.set.lang.exceptions.EvaluationException;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
@@ -28,7 +28,7 @@ public class TVector implements Pattern {
     @Override
     public boolean equals( Object o ) {
         try {
-            return ((TVector)o).entries.equals( entries );
+            return Decide.alpha_equivalence(this, (TVector) o, new HashSet<Symbol>(), new HashSet<Symbol>());
         } catch ( ClassCastException _ ) {
             return false;
         }
@@ -64,6 +64,14 @@ public class TVector implements Pattern {
             throw new TypecheckingException( this, gamma );
         }
 
+    }
+
+    public Term reduce() throws EvaluationException {
+        Collection<Term> ts = new Vector<Term>();
+        for ( Term e : entries ) {
+            ts.add( e.reduce() );
+        }
+        return new TSet( ts );
     }
 
     @Override

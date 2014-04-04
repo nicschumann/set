@@ -2,6 +2,8 @@ package com.workshop.set.lang.core;
 
 import com.google.common.collect.Sets;
 import com.workshop.set.interfaces.*;
+import com.workshop.set.lang.engines.Decide;
+import com.workshop.set.lang.exceptions.EvaluationException;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
@@ -25,8 +27,7 @@ public class TJudgement implements Term {
     @Override
     public boolean equals( Object o ) {
         try {
-            return ((TJudgement)o).left.equals( left )
-                && ((TJudgement)o).right.equals( right );
+            return Decide.alpha_equivalence(this, (TJudgement) o, new HashSet<Symbol>(), new HashSet<Symbol>());
         } catch ( ClassCastException _ ) {
             return false;
         }
@@ -34,7 +35,7 @@ public class TJudgement implements Term {
 
     @Override
     public String toString() {
-        return left.toString() + " = " + right.toString();
+        return left.toString() + " \u003D " + right.toString();
     }
 
     @Override
@@ -52,6 +53,10 @@ public class TJudgement implements Term {
         } catch ( ClassCastException _ ) {
             throw new TypecheckingException( this, gamma );
         }
+    }
+
+    public Term reduce() throws EvaluationException {
+        return new TJudgement( left.reduce(), right.reduce() );
     }
 
     @Override

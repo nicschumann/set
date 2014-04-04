@@ -13,7 +13,7 @@ import java.util.Set;
 public class Decide {
     public static boolean alpha_equivalence( Term t1, Term t2, Set<Symbol> g1, Set<Symbol> g2 ) {
 
-        System.out.println( "AD - HOC" );
+        //System.out.println( "AD - HOC" );
 
         try {
             return alpha_equivalence( (TAbstraction)t1, (TAbstraction)t2, g1, g2 );
@@ -72,7 +72,7 @@ public class Decide {
     }
 
     public static boolean alpha_equivalence( TAbstraction t1, TAbstraction t2, Set<Symbol> g1, Set<Symbol> g2 ) {
-        System.out.println( "Abstraction" );
+        //System.out.println( "Abstraction" );
         g1.addAll( t1.binder.names() );
         g2.addAll( t2.binder.names() );
         return alpha_equivalence( t1.type, t2.type, g1, g2 )
@@ -92,8 +92,7 @@ public class Decide {
     }
     public static boolean alpha_equivalence( TApplication t1, TApplication t2, Set<Symbol> g1, Set<Symbol> g2 ) {
         return alpha_equivalence( t1.implication, t2.implication, g1, g2 )
-            && alpha_equivalence( t1.argument, t2.argument, g1, g2 )
-            && t1.equals( t2 );
+            && alpha_equivalence( t1.argument, t2.argument, g1, g2 );
     }
     public static boolean alpha_equivalence( TNameGenerator.TName t1, TNameGenerator.TName t2, Set<Symbol> g1, Set<Symbol> g2 ) {
         return g1.contains( t1 ) && g2.contains( t2 ) || t1.equals( t2 );

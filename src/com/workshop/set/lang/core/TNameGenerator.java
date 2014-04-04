@@ -77,6 +77,11 @@ public class TNameGenerator
         }
 
         @Override
+        public Term reduce() {
+            return this;
+        }
+
+        @Override
         public Term substitute( Term x, Symbol y ) {
             if ( y.equals( this ) ) return x;
             else return this;

@@ -45,6 +45,11 @@ public class TScalar implements Pattern {
     }
 
     @Override
+    public Term reduce() {
+        return this;
+    }
+
+    @Override
     public Pattern substitute( Term x, Symbol y ) { return this; }
 
     @Override

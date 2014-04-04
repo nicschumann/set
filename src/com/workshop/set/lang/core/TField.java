@@ -22,16 +22,19 @@ public class TField implements Term {
 
     @Override
     public String toString() {
-        return "F";
+        return "\u211D";
     }
 
     @Override
     public Environment<Term> type( Environment<Term> gamma )
         throws ProofFailureException {
          TUniverse ty = new TUniverse(0L);
-         return gamma.extend( gamma.compute( this, ty ), ty );
+         return gamma.extend( this, ty );
 
     }
+
+    @Override
+    public Term reduce() { return new TField(); }
 
     @Override
     public Term substitute( Term x, Symbol y ) {

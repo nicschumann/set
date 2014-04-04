@@ -28,7 +28,7 @@ public class TUniverse implements Term {
 
     @Override
     public String toString() {
-        return  ( level == 0L ) ? "type" : "type{" + Long.toString( level ) + "}";
+        return  ( level == 0L ) ? "*" : "*[" + Long.toString( level ) + "]";
     }
 
     public TUniverse max( TUniverse n ) {
@@ -43,6 +43,11 @@ public class TUniverse implements Term {
         throws ProofFailureException {
         TUniverse t = new TUniverse( level + 1L );
         return gamma.extend( gamma.compute( this, t ), t );
+    }
+
+    @Override
+    public Term reduce() {
+        return new TUniverse( level );
     }
 
     @Override

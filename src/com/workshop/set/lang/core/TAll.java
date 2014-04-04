@@ -2,6 +2,8 @@ package com.workshop.set.lang.core;
 
 import com.google.common.collect.Sets;
 import com.workshop.set.interfaces.*;
+import com.workshop.set.lang.engines.Decide;
+import com.workshop.set.lang.exceptions.EvaluationException;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
@@ -12,23 +14,21 @@ import java.util.Set;
 /**
  * Created by nicschumann on 3/29/14.
  */
-public class TAll implements Term {
+public class TAll implements Term,Value {
     public TAll(Pattern N, Term T1, Term T2 ) {
         binder = N;
         type = T1;
         body = T2;
     }
 
-    public final Pattern binder;
-    public final Term type;
-    public final Term body;
+    public Pattern binder;
+    public Term type;
+    public Term body;
 
     @Override
     public boolean equals( Object o ) {
         try {
-            TAll tar = (TAll)o;
-            return  ((TAll)o).type.equals(type)
-                    && ((TAll)o).body.equals( body );
+            return Decide.alpha_equivalence(this, (TAll) o, new HashSet<Symbol>(), new HashSet<Symbol>());
         } catch ( ClassCastException _ ) {
             return false;
         }
@@ -37,8 +37,8 @@ public class TAll implements Term {
     @Override
     public String toString() {
         if ( Sets.intersection(binder.free(),body.free()).isEmpty() ) {
-            return "(" + type.toString() + " -> " + body.toString() + ")";
-        } else return "all " + binder.toString() + " : " + type.toString() + " . " + body.toString();
+            return "(" + type.toString() + " \u2192 " + body.toString() + ")";
+        } else return "\u2200 " + binder.toString() + " : " + type.toString() + " . " + body.toString();
     }
 
     @Override
@@ -68,6 +68,8 @@ public class TAll implements Term {
 
             TUniverse U2 = (TUniverse)(body.type( gamma.extend( bound ) ) ).proves( type );
 
+            body = gamma.value();
+
             gamma.unstep();
 
             TUniverse max = U1.max(U2);
@@ -78,6 +80,11 @@ public class TAll implements Term {
         } catch ( ClassCastException _ ) {
             throw new TypecheckingException( this, gamma );
         }
+    }
+
+    @Override
+    public Term reduce() throws EvaluationException {
+        return new TAll( binder,type,body.reduce() );
     }
 
     @Override

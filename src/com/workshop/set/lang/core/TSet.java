@@ -4,6 +4,8 @@ import java.util.*;
 
 import com.google.common.collect.Sets;
 import com.workshop.set.interfaces.*;
+import com.workshop.set.lang.engines.Decide;
+import com.workshop.set.lang.exceptions.EvaluationException;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
@@ -26,7 +28,7 @@ public class TSet implements Pattern {
     @Override
     public boolean equals( Object o ) {
         try {
-            return ((TSet)o).elements().equals( elements );
+            return Decide.alpha_equivalence(this, (TSet) o, new HashSet<Symbol>(), new HashSet<Symbol>());
         } catch ( ClassCastException _ ) {
             return false;
         }
@@ -70,6 +72,14 @@ public class TSet implements Pattern {
 
         } throw new TypecheckingException( this, gamma, "Heterogeneous Set" );
 
+    }
+
+    public Term reduce() throws EvaluationException {
+        Collection<Term> ts = new ArrayList<Term>();
+        for ( Term e : elements ) {
+            ts.add( e.reduce() );
+        }
+        return new TSet( ts );
     }
 
     @Override

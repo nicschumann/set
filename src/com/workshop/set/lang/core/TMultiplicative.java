@@ -2,6 +2,8 @@ package com.workshop.set.lang.core;
 
 import com.google.common.collect.Sets;
 import com.workshop.set.interfaces.*;
+import com.workshop.set.lang.engines.Decide;
+import com.workshop.set.lang.exceptions.EvaluationException;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
@@ -26,12 +28,13 @@ public class TMultiplicative implements Pattern {
     @Override
     public boolean equals( Object o ) {
         try {
-            return ((TMultiplicative)o).scalar.equals(this.scalar)
-                && ((TMultiplicative)o).multiplicand.equals(this.multiplicand);
+            return Decide.alpha_equivalence(this, (TMultiplicative) o, new HashSet<Symbol>(), new HashSet<Symbol>());
         } catch ( ClassCastException _ ) {
             return false;
         }
     }
+
+
 
     @Override
     public String toString() {
@@ -44,6 +47,11 @@ public class TMultiplicative implements Pattern {
                 Term t = gamma.proves( multiplicand );
                        gamma.compute( this, t );
                 return gamma.extend(this, t);
+    }
+
+    @Override
+    public Term reduce() throws EvaluationException {
+        return new TAdditive( scalar, multiplicand.reduce() );
     }
 
     @Override

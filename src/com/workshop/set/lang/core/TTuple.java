@@ -1,6 +1,8 @@
 package com.workshop.set.lang.core;
 
 import com.workshop.set.interfaces.*;
+import com.workshop.set.lang.engines.Decide;
+import com.workshop.set.lang.exceptions.EvaluationException;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
@@ -25,8 +27,7 @@ public class TTuple implements Pattern {
     @Override
     public boolean equals( Object o ) {
         try {
-            return ((TTuple)o).domain.equals( domain )
-                && ((TTuple)o).range.equals( range );
+            return Decide.alpha_equivalence(this, (TTuple) o, new HashSet<Symbol>(), new HashSet<Symbol>());
         } catch ( ClassCastException _ ) {
             return false;
         }
@@ -55,6 +56,11 @@ public class TTuple implements Pattern {
         } catch ( ClassCastException _ ) {
             throw new TypecheckingException( this, gamma );
         }
+    }
+
+    @Override
+    public Term reduce() throws EvaluationException {
+        return new TTuple( domain.reduce(), range.reduce() );
     }
 
     @Override

@@ -2,6 +2,8 @@ package com.workshop.set.lang.core;
 
 import com.google.common.collect.Sets;
 import com.workshop.set.interfaces.*;
+import com.workshop.set.lang.engines.Decide;
+import com.workshop.set.lang.exceptions.EvaluationException;
 import com.workshop.set.lang.exceptions.PatternMatchException;
 import com.workshop.set.lang.exceptions.ProofFailureException;
 import com.workshop.set.lang.exceptions.TypecheckingException;
@@ -31,8 +33,7 @@ public class TCollection implements Term {
     @Override
     public boolean equals( Object o ) {
         try {
-            return ((TCollection)o).contents.equals( contents )
-                && ((TCollection)o).cardinality == cardinality;
+            return Decide.alpha_equivalence(this, (TCollection) o, new HashSet<Symbol>(), new HashSet<Symbol>());
         } catch ( ClassCastException _ ) {
             return false;
         }
@@ -47,6 +48,11 @@ public class TCollection implements Term {
 
                gamma.compute(this, t);
         return gamma.extend( this, t );
+    }
+
+    @Override
+    public Term reduce() throws EvaluationException {
+        return new TCollection( contents.reduce(), cardinality );
     }
 
     @Override
