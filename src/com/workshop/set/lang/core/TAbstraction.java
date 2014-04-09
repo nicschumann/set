@@ -82,7 +82,7 @@ public class TAbstraction implements Term,Value {
 
                 Term T2                             = (body.type( gamma )).proves( body );  //
 
-                System.out.println( this + " : ===> " + gamma.value() );
+                //System.out.println( this + " : ===> " + gamma.value() );
 
                 TUniverse U2                        = (TUniverse)(T2.type( gamma )).proves( T2 );
 
