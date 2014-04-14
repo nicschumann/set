@@ -47,6 +47,14 @@ public class GLPanel extends GLComponent {
 
 	@Override
 	public void mousePressed(Vector2f p, MouseButton button) {
+//		System.out.println("Panel : " + p);
+		for (ScreenFrame frame : comps) {
+			if (frame.contains(p)) {
+				Vector2f relativePoint = new Vector2f();
+				Vector2f.sub(p, frame.getLocation(), relativePoint);
+				frame.mousePressed(relativePoint, button);
+			}
+		}
 	}
 
 	@Override

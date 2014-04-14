@@ -60,7 +60,9 @@ public class SetScreen implements ScreenFrame {
 	public void mousePressed(Vector2f p, MouseButton button) {
 		for (ScreenFrame frame : frames) {
 			if (frame.contains(p)) {
-//				System.out.println(p);
+				Vector2f relativePoint = new Vector2f();
+				Vector2f.sub(p, frame.getLocation(), relativePoint);
+				frame.mousePressed(relativePoint, button);
 			}
 		}
 	}

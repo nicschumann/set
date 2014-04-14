@@ -73,7 +73,9 @@ public class GLButton extends GLComponent {
 	}
 
 	@Override
-	public void mousePressed(Vector2f p, MouseButton button) {}
+	public void mousePressed(Vector2f p, MouseButton button) {
+//		System.out.println("Button : " + p);
+	}
 
 	@Override
 	public void mouseReleased(Vector2f p, MouseButton button) {}
