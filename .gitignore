@@ -8,13 +8,15 @@
 .DS_Store
 set.iml
 
+.gitignore
+
+out/*
+
 **/.classpath
 **/.DS_Store
 
 # Java
 **/*.class
-
-/lib
 
 # C
 **/*.o
