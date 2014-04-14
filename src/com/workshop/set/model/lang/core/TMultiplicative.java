@@ -38,7 +38,6 @@ public class TMultiplicative implements Pattern {
     }
 
 
-
     @Override
     public String toString() {
         return scalar.toString() + " * " + multiplicand.toString();
