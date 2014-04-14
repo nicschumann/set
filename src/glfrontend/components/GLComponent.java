@@ -1,16 +1,18 @@
 package glfrontend.components;
 
-//import static org.lwjgl.opengl.GL11.GL_QUADS;
-//import static org.lwjgl.opengl.GL11.glBegin;
-//import static org.lwjgl.opengl.GL11.glColor4f;
-//import static org.lwjgl.opengl.GL11.glEnd;
-//import static org.lwjgl.opengl.GL11.glVertex2f;
+import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glColor4f;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glVertex2f;
+import glfrontend.ScreenFrame;
+
 
 import java.awt.Color;
 
 import org.lwjgl.util.vector.Vector2f;
 
-public abstract class GLComponent {
+public abstract class GLComponent implements ScreenFrame {
 
 	protected float[] _color;
 	protected Vector2f ul;
@@ -41,35 +43,46 @@ public abstract class GLComponent {
 	public void setBackground(Color color) {
 		color.getComponents(_color);
 	}
-
-	public void setSize(float width, float height) {
-		setSize(new Vector2f(width, height));
-	}
-
-	public void setSize(Vector2f dim) {
-		Vector2f.add(ul, dim, lr);
-	}
-
-	public Vector2f getSize() {
-		Vector2f result = new Vector2f();
-		Vector2f.sub(lr, ul, result);
-		return result;
-	}
-
+	
 	public void setLocation(float x, float y) {
-		Vector2f.sub(lr, ul, lr);
-		ul = new Vector2f(x, y);
-		Vector2f.add(ul, lr, lr);
+		setLocation(new Vector2f(x, y));
 	}
-
+	
+	@Override
 	public void setLocation(Vector2f p) {
 		Vector2f.sub(lr, ul, lr);
 		ul = p;
 		Vector2f.add(ul, lr, lr);
 	}
-
+	
+	@Override
 	public Vector2f getLocation() {
 		return ul;
+	}
+
+	public void setSize(float width, float height) {
+		setSize(new Vector2f(width, height));
+	}
+
+	@Override
+	public void setSize(Vector2f dim) {
+		Vector2f.add(ul, dim, lr);
+	}
+
+	@Override
+	public Vector2f getSize() {
+		Vector2f result = new Vector2f();
+		Vector2f.sub(lr, ul, result);
+		return result;
+	}
+	
+	@Override
+	public boolean contains(Vector2f p) {
+		Vector2f temp1 = new Vector2f();
+		Vector2f temp2 = new Vector2f();
+		Vector2f.sub(lr, p, temp1);
+		Vector2f.sub(p, ul, temp2);
+		return temp1.x >= 0 && temp2.x >= 0 && temp1.y >= 0 && temp2.y >= 0;
 	}
 
 	public void setResizable(boolean resizable) {
@@ -84,6 +97,8 @@ public abstract class GLComponent {
 		resize(new Vector2f(width, height));
 	}
 	
+
+	@Override
 	public void render() {
 		// set color
 		//glColor4f(_color[0], _color[1], _color[2], _color[3]);
@@ -100,7 +115,5 @@ public abstract class GLComponent {
 	}
 
 	public abstract void draw();
-
-	public abstract void resize(Vector2f dim);
 
 }

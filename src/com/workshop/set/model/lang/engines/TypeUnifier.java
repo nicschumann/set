@@ -38,9 +38,11 @@ public class TypeUnifier {
                 System.out.println( t + " : " + unify( t, new Evaluation( new TNameGenerator() ) ) );
             } catch ( TypecheckingException e ) {
                 System.out.println( e.getLocalizedMessage() );
-            } finally {
+            } catch (ProofFailureException e) {
+				e.printStackTrace();
+			} finally {
                 //System.out.print( System.lineSeparator() );
-                return this;
             }
+            return this;
     }
 }

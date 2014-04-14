@@ -20,12 +20,14 @@ import static org.lwjgl.opengl.GL11.glOrtho;
 import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.glPushMatrix;
 import static org.lwjgl.opengl.GL11.glViewport;
+import glfrontend.ScreenFrame.MouseButton;
 import glfrontend.components.GLPanel;
 
-import java.awt.Color;
 import java.awt.Dimension;
 
 import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.vector.Vector2f;
@@ -36,7 +38,7 @@ public class GLFrontEnd implements FrontEnd {
 	public static Vector2f SCALE = new Vector2f(1, 1);
 	public static String TITLE = "";
 
-	private GLPanel _panel;
+	private ScreenFrame _frame;
 
 	public GLFrontEnd() {
 		init();
@@ -57,14 +59,13 @@ public class GLFrontEnd implements FrontEnd {
 		setUpDisplay();
 		setUpStates();
 		setUpMatrices();
-		_panel = new GLPanel();
-		_panel.setLocation(0, 0);
-		_panel.setSize(WINDOW_DIMENSIONS.width, WINDOW_DIMENSIONS.height);
-		_panel.setBackground(Color.DARK_GRAY);
+		_frame = new GLPanel();
+		_frame.setLocation(new Vector2f(0, 0));
+		_frame.setSize(new Vector2f(WINDOW_DIMENSIONS.width, WINDOW_DIMENSIONS.height));
 	}
 
-	public void setMainPanel(GLPanel panel) {
-		this._panel = panel;
+	public void setMainScreen(ScreenFrame panel) {
+		this._frame = panel;
 	}
 
 	/**
@@ -75,7 +76,7 @@ public class GLFrontEnd implements FrontEnd {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glPushMatrix();
-		_panel.render();
+		_frame.render();
 		glPopMatrix();
 	}
 
@@ -92,7 +93,7 @@ public class GLFrontEnd implements FrontEnd {
 			glOrtho(0.0f, Display.getWidth(), Display.getHeight(), 0.0f, 1.0f, -1.0f);
 			glMatrixMode(GL_MODELVIEW);
 			glLoadIdentity();
-			_panel.resize(Display.getWidth(), Display.getHeight());
+			_frame.resize(new Vector2f(Display.getWidth(), Display.getHeight()));
 		}
 	}
 
@@ -101,7 +102,22 @@ public class GLFrontEnd implements FrontEnd {
 	 */
 	@Override
 	public void checkInput() {
-
+		if (Mouse.isButtonDown(0))
+			_frame.mousePressed(new Vector2f(Mouse.getX(), Display.getHeight() - Mouse.getY() - 1), MouseButton.LEFT);
+		if (Mouse.isButtonDown(1))
+			_frame.mousePressed(new Vector2f(Mouse.getX(), Display.getHeight() - Mouse.getY() - 1), MouseButton.RIGHT);
+		int dWheel = Mouse.getDWheel();
+		if (dWheel != 0)
+			_frame.mouseWheelScrolled(dWheel);
+		
+		while(Keyboard.next()) {
+			if (Keyboard.getEventKeyState()) {
+				_frame.keyPressed(Keyboard.getEventKey());
+			} else {
+				_frame.keyReleased(Keyboard.getEventKey());
+			}
+		}
+		
 	}
 
 	/**

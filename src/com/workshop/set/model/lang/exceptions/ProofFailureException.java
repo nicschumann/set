@@ -1,12 +1,16 @@
 package com.workshop.set.model.lang.exceptions;
 
-import com.workshop.set.model.interfaces.Context;
 
 /**
  * Created by nicschumann on 4/2/14.
  */
 public class ProofFailureException extends Exception {
-    public ProofFailureException( String t ) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 3363323403119840535L;
+
+	public ProofFailureException( String t ) {
         msg = t;
     }
 

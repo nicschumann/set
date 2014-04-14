@@ -1,7 +1,5 @@
 package com.workshop.set.model.lang.exceptions;
 
-import com.workshop.set.model.interfaces.Context;
-import com.workshop.set.model.interfaces.Term;
 
 /**
  * Created by nicschumann on 4/2/14.
