@@ -1,16 +1,15 @@
 package test;
 
 
-import com.workshop.set.interfaces.Environment;
-import com.workshop.set.interfaces.Symbol;
-import com.workshop.set.interfaces.Term;
-import com.workshop.set.lang.core.*;
-
-import com.workshop.set.lang.engines.Decide;
-import com.workshop.set.lang.engines.Typechecker;
-import com.workshop.set.lang.exceptions.EvaluationException;
-import com.workshop.set.lang.exceptions.ProofFailureException;
-import com.workshop.set.lang.exceptions.TypecheckingException;
+import com.workshop.set.model.interfaces.Environment;
+import com.workshop.set.model.interfaces.Symbol;
+import com.workshop.set.model.interfaces.Term;
+import com.workshop.set.model.lang.core.*;
+import com.workshop.set.model.lang.engines.Decide;
+import com.workshop.set.model.lang.engines.Typechecker;
+import com.workshop.set.model.lang.exceptions.EvaluationException;
+import com.workshop.set.model.lang.exceptions.ProofFailureException;
+import com.workshop.set.model.lang.exceptions.TypecheckingException;
 
 import java.util.Arrays;
 import java.util.HashSet;
