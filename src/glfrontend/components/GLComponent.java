@@ -1,10 +1,10 @@
 package glfrontend.components;
 
-import static org.lwjgl.opengl.GL11.GL_QUADS;
-import static org.lwjgl.opengl.GL11.glBegin;
-import static org.lwjgl.opengl.GL11.glColor4f;
-import static org.lwjgl.opengl.GL11.glEnd;
-import static org.lwjgl.opengl.GL11.glVertex2f;
+//import static org.lwjgl.opengl.GL11.GL_QUADS;
+//import static org.lwjgl.opengl.GL11.glBegin;
+//import static org.lwjgl.opengl.GL11.glColor4f;
+//import static org.lwjgl.opengl.GL11.glEnd;
+//import static org.lwjgl.opengl.GL11.glVertex2f;
 
 import java.awt.Color;
 
@@ -86,15 +86,15 @@ public abstract class GLComponent {
 	
 	public void render() {
 		// set color
-		glColor4f(_color[0], _color[1], _color[2], _color[3]);
+		//glColor4f(_color[0], _color[1], _color[2], _color[3]);
 
 		// draw quad
-		glBegin(GL_QUADS);
-		glVertex2f(ul.x, ul.y);
-		glVertex2f(ul.x, lr.y);
-		glVertex2f(lr.x, lr.y);
-		glVertex2f(lr.x, ul.y);
-		glEnd();
+//		glBegin(GL_QUADS);
+//		glVertex2f(ul.x, ul.y);
+//		glVertex2f(ul.x, lr.y);
+//		glVertex2f(lr.x, lr.y);
+//		glVertex2f(lr.x, ul.y);
+//		glEnd();
 		
 		draw();
 	}
