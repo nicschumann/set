@@ -79,7 +79,7 @@ public class GLButton extends GLComponent {
 	public void mouseReleased(Vector2f p, MouseButton button) {}
 
 	@Override
-	public void mouseWheelScrolled(Vector2f p) {}
+	public void mouseWheelScrolled(int amount) {}
 
 	@Override
 	public void keyPressed(int key) {}

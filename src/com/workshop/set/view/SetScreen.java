@@ -50,9 +50,19 @@ public class SetScreen implements ScreenFrame {
 		Vector2f.sub(lr, ul, result);
 		return result;
 	}
+	
+	@Override
+	public boolean contains(Vector2f p) {
+		return false;
+	}
 
 	@Override
 	public void mousePressed(Vector2f p, MouseButton button) {
+		for (ScreenFrame frame : frames) {
+			if (frame.contains(p)) {
+//				System.out.println(p);
+			}
+		}
 	}
 
 	@Override
@@ -60,7 +70,7 @@ public class SetScreen implements ScreenFrame {
 	}
 
 	@Override
-	public void mouseWheelScrolled(Vector2f p) {
+	public void mouseWheelScrolled(int amount) {
 	}
 
 	@Override

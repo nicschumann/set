@@ -42,33 +42,46 @@ public abstract class GLComponent implements ScreenFrame {
 	public void setBackground(Color color) {
 		color.getComponents(_color);
 	}
-
-	public void setSize(float width, float height) {
-		setSize(new Vector2f(width, height));
-	}
-
-	public void setSize(Vector2f dim) {
-		Vector2f.add(ul, dim, lr);
-	}
-
-	public Vector2f getSize() {
-		Vector2f result = new Vector2f();
-		Vector2f.sub(lr, ul, result);
-		return result;
-	}
-
+	
 	public void setLocation(float x, float y) {
 		setLocation(new Vector2f(x, y));
 	}
-
+	
+	@Override
 	public void setLocation(Vector2f p) {
 		Vector2f.sub(lr, ul, lr);
 		ul = p;
 		Vector2f.add(ul, lr, lr);
 	}
-
+	
+	@Override
 	public Vector2f getLocation() {
 		return ul;
+	}
+
+	public void setSize(float width, float height) {
+		setSize(new Vector2f(width, height));
+	}
+
+	@Override
+	public void setSize(Vector2f dim) {
+		Vector2f.add(ul, dim, lr);
+	}
+
+	@Override
+	public Vector2f getSize() {
+		Vector2f result = new Vector2f();
+		Vector2f.sub(lr, ul, result);
+		return result;
+	}
+	
+	@Override
+	public boolean contains(Vector2f p) {
+		Vector2f temp1 = new Vector2f();
+		Vector2f temp2 = new Vector2f();
+		Vector2f.sub(lr, p, temp1);
+		Vector2f.sub(p, ul, temp2);
+		return temp1.x >= 0 && temp2.x >= 0 && temp1.y >= 0 && temp2.y >= 0;
 	}
 
 	public void setResizable(boolean resizable) {

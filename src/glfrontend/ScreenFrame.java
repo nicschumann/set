@@ -17,11 +17,13 @@ public interface ScreenFrame {
 	
 	public Vector2f getSize();
 	
+	public boolean contains(Vector2f p);
+	
 	public void mousePressed(Vector2f p, MouseButton button);
 	
 	public void mouseReleased(Vector2f p, MouseButton button);
 	
-	public void mouseWheelScrolled(Vector2f p);
+	public void mouseWheelScrolled(int amount);
 	
 	public void keyPressed(int key);
 	
@@ -30,5 +32,5 @@ public interface ScreenFrame {
 	public void render();
 	
 	public void resize(Vector2f newSize);
-//	public void 
+
 }

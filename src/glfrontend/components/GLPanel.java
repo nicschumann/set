@@ -46,13 +46,14 @@ public class GLPanel extends GLComponent {
 	}
 
 	@Override
-	public void mousePressed(Vector2f p, MouseButton button) {}
+	public void mousePressed(Vector2f p, MouseButton button) {
+	}
 
 	@Override
 	public void mouseReleased(Vector2f p, MouseButton button) {}
 
 	@Override
-	public void mouseWheelScrolled(Vector2f p) {}
+	public void mouseWheelScrolled(int amount) {}
 
 	@Override
 	public void keyPressed(int key) {}

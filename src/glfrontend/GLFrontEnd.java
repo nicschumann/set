@@ -26,6 +26,7 @@ import glfrontend.components.GLPanel;
 import java.awt.Dimension;
 
 import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -102,9 +103,20 @@ public class GLFrontEnd implements FrontEnd {
 	@Override
 	public void checkInput() {
 		if (Mouse.isButtonDown(0))
-			_frame.mousePressed(new Vector2f(Mouse.getX(), Mouse.getY()), MouseButton.LEFT);
+			_frame.mousePressed(new Vector2f(Mouse.getX(), Display.getHeight() - Mouse.getY() - 1), MouseButton.LEFT);
 		if (Mouse.isButtonDown(1))
-			_frame.mousePressed(new Vector2f(Mouse.getX(), Mouse.getY()), MouseButton.RIGHT);
+			_frame.mousePressed(new Vector2f(Mouse.getX(), Display.getHeight() - Mouse.getY() - 1), MouseButton.RIGHT);
+		int dWheel = Mouse.getDWheel();
+		if (dWheel != 0)
+			_frame.mouseWheelScrolled(dWheel);
+		
+		while(Keyboard.next()) {
+			if (Keyboard.getEventKeyState()) {
+				_frame.keyPressed(Keyboard.getEventKey());
+			} else {
+				_frame.keyReleased(Keyboard.getEventKey());
+			}
+		}
 		
 	}
 
