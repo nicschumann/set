@@ -8,7 +8,6 @@ import glfrontend.components.GLPanel;
 import java.awt.Color;
 import java.awt.Dimension;
 
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector2f;
 
@@ -16,7 +15,6 @@ public class SetFrontEnd extends GLFrontEnd {
 
 	public SetFrontEnd() {
 		super("Set", new Dimension(750, 600));
-		System.out.println(Mouse.getButtonCount());
 		this.setMainScreen(setUpScreens());
 	}
 
@@ -38,7 +36,7 @@ public class SetFrontEnd extends GLFrontEnd {
 		button.setBackground(Color.ORANGE);
 		buttonPanel.add(button);
 
-//		main.add(stage);
+		// main.add(stage);
 		main.add(buttonPanel);
 
 		return main;

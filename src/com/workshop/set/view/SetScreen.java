@@ -87,7 +87,6 @@ public class SetScreen implements ScreenFrame {
 		for (ScreenFrame frame : frames) {
 			Vector2f oldSize = frame.getSize();
 			Vector2f oldLoc = frame.getLocation();
-			System.out.println(frame + ", " + oldSize + ", " + newSize);
 
 			frame.setLocation(newRatio(oldLoc, size, newSize));
 			frame.resize(newRatio(oldSize, size, newSize));
