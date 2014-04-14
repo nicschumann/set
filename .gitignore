@@ -8,6 +8,10 @@
 .DS_Store
 set.iml
 
+.gitignore
+
+out/*
+
 **/.classpath
 **/.DS_Store
 
