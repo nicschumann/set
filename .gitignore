@@ -1,35 +1,16 @@
-# .gitignore for set
-
-.classpath
-.project
-.metadata
-.idea
-.settings
-.DS_Store
-set.iml
-
-**/.classpath
-**/.DS_Store
-
-# Java
-**/*.class
-
-/lib
-
-# C
-**/*.o
-**/*.s
-/bin
-/build
-
 # Compiled source #
 ###################
 *.com
 *.class
+**/*.class
 *.dll
 *.exe
 *.o
 *.so
+**/*.o
+**/*.s
+/bin
+out/*
 
 # Packages #
 ############
@@ -63,12 +44,22 @@ lib/
 .Trashes
 ehthumbs.db
 Thumbs.db
+**/.DS_Store
 
 # Eclipse #
 ###########
 .classpath
 .project
 .settings
+.settings
 /build
 .metadata/*
+**/.classpath
+
+# Idea #
+########
+.idea
+
+set.iml
+.gitignore
 
