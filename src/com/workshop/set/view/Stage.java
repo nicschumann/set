@@ -1,37 +1,52 @@
 package com.workshop.set.view;
 
-import glfrontend.components.GLComponent;
+import glfrontend.ScreenFrame;
 
 import org.lwjgl.util.vector.Vector2f;
 
-public class Stage extends GLComponent {
+public class Stage implements ScreenFrame {
 
+	public Stage() {}
 
-	public Stage() {
-		super();
-	}
+	public Stage(float x, float y) {}
 
-	public Stage(float x, float y) {
-		super(x, y);
-	}
+	public Stage(Vector2f size) {}
 
-	public Stage(Vector2f size) {
-		super(size);
+	@Override
+	public void setLocation(Vector2f loc) {}
+
+	@Override
+	public Vector2f getLocation() {
+		return null;
 	}
 
 	@Override
-	public void draw() {
-//		be.getRenderObjects();
+	public void setSize(Vector2f size) {}
+
+	@Override
+	public Vector2f getSize() {
+		return null;
 	}
 
 	@Override
-	public void resize(Vector2f dim) {
-		if (!isResizable())
-			return;
-		Vector2f size = new Vector2f();
-		Vector2f.sub(lr, ul, size);
+	public void mousePressed(Vector2f p, MouseButton button) {}
 
-		Vector2f.add(ul, dim, lr);
-	}
+	@Override
+	public void mouseReleased(Vector2f p, MouseButton button) {}
+
+	@Override
+	public void mouseWheelScrolled(Vector2f p) {}
+
+	@Override
+	public void keyPressed(int key) {}
+
+	@Override
+	public void keyReleased(int key) {}
+
+	@Override
+	public void render() {}
+
+	@Override
+	public void resize(Vector2f newSize) {}
 
 }

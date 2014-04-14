@@ -5,12 +5,13 @@ import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glColor4f;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glVertex2f;
+import glfrontend.ScreenFrame;
 
 import java.awt.Color;
 
 import org.lwjgl.util.vector.Vector2f;
 
-public abstract class GLComponent {
+public abstract class GLComponent implements ScreenFrame {
 
 	protected float[] _color;
 	protected Vector2f ul;
@@ -57,9 +58,7 @@ public abstract class GLComponent {
 	}
 
 	public void setLocation(float x, float y) {
-		Vector2f.sub(lr, ul, lr);
-		ul = new Vector2f(x, y);
-		Vector2f.add(ul, lr, lr);
+		setLocation(new Vector2f(x, y));
 	}
 
 	public void setLocation(Vector2f p) {
@@ -84,6 +83,8 @@ public abstract class GLComponent {
 		resize(new Vector2f(width, height));
 	}
 	
+
+	@Override
 	public void render() {
 		// set color
 		glColor4f(_color[0], _color[1], _color[2], _color[3]);
@@ -95,12 +96,10 @@ public abstract class GLComponent {
 		glVertex2f(lr.x, lr.y);
 		glVertex2f(lr.x, ul.y);
 		glEnd();
-		
-		draw();
+
+		 draw();
 	}
 
 	public abstract void draw();
-
-	public abstract void resize(Vector2f dim);
 
 }

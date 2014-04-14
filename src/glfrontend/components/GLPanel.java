@@ -1,6 +1,8 @@
 package glfrontend.components;
 
+import static com.workshop.set.view.SetScreen.newRatio;
 import static org.lwjgl.opengl.GL11.glTranslatef;
+import glfrontend.ScreenFrame;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +11,7 @@ import org.lwjgl.util.vector.Vector2f;
 
 public class GLPanel extends GLComponent {
 
-	List<GLComponent> comps = new ArrayList<>();
+	List<ScreenFrame> comps = new ArrayList<>();
 
 	public GLPanel() {
 		super();
@@ -37,11 +39,26 @@ public class GLPanel extends GLComponent {
 
 		// draw sub components
 		glTranslatef(ul.x, ul.y, 0);
-		for (GLComponent comp : comps)
+		for (ScreenFrame comp : comps)
 			comp.render();
 		glTranslatef(-ul.x, -ul.y, 0);
 
 	}
+
+	@Override
+	public void mousePressed(Vector2f p, MouseButton button) {}
+
+	@Override
+	public void mouseReleased(Vector2f p, MouseButton button) {}
+
+	@Override
+	public void mouseWheelScrolled(Vector2f p) {}
+
+	@Override
+	public void keyPressed(int key) {}
+
+	@Override
+	public void keyReleased(int key) {}
 
 	@Override
 	public void resize(Vector2f dim) {
@@ -50,7 +67,7 @@ public class GLPanel extends GLComponent {
 		Vector2f size = new Vector2f();
 		Vector2f.sub(lr, ul, size);
 
-		for (GLComponent comp : comps) {
+		for (ScreenFrame comp : comps) {
 			Vector2f oldSize = comp.getSize();
 			Vector2f oldLoc = comp.getLocation();
 
@@ -59,12 +76,6 @@ public class GLPanel extends GLComponent {
 		}
 
 		Vector2f.add(ul, dim, lr);
-	}
-
-	public static Vector2f newRatio(Vector2f oldTop, Vector2f oldBottom, Vector2f newBottom) {
-		float x = (oldTop.x * newBottom.x) / oldBottom.x;
-		float y = (oldTop.y * newBottom.y) / oldBottom.y;
-		return new Vector2f(x, y);
 	}
 
 }

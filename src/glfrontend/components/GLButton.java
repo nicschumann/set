@@ -73,8 +73,21 @@ public class GLButton extends GLComponent {
 	}
 
 	@Override
-	public void resize(Vector2f dim) {
+	public void mousePressed(Vector2f p, MouseButton button) {}
 
-	}
+	@Override
+	public void mouseReleased(Vector2f p, MouseButton button) {}
+
+	@Override
+	public void mouseWheelScrolled(Vector2f p) {}
+
+	@Override
+	public void keyPressed(int key) {}
+
+	@Override
+	public void keyReleased(int key) {}
+
+	@Override
+	public void resize(Vector2f newSize) {}
 
 }
