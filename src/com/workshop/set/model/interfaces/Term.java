@@ -1,14 +1,13 @@
 package com.workshop.set.model.interfaces;
 
 
+import java.util.Set;
+
 import com.workshop.set.model.lang.exceptions.EvaluationException;
 import com.workshop.set.model.lang.exceptions.PatternMatchException;
 import com.workshop.set.model.lang.exceptions.ProofFailureException;
 import com.workshop.set.model.lang.exceptions.TypecheckingException;
 import com.workshop.set.model.lang.judgements.HasValue;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * Created by nicschumann on 3/29/14.

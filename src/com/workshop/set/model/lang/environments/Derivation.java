@@ -1,10 +1,16 @@
 package com.workshop.set.model.lang.environments;
 
-import com.workshop.set.model.interfaces.*;
-import com.workshop.set.model.lang.core.TNameGenerator;
-import com.workshop.set.model.lang.exceptions.ProofFailureException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import java.util.*;
+import com.workshop.set.model.interfaces.Context;
+import com.workshop.set.model.interfaces.Gensym;
+import com.workshop.set.model.interfaces.Judgement;
+import com.workshop.set.model.interfaces.Symbol;
+import com.workshop.set.model.lang.exceptions.ProofFailureException;
 
 /**
  * The type derivation class represents the derivation of a term t's
@@ -105,7 +111,7 @@ public class Derivation<T> implements Context<T> {
 
 
     @Override
-    public Context step() {
+    public Context<T> step() {
         currentStep += 1;
         if ( currentStep > steps ) {
             derivation.add( currentStep, new LinkedHashMap<T, T>() );
@@ -114,7 +120,7 @@ public class Derivation<T> implements Context<T> {
         return this;
     }
     @Override
-    public Context unstep() { if ( currentStep > 0 ) currentStep -= 1; return this; }
+    public Context<T> unstep() { if ( currentStep > 0 ) currentStep -= 1; return this; }
 
     public int currentStep() { return currentStep; }
 

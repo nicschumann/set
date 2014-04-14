@@ -51,8 +51,8 @@ public class TypeTester {
                 System.out.println( e.getLocalizedMessage() );
             } finally {
                 System.out.print( System.lineSeparator() );
-                return this;
             }
+            return this;
         }
 
         public EvalUnitTest error( Term a ) {
@@ -67,8 +67,8 @@ public class TypeTester {
                 System.out.println( e.getLocalizedMessage() );
             } finally {
                 System.out.print( System.lineSeparator() );
-                return this;
             }
+            return this;
         }
 
         public EvalUnitTest trial( Term a ) {
@@ -89,8 +89,8 @@ public class TypeTester {
                 System.out.println( "ORDERING ERROR: " + e.getLocalizedMessage() );
             } finally {
                 System.out.print( System.lineSeparator() );
-                return this;
             }
+            return this;
         }
 
         private String generateInferenceLine( int length, String rule ) {
@@ -130,8 +130,8 @@ public class TypeTester {
                 System.out.println( e.getLocalizedMessage() );
             } finally {
                 //System.out.print( System.lineSeparator() );
-                return this;
             }
+            return this;
         }
 
         public TypeUnitTest error( Term a ) {
@@ -146,8 +146,8 @@ public class TypeTester {
                 System.out.println( e.getLocalizedMessage() );
             } finally {
                 //System.out.print( System.lineSeparator() );
-                return this;
             }
+            return this;
         }
 
         public TypeUnitTest trial( Term a ) {
@@ -164,8 +164,8 @@ public class TypeTester {
                 System.out.println( "ORDERING ERROR: " + e.getLocalizedMessage() );
             } finally {
                 System.out.print( System.lineSeparator() );
-                return this;
             }
+            return this;
         }
     }
 
