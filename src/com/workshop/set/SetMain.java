@@ -2,7 +2,7 @@ package com.workshop.set;
 
 import glfrontend.FrontEnd;
 
-import com.workshop.set.frontend.SetFrontEnd;
+import com.workshop.set.view.SetFrontEnd;
 
 public class SetMain {
 
