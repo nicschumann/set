@@ -58,7 +58,15 @@ public class GLPanel extends GLComponent {
 	}
 
 	@Override
-	public void mouseReleased(Vector2f p, MouseButton button) {}
+	public void mouseReleased(Vector2f p, MouseButton button) {
+		for (ScreenFrame frame : comps) {
+			if (frame.contains(p)) {
+				Vector2f relativePoint = new Vector2f();
+				Vector2f.sub(p, frame.getLocation(), relativePoint);
+				frame.mouseReleased(relativePoint, button);
+			}
+		}
+	}
 
 	@Override
 	public void mouseWheelScrolled(int amount) {}

@@ -1,19 +1,27 @@
 package test;
 
 
+import java.util.Arrays;
+import java.util.Vector;
+
 import com.workshop.set.model.interfaces.Environment;
-import com.workshop.set.model.interfaces.Symbol;
 import com.workshop.set.model.interfaces.Term;
-import com.workshop.set.model.lang.core.*;
-import com.workshop.set.model.lang.engines.Decide;
+import com.workshop.set.model.lang.core.TAbstraction;
+import com.workshop.set.model.lang.core.TAll;
+import com.workshop.set.model.lang.core.TApplication;
+import com.workshop.set.model.lang.core.TExponential;
+import com.workshop.set.model.lang.core.TField;
+import com.workshop.set.model.lang.core.TJudgement;
+import com.workshop.set.model.lang.core.TNameGenerator;
+import com.workshop.set.model.lang.core.TScalar;
+import com.workshop.set.model.lang.core.TSet;
+import com.workshop.set.model.lang.core.TSum;
+import com.workshop.set.model.lang.core.TTuple;
+import com.workshop.set.model.lang.core.TUniverse;
+import com.workshop.set.model.lang.core.TVector;
 import com.workshop.set.model.lang.engines.Typechecker;
-import com.workshop.set.model.lang.exceptions.EvaluationException;
 import com.workshop.set.model.lang.exceptions.ProofFailureException;
 import com.workshop.set.model.lang.exceptions.TypecheckingException;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Vector;
 
 /**
  * Created by nicschumann on 3/30/14.

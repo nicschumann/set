@@ -1,6 +1,5 @@
 package glfrontend;
 
-import static org.lwjgl.opengl.ARBTextureRectangle.GL_TEXTURE_RECTANGLE_ARB;
 import static org.lwjgl.opengl.GL11.GL_BACK;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
@@ -10,6 +9,8 @@ import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 import static org.lwjgl.opengl.GL11.GL_PROJECTION;
 import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glClear;
 import static org.lwjgl.opengl.GL11.glCullFace;
@@ -37,6 +38,9 @@ public class GLFrontEnd implements FrontEnd {
 	public static Dimension WINDOW_DIMENSIONS = new Dimension(500, 500);
 	public static Vector2f SCALE = new Vector2f(1, 1);
 	public static String TITLE = "";
+	
+	private boolean leftPressed = false;
+	private boolean rightPressed = false;
 
 	private ScreenFrame _frame;
 
@@ -76,6 +80,7 @@ public class GLFrontEnd implements FrontEnd {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		glPushMatrix();
+		glBindTexture(GL_TEXTURE_2D, 0);
 		_frame.render();
 		glPopMatrix();
 	}
@@ -102,10 +107,21 @@ public class GLFrontEnd implements FrontEnd {
 	 */
 	@Override
 	public void checkInput() {
-		if (Mouse.isButtonDown(0))
-			_frame.mousePressed(new Vector2f(Mouse.getX(), Display.getHeight() - Mouse.getY() - 1), MouseButton.LEFT);
-		if (Mouse.isButtonDown(1))
+		if (Mouse.isButtonDown(0)) {
+				_frame.mousePressed(new Vector2f(Mouse.getX(), Display.getHeight() - Mouse.getY() - 1), MouseButton.LEFT);
+				leftPressed = true;
+				
+		} else if (leftPressed){
+			_frame.mouseReleased(new Vector2f(Mouse.getX(), Display.getHeight() - Mouse.getY() - 1), MouseButton.LEFT);
+			leftPressed = false;
+		}
+		if (Mouse.isButtonDown(1)) {
 			_frame.mousePressed(new Vector2f(Mouse.getX(), Display.getHeight() - Mouse.getY() - 1), MouseButton.RIGHT);
+			rightPressed = true;
+		} else if (rightPressed) {
+			_frame.mouseReleased(new Vector2f(Mouse.getX(), Display.getHeight() - Mouse.getY() - 1), MouseButton.LEFT);
+			rightPressed = false;
+		}
 		int dWheel = Mouse.getDWheel();
 		if (dWheel != 0)
 			_frame.mouseWheelScrolled(dWheel);
@@ -149,7 +165,7 @@ public class GLFrontEnd implements FrontEnd {
 	 */
 	public void setUpStates() {
 		// Allows for textures(images) to be drawn on shape surfaces.
-		glEnable(GL_TEXTURE_RECTANGLE_ARB);
+//		glEnable(GL_TEXTURE_RECTANGLE_ARB);
 
 		// Only shows the image on the front of the surface.
 		glEnable(GL_CULL_FACE);
@@ -164,9 +180,9 @@ public class GLFrontEnd implements FrontEnd {
 	 * (window_dimensions)
 	 */
 	public void setUpMatrices() {
-		glMatrixMode(GL_PROJECTION);
-		glOrtho(0, Display.getWidth() / SCALE.x, Display.getHeight() / SCALE.y, 0, 1, -1);
-		glMatrixMode(GL_MODELVIEW);
+        glMatrixMode(GL_PROJECTION);
+        glOrtho(0, Display.getWidth() / SCALE.x, Display.getHeight() / SCALE.y, 0, 1, -1);
+        glMatrixMode(GL_MODELVIEW);
 	}
 
 	@Override

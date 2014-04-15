@@ -1,8 +1,8 @@
 package com.workshop.set.model.interfaces;
 
-import com.workshop.set.model.lang.exceptions.ProofFailureException;
-
 import java.util.Set;
+
+import com.workshop.set.model.lang.exceptions.ProofFailureException;
 
 /**
  * An environment maintains a mapping of variable names to values,
