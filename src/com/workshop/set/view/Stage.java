@@ -1,14 +1,11 @@
 package com.workshop.set.view;
 
-
 import glfrontend.components.GLComponent;
-
 import glfrontend.ScreenFrame;
-
 import org.lwjgl.util.vector.Vector2f;
 import static org.lwjgl.opengl.GL11.*;
 
-public class Stage implements ScreenFrame {
+public class Stage extends GLComponent implements ScreenFrame {
 
 	private Vector2f ul, lr;
 
@@ -35,11 +32,27 @@ public class Stage implements ScreenFrame {
 		
 		
 		//1. render the grid
+//	    glLineWidth((float)(1.5));
+//	    glDepthMask(false);		//watch this
+//	    glEnable(GL_LINE_SMOOTH);
+//	    glEnable(GL_BLEND);
+//	    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//	    glBegin(GL_LINES);
+//	    for (int i = -10; i <= 10; i++)
+//	    {
+//	        glVertex3i(i, 0, -10);
+//	        glVertex3i(i, 0, 10);
+//	        glVertex3i(-10, 0, i);
+//	        glVertex3i(10, 0, i);
+//	    }
+//	    glEnd();
+//	    glDisable(GL_BLEND);
+//	    glDisable(GL_LINE_SMOOTH);
+//	    glDepthMask(true);
+		
+		
 		
 //		glBegin(GL_LINES);
-//		glEnd();
-		
-//		glBegin(GL_QUADS);
 //		glVertex2f(ul.x, ul.y);
 //		glVertex2f(ul.x, lr.y);
 //		glVertex2f(lr.x, lr.y);

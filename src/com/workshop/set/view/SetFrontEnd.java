@@ -36,7 +36,7 @@ public class SetFrontEnd extends GLFrontEnd {
 		button.setBackground(Color.ORANGE);
 		buttonPanel.add(button);
 
-		// main.add(stage);
+		//main.add(stage);
 		main.add(buttonPanel);
 
 		return main;

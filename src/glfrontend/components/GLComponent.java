@@ -101,15 +101,15 @@ public abstract class GLComponent implements ScreenFrame {
 	@Override
 	public void render() {
 		// set color
-		//glColor4f(_color[0], _color[1], _color[2], _color[3]);
+		glColor4f(_color[0], _color[1], _color[2], _color[3]);
 
 		// draw quad
-//		glBegin(GL_QUADS);
-//		glVertex2f(ul.x, ul.y);
-//		glVertex2f(ul.x, lr.y);
-//		glVertex2f(lr.x, lr.y);
-//		glVertex2f(lr.x, ul.y);
-//		glEnd();
+		glBegin(GL_QUADS);
+		glVertex2f(ul.x, ul.y);
+		glVertex2f(ul.x, lr.y);
+		glVertex2f(lr.x, lr.y);
+		glVertex2f(lr.x, ul.y);
+		glEnd();
 		
 		draw();
 	}
