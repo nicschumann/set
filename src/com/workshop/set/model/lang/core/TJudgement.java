@@ -15,7 +15,7 @@ import java.util.Set;
 /**
  * Created by nicschumann on 3/29/14.
  */
-public class TJudgement implements Term {
+public class TJudgement implements Term,Constraint {
     public TJudgement(Term T1, Term T2) {
         left = T1; right = T2;
     }
