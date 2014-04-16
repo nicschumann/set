@@ -17,14 +17,6 @@ public class GLPanel extends GLComponent {
 		super();
 	}
 
-	public GLPanel(float x, float y) {
-		super(x, y);
-	}
-
-	public GLPanel(Vector2f dim) {
-		super(dim);
-	}
-
 	public void add(GLComponent c) {
 		comps.add(c);
 	}
@@ -47,7 +39,6 @@ public class GLPanel extends GLComponent {
 
 	@Override
 	public void mousePressed(Vector2f p, MouseButton button) {
-//		System.out.println("Panel : " + p);
 		for (ScreenFrame frame : comps) {
 			if (frame.contains(p)) {
 				Vector2f relativePoint = new Vector2f();

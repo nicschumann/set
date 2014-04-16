@@ -22,16 +22,6 @@ public abstract class GLComponent implements ScreenFrame {
 		init();
 	}
 
-	public GLComponent(float x, float y) {
-		init();
-		setSize(x, y);
-	}
-
-	public GLComponent(Vector2f dim) {
-		init();
-		setSize(dim);
-	}
-
 	private void init() {
 		_color = new float[4];
 		ul = new Vector2f(0f, 0f);

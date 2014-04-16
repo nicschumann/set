@@ -1,19 +1,24 @@
 package glfrontend.components;
 
 import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glColor4f;
+import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glVertex2f;
+import glfrontend.Triggerable;
+import glfrontend.Triggerable.TriggerEvent;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.UnicodeFont;
 import org.newdawn.slick.font.effects.ColorEffect;
-import org.newdawn.slick.opengl.TextureImpl;
 
 public class GLButton extends GLComponent {
 
@@ -24,6 +29,7 @@ public class GLButton extends GLComponent {
 	private UnicodeFont font;
 	private Vector2f textLoc;
 	private boolean pressed;
+	private List<Triggerable> triggers;
 
 	public GLButton() {
 		super();
@@ -36,32 +42,14 @@ public class GLButton extends GLComponent {
 		setText(text);
 	}
 
-	public GLButton(float x, float y) {
-		super(x, y);
-		init();
-	}
-
-	public GLButton(float x, float y, String text) {
-		super(x, y);
-		init();
-		setText(text);
-	}
-
-	public GLButton(Vector2f dim) {
-		super(dim);
-		init();
-	}
-
-	public GLButton(Vector2f dim, String text) {
-		super(dim);
-		init();
-		setText(text);
-	}
-
 	public void init() {
-		text = "Button";
+		text = "";
 		setFont(new java.awt.Font("Times New Roman", java.awt.Font.BOLD, 14));
-		TextureImpl.bindNone();
+		triggers = new ArrayList<>();
+	}
+
+	public void addTriggerable(Triggerable trigger) {
+		triggers.add(trigger);
 	}
 
 	public void setText(String text) {
@@ -75,14 +63,14 @@ public class GLButton extends GLComponent {
 
 	@SuppressWarnings("unchecked")
 	public void setFont(Font awtFont) {
-        font = new UnicodeFont(awtFont);
-        font.getEffects().add(new ColorEffect(java.awt.Color.black));
-        font.addAsciiGlyphs();
-        try {
-            font.loadGlyphs();
-        } catch (SlickException e) {
-            e.printStackTrace();
-        }
+		font = new UnicodeFont(awtFont);
+		font.getEffects().add(new ColorEffect(java.awt.Color.black));
+		font.addAsciiGlyphs();
+		try {
+			font.loadGlyphs();
+		} catch (SlickException e) {
+			e.printStackTrace();
+		}
 		setTextLoc();
 	}
 
@@ -92,7 +80,7 @@ public class GLButton extends GLComponent {
 		int textWidth = font.getWidth(text);
 		int textHeight = font.getAscent() + font.getDescent();
 		Vector2f mid = new Vector2f();
-		Vector2f.add(ul, lr, mid);
+		Vector2f.sub(lr, ul, mid);
 		textLoc = new Vector2f((mid.x - textWidth) / 2, (mid.y - textHeight) / 2);
 	}
 
@@ -140,7 +128,8 @@ public class GLButton extends GLComponent {
 		glEnd();
 
 		if (textLoc != null) {
-	        font.drawString(textLoc.x + ul.x, textLoc.y + ul.y, text);
+			font.drawString(textLoc.x + ul.x, textLoc.y + ul.y, text);
+			glDisable(GL_TEXTURE_2D);
 		}
 
 	}
@@ -154,6 +143,9 @@ public class GLButton extends GLComponent {
 			pressed = true;
 			textLoc.x += bs;
 			textLoc.y += bs;
+			for (Triggerable trigger : triggers) {
+				trigger.trigger(new TriggerEvent(this));
+			}
 		}
 	}
 
@@ -179,6 +171,14 @@ public class GLButton extends GLComponent {
 	public void keyReleased(int key) {}
 
 	@Override
-	public void resize(Vector2f newSize) {}
+	public void resize(Vector2f newSize) {
+		if (!isResizable())
+			return;
+		Vector2f size = new Vector2f();
+		Vector2f.sub(lr, ul, size);
+
+		Vector2f.add(ul, newSize, lr);
+		setTextLoc();
+	}
 
 }
