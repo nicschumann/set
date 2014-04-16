@@ -17,20 +17,10 @@ public abstract class GLComponent implements ScreenFrame {
 	protected float[] _color;
 	protected Vector2f ul;
 	protected Vector2f lr;
-	protected boolean resizable;
+	private boolean resizable;
 
 	public GLComponent() {
 		init();
-	}
-
-	public GLComponent(float x, float y) {
-		init();
-		setSize(x, y);
-	}
-
-	public GLComponent(Vector2f dim) {
-		init();
-		setSize(dim);
 	}
 
 	private void init() {

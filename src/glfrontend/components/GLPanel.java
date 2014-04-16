@@ -5,33 +5,32 @@ import static org.lwjgl.opengl.GL11.glTranslatef;
 import glfrontend.ScreenFrame;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.lwjgl.util.vector.Vector2f;
 
 public class GLPanel extends GLComponent {
 
-	List<ScreenFrame> comps = new ArrayList<>();
+	private List<ScreenFrame> comps;
+	private Map<ScreenFrame, Boolean> contained;
 
 	public GLPanel() {
 		super();
-	}
-
-	public GLPanel(float x, float y) {
-		super(x, y);
-	}
-
-	public GLPanel(Vector2f dim) {
-		super(dim);
+		comps = new ArrayList<>();
+		contained = new HashMap<>();
 	}
 
 	public void add(GLComponent c) {
 		comps.add(c);
+		contained.put(c, false);
 	}
 
 	public void add(GLComponent c, boolean resizable) {
 		c.setResizable(resizable);
 		comps.add(c);
+		contained.put(c, false);
 	}
 
 	@Override
@@ -47,6 +46,13 @@ public class GLPanel extends GLComponent {
 
 	@Override
 	public void mousePressed(Vector2f p, MouseButton button) {
+		for (ScreenFrame frame : comps) {
+			if (frame.contains(p)) {
+				Vector2f relativePoint = new Vector2f();
+				Vector2f.sub(p, frame.getLocation(), relativePoint);
+				frame.mousePressed(relativePoint, button);
+			}
+		}
 	}
 
 	@Override
@@ -77,6 +83,40 @@ public class GLPanel extends GLComponent {
 		}
 
 		Vector2f.add(ul, dim, lr);
+	}
+
+	@Override
+	public void mouseMoved(Vector2f p) {
+		for (ScreenFrame frame : comps) {
+			if (frame.contains(p)) {
+				Vector2f relativePoint = new Vector2f();
+				Vector2f.sub(p, frame.getLocation(), relativePoint);
+
+				if (!contained.get(frame)) {
+					frame.mouseEntered(relativePoint);
+					contained.put(frame, true);
+				}
+				frame.mouseMoved(relativePoint);
+			} else if (contained.get(frame)) {
+				Vector2f relativePoint = new Vector2f();
+				Vector2f.sub(p, frame.getLocation(), relativePoint);
+
+				frame.mouseExited(relativePoint);
+				contained.put(frame, false);
+			}
+		}
+	}
+
+	@Override
+	public void mouseEntered(Vector2f p) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void mouseExited(Vector2f p) {
+		// TODO Auto-generated method stub
+
 	}
 
 }
