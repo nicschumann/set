@@ -41,6 +41,7 @@ public class GLFrontEnd implements FrontEnd {
 	
 	private boolean leftPressed = false;
 	private boolean rightPressed = false;
+	private Vector2f prevMouse;
 
 	private ScreenFrame _frame;
 
@@ -66,6 +67,9 @@ public class GLFrontEnd implements FrontEnd {
 		_frame = new GLPanel();
 		_frame.setLocation(new Vector2f(0, 0));
 		_frame.setSize(new Vector2f(WINDOW_DIMENSIONS.width, WINDOW_DIMENSIONS.height));
+		prevMouse = new Vector2f(Mouse.getX(), mouseY());
+//		System.out.println(prevMouse.x + ", " + prevMouse.y);
+//		System.out.println(Display.getWidth());
 	}
 
 	public void setMainScreen(ScreenFrame panel) {
@@ -107,21 +111,28 @@ public class GLFrontEnd implements FrontEnd {
 	 */
 	@Override
 	public void checkInput() {
+		
+		Vector2f mouseLoc = new Vector2f(Mouse.getX(), mouseY());
+		
 		if (Mouse.isButtonDown(0)) {
-				_frame.mousePressed(new Vector2f(Mouse.getX(), Display.getHeight() - Mouse.getY() - 1), MouseButton.LEFT);
+				_frame.mousePressed(mouseLoc, MouseButton.LEFT);
 				leftPressed = true;
 				
 		} else if (leftPressed){
-			_frame.mouseReleased(new Vector2f(Mouse.getX(), Display.getHeight() - Mouse.getY() - 1), MouseButton.LEFT);
+			_frame.mouseReleased(mouseLoc, MouseButton.LEFT);
 			leftPressed = false;
 		}
 		if (Mouse.isButtonDown(1)) {
-			_frame.mousePressed(new Vector2f(Mouse.getX(), Display.getHeight() - Mouse.getY() - 1), MouseButton.RIGHT);
+			_frame.mousePressed(mouseLoc, MouseButton.RIGHT);
 			rightPressed = true;
 		} else if (rightPressed) {
-			_frame.mouseReleased(new Vector2f(Mouse.getX(), Display.getHeight() - Mouse.getY() - 1), MouseButton.LEFT);
+			_frame.mouseReleased(mouseLoc, MouseButton.LEFT);
 			rightPressed = false;
 		}
+//		if (!Mouse.isButtonDown(0) && !Mouse.isButtonDown(1)) {
+			if (mouseLoc.x - prevMouse.x != 0 || mouseLoc.y - prevMouse.x != 0)
+				_frame.mouseMoved(mouseLoc);
+//		}
 		int dWheel = Mouse.getDWheel();
 		if (dWheel != 0)
 			_frame.mouseWheelScrolled(dWheel);
@@ -199,6 +210,10 @@ public class GLFrontEnd implements FrontEnd {
 	public void cleanUp(boolean asCrash) {
 		Display.destroy();
 		System.exit(asCrash ? 1 : 0);
+	}
+	
+	public static float mouseY() {
+		return Display.getHeight() - Mouse.getY() - 1;
 	}
 
 }

@@ -16,11 +16,13 @@ import org.lwjgl.util.vector.Vector2f;
 
 public class SetFrontEnd extends GLFrontEnd {
 
+	private static Color ORANGE = new Color(255, 128, 0);
+
 	public SetFrontEnd() {
 		super("Set", new Dimension(750, 600));
 		this.setMainScreen(setUpScreens());
 	}
-	
+
 	private GLLabel label;
 
 	private ScreenFrame setUpScreens() {
@@ -37,7 +39,7 @@ public class SetFrontEnd extends GLFrontEnd {
 		Stage stage = new Stage(width, height * 4f / 5f);
 		stage.setLocation(new Vector2f(0, 0));
 
-		// main.add(stage);
+		main.add(stage);
 		main.add(makeSelectionPanel(width, height));
 
 		return main;
@@ -57,16 +59,18 @@ public class SetFrontEnd extends GLFrontEnd {
 		label.setLocation(panelWidth / 10f, 300);
 		label.setSize(panelWidth * 4 / 5, 40);
 		label.setBackground(Color.DARK_GRAY);
+		label.setForeground(ORANGE);
 		selectionPanel.add(label);
-		
+
 		float buttonWidth = panelWidth / 2f;
 		float buttonHeight = panelHeight / 10f;
 
-		selectionPanel.add(makeButton(0, 0, buttonWidth, buttonHeight, "Button 1", Color.ORANGE));
-		selectionPanel.add(makeButton(0, buttonHeight, buttonWidth, buttonHeight, "Button 3", Color.ORANGE));
-		selectionPanel.add(makeButton(buttonWidth, 0, buttonWidth, buttonHeight, "Button 2", Color.ORANGE));
-		selectionPanel.add(makeButton(buttonWidth, buttonHeight, buttonWidth, buttonHeight, "Button 4", Color.ORANGE));
-
+		selectionPanel.add(makeButton(0, 0, buttonWidth, buttonHeight, "Button 1", ORANGE));
+		selectionPanel.add(makeButton(0, buttonHeight, buttonWidth, buttonHeight, "Button 3", ORANGE));
+		selectionPanel.add(makeButton(0, 2 * buttonHeight, buttonWidth, buttonHeight, "Button 5", ORANGE));
+		selectionPanel.add(makeButton(buttonWidth, 0, buttonWidth, buttonHeight, "Button 2", ORANGE));
+		selectionPanel.add(makeButton(buttonWidth, buttonHeight, buttonWidth, buttonHeight, "Button 4", ORANGE));
+		selectionPanel.add(makeButton(buttonWidth, 2 * buttonHeight, buttonWidth, buttonHeight, "Button 6", ORANGE));
 
 		return selectionPanel;
 	}
@@ -83,7 +87,7 @@ public class SetFrontEnd extends GLFrontEnd {
 				GLButton b = (GLButton) e.getSource();
 				label.setText(b.getText() + " pressed");
 			}
-			
+
 		});
 		return button;
 	}

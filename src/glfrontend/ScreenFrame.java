@@ -29,6 +29,12 @@ public interface ScreenFrame {
 	
 	public void keyReleased(int key);
 	
+	public void mouseMoved(Vector2f p);
+	
+	public void mouseEntered(Vector2f p);
+	
+	public void mouseExited(Vector2f p);
+	
 	public void render();
 	
 	public void resize(Vector2f newSize);

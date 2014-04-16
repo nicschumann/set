@@ -16,7 +16,7 @@ public abstract class GLComponent implements ScreenFrame {
 	protected float[] _color;
 	protected Vector2f ul;
 	protected Vector2f lr;
-	protected boolean resizable;
+	private boolean resizable;
 
 	public GLComponent() {
 		init();

@@ -3,6 +3,7 @@ package glfrontend.components;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glDisable;
 
+import java.awt.Color;
 import java.awt.Font;
 
 import org.lwjgl.util.vector.Vector2f;
@@ -16,6 +17,8 @@ public class GLLabel extends GLComponent {
 	private String text;
 	private UnicodeFont font;
 	private Vector2f textLoc;
+	private Font awtFont;
+	private Color _foreground;
 
 	public GLLabel() {
 		super();
@@ -30,8 +33,14 @@ public class GLLabel extends GLComponent {
 
 	public void init() {
 		text = "";
+		_foreground = Color.BLACK;
 		setFont(new java.awt.Font("Times New Roman", java.awt.Font.BOLD, 14));
 		TextureImpl.bindNone();
+	}
+	
+	public void setForeground(Color color) {
+		_foreground = color;
+		setFont(awtFont);
 	}
 
 	public void setText(String text) {
@@ -45,8 +54,9 @@ public class GLLabel extends GLComponent {
 
 	@SuppressWarnings("unchecked")
 	public void setFont(Font awtFont) {
+		this.awtFont = awtFont;
 		font = new UnicodeFont(awtFont);
-		font.getEffects().add(new ColorEffect(java.awt.Color.black));
+		font.getEffects().add(new ColorEffect(_foreground));
 		font.addAsciiGlyphs();
 		try {
 			font.loadGlyphs();
@@ -104,6 +114,24 @@ public class GLLabel extends GLComponent {
 
 		Vector2f.add(ul, newSize, lr);
 		setTextLoc();
+	}
+
+	@Override
+	public void mouseMoved(Vector2f p) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseEntered(Vector2f p) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(Vector2f p) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

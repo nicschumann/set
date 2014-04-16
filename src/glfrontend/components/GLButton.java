@@ -96,7 +96,7 @@ public class GLButton extends GLComponent {
 		Color temp = color.darker().darker();
 		temp.getComponents(_color);
 
-		temp = color.brighter().brighter();
+		temp = color.brighter();
 		temp.getComponents(_brightColor);
 
 		color.getComponents(_midColor);
@@ -143,9 +143,6 @@ public class GLButton extends GLComponent {
 			pressed = true;
 			textLoc.x += bs;
 			textLoc.y += bs;
-			for (Triggerable trigger : triggers) {
-				trigger.trigger(new TriggerEvent(this));
-			}
 		}
 	}
 
@@ -158,6 +155,9 @@ public class GLButton extends GLComponent {
 			pressed = false;
 			textLoc.x -= bs;
 			textLoc.y -= bs;
+			for (Triggerable trigger : triggers) {
+				trigger.trigger(new TriggerEvent(this));
+			}
 		}
 	}
 
@@ -179,6 +179,24 @@ public class GLButton extends GLComponent {
 
 		Vector2f.add(ul, newSize, lr);
 		setTextLoc();
+	}
+
+	@Override
+	public void mouseMoved(Vector2f p) {}
+
+	@Override
+	public void mouseEntered(Vector2f p) {}
+
+	@Override
+	public void mouseExited(Vector2f p) {
+		if (pressed) {
+			float[] temp = _brightColor;
+			_brightColor = _color;
+			_color = temp;
+			pressed = false;
+			textLoc.x -= bs;
+			textLoc.y -= bs;
+		}
 	}
 
 }
