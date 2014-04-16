@@ -31,12 +31,13 @@ public class SetFrontEnd extends GLFrontEnd {
 		buttonPanel.setLocation(0, height * 4 / 5);
 		buttonPanel.setBackground(new Color(255, 255, 255, 100));
 
-		GLButton button = new GLButton(60, 30);
-		button.setLocation(30, 30);
-		button.setBackground(Color.ORANGE);
-		buttonPanel.add(button);
+		//GLButton button = new GLButton(60, 30);
+		//button.setLocation(30, 30);
+		//button.setBackground(Color.ORANGE);
+		//buttonPanel.add(button);
 
-		//main.add(stage);
+		main.setStage(stage);
+		main.add(stage);	
 		main.add(buttonPanel);
 
 		return main;

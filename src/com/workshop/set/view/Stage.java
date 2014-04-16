@@ -5,7 +5,7 @@ import glfrontend.ScreenFrame;
 import org.lwjgl.util.vector.Vector2f;
 import static org.lwjgl.opengl.GL11.*;
 
-public class Stage extends GLComponent implements ScreenFrame {
+public class Stage implements ScreenFrame {
 
 	private Vector2f ul, lr;
 
@@ -25,41 +25,7 @@ public class Stage extends GLComponent implements ScreenFrame {
 	}
 	
 
-	public void draw() {
-//		be.getRenderObjects();
-		
-		//render the grid, axes and renderable items from the stage
-		
-		
-		//1. render the grid
-//	    glLineWidth((float)(1.5));
-//	    glDepthMask(false);		//watch this
-//	    glEnable(GL_LINE_SMOOTH);
-//	    glEnable(GL_BLEND);
-//	    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-//	    glBegin(GL_LINES);
-//	    for (int i = -10; i <= 10; i++)
-//	    {
-//	        glVertex3i(i, 0, -10);
-//	        glVertex3i(i, 0, 10);
-//	        glVertex3i(-10, 0, i);
-//	        glVertex3i(10, 0, i);
-//	    }
-//	    glEnd();
-//	    glDisable(GL_BLEND);
-//	    glDisable(GL_LINE_SMOOTH);
-//	    glDepthMask(true);
-		
-		
-		
-//		glBegin(GL_LINES);
-//		glVertex2f(ul.x, ul.y);
-//		glVertex2f(ul.x, lr.y);
-//		glVertex2f(lr.x, lr.y);
-//		glVertex2f(lr.x, ul.y);
-//		glEnd();
-		
-	}
+	public void draw() {}
 	
 	public void setLocation(Vector2f p) {
 		Vector2f.sub(lr, ul, lr);
@@ -105,7 +71,50 @@ public class Stage extends GLComponent implements ScreenFrame {
 	public void keyReleased(int key) {}
 
 	@Override
-	public void render() {}
+	public void render() {
+		
+		//render the grid, axes and renderable items from the stage
+		//1. render the grid
+		
+		//glBegin(GL_LINES);
+		//glEnd();
+		
+		//System.out.println("UL: " + ul + "LR: " +lr);
+		glColor3f(1, 0, 0);
+		
+		//glBegin(GL_QUADS);
+		//glBegin(GL_LINES);
+		//glVertex2f(ul.x/2, ul.y/2);
+		//glVertex2f(ul.x/2, lr.y/2);
+		//glVertex2f(lr.x/2, lr.y/2);
+		//glVertex2f(lr.x/2, ul.y/2);
+		//glEnd();
+		
+		glBegin(GL_TRIANGLES);
+		glVertex3f(230,180, 1);
+		glVertex3f(200,300,1);
+		glVertex3f(300,300,1);
+		glEnd();
+		
+//		glLineWidth(1);
+//	    glDepthMask(false);
+//	    glEnable(GL_LINE_SMOOTH);
+//	    glEnable(GL_BLEND);
+//	    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+//	    glBegin(GL_LINES);
+//	    for (int i = -10; i <= 10; i++)
+//	    {
+//	        glVertex3i(i, 0, -10);
+//	        glVertex3i(i, 0, 10);
+//	        glVertex3i(-10, 0, i);
+//	        glVertex3i(10, 0, i);
+//	    }
+//	    glEnd();
+//	    glDisable(GL_BLEND);
+//	    glDisable(GL_LINE_SMOOTH);
+//	    glDepthMask(true);
+		
+	}
 
 	@Override
 	public void resize(Vector2f newSize) {}

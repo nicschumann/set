@@ -1,10 +1,25 @@
 package com.workshop.set.model.lang.engines;
 
+import java.util.Set;
+
 import com.workshop.set.model.interfaces.Symbol;
 import com.workshop.set.model.interfaces.Term;
-import com.workshop.set.model.lang.core.*;
-
-import java.util.Set;
+import com.workshop.set.model.lang.core.TAbstraction;
+import com.workshop.set.model.lang.core.TAdditive;
+import com.workshop.set.model.lang.core.TAll;
+import com.workshop.set.model.lang.core.TApplication;
+import com.workshop.set.model.lang.core.TCollection;
+import com.workshop.set.model.lang.core.TExponential;
+import com.workshop.set.model.lang.core.TField;
+import com.workshop.set.model.lang.core.TJudgement;
+import com.workshop.set.model.lang.core.TMultiplicative;
+import com.workshop.set.model.lang.core.TNameGenerator;
+import com.workshop.set.model.lang.core.TScalar;
+import com.workshop.set.model.lang.core.TSet;
+import com.workshop.set.model.lang.core.TSum;
+import com.workshop.set.model.lang.core.TTuple;
+import com.workshop.set.model.lang.core.TUniverse;
+import com.workshop.set.model.lang.core.TVector;
 
 /**
  * This class uses adhoc polymorphism to define alpha equivalence on terms. Basically,
