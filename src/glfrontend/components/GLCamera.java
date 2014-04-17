@@ -11,6 +11,7 @@ public class GLCamera {
 	public GLCamera(){
 		_eye = new Vector4(4, 4, 8, 1);
 	    _look = new Vector4(-_eye.x, -_eye.y, -_eye.z, 0).getNormalized();
+	    System.out.println("This is the value of look at start: " + _look.x + " " + _look.y + " " + _look.z);
 	    _up = new Vector4(0, 1, 0, 0);
 	}
 	
@@ -24,22 +25,27 @@ public class GLCamera {
     	return _up; }
 
     public Vector4 getU(){ 
+    	Vector4 lookCopy = new Vector4(_look.x, _look.y, _look.z, _look.w);
+    	Vector4 upCopy = new Vector4(_up.x, _up.y, _up.z, _up.w);
     	return _look.getCrossProd(_up).getNormalized();
     }
     public Vector4 getV(){ 
-    	return getU().getCrossProd(_look).getNormalized();
+    	Vector4 lookCopy = new Vector4(_look.x, _look.y, _look.z, _look.w);
+    	return getU().getCrossProd(lookCopy).getNormalized();
     }
     public Vector4 getW(){ 
-    	return _look.getNormalized().uniformScale(-1);
+    	Vector4 lookCopy = new Vector4(_look.x, _look.y, _look.z, _look.w); 	//make this better
+    	return lookCopy.getNormalized().uniformScale(-1.0);
     }
 
 	public void multMatrix(){
 	    GLU.gluLookAt(_eye.x, _eye.y, _eye.z,
-	              _eye.x + _look.x, _eye.y + _look.y, _eye.z + _look.z,
+	              (_eye.x + _look.x), (_eye.y + _look.y), (_eye.z + _look.z),
 	              _up.x, _up.y, _up.z);
 	}
 
 	public void lookAt(Vector4 eye, Vector4 look, Vector4 up){
+		
 	    _eye = eye;
 	    _look = look;
 	    _up = up;
@@ -65,7 +71,7 @@ public class GLCamera {
 //	}
 
 	public void mouseWheel(float delta){
-	    this.lookVectorTranslate(delta);
+	    this.lookVectorTranslate(delta*10);
 	}
 
 	public void filmPlaneTranslate(double deltaX, double deltaY){

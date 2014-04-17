@@ -24,7 +24,27 @@ public class Stage implements ScreenFrame {
 		lr = new Vector2f(50f, 50f);
 	}
 
-	public void draw() {}
+	public void drawGrid() {
+		glColor3f(1, 1, 1);
+	    
+		glLineWidth(1);
+	    glDepthMask(false);
+	    glEnable(GL_LINE_SMOOTH);
+	    glEnable(GL_BLEND);
+	    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	    glBegin(GL_LINES);
+	    for (int i = -10; i <= 10; i++)
+	    {
+	        glVertex3i(i, 0, -10);
+	        glVertex3i(i, 0, 10);
+	        glVertex3i(-10, 0, i);
+	        glVertex3i(10, 0, i);
+	    }
+	    glEnd();
+	    glDisable(GL_BLEND);
+	    glDisable(GL_LINE_SMOOTH);
+	    glDepthMask(true);	
+	}
 
 	@Override
 
@@ -74,47 +94,8 @@ public class Stage implements ScreenFrame {
 	@Override
 	public void render() {
 		
-		//render the grid, axes and renderable items from the stage
 		//1. render the grid
-		
-		//glBegin(GL_LINES);
-		//glEnd();
-		
-		//System.out.println("UL: " + ul + "LR: " +lr);
-		glColor3f(1, 0, 0);
-		
-		//glBegin(GL_QUADS);
-		//glBegin(GL_LINES);
-		//glVertex2f(ul.x/2, ul.y/2);
-		//glVertex2f(ul.x/2, lr.y/2);
-		//glVertex2f(lr.x/2, lr.y/2);
-		//glVertex2f(lr.x/2, ul.y/2);
-		//glEnd();
-		
-		glBegin(GL_TRIANGLES);
-		glVertex3f(230,180, 1);
-		glVertex3f(200,300,1);
-		glVertex3f(300,300,1);
-		glEnd();
-		
-//		glLineWidth(1);
-//	    glDepthMask(false);
-//	    glEnable(GL_LINE_SMOOTH);
-//	    glEnable(GL_BLEND);
-//	    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-//	    glBegin(GL_LINES);
-//	    for (int i = -10; i <= 10; i++)
-//	    {
-//	        glVertex3i(i, 0, -10);
-//	        glVertex3i(i, 0, 10);
-//	        glVertex3i(-10, 0, i);
-//	        glVertex3i(10, 0, i);
-//	    }
-//	    glEnd();
-//	    glDisable(GL_BLEND);
-//	    glDisable(GL_LINE_SMOOTH);
-//	    glDepthMask(true);
-		
+		this.drawGrid(); 
 	}
 
 	@Override

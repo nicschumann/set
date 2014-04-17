@@ -82,7 +82,6 @@ public class GLFrontEnd implements FrontEnd {
 	@Override
 	public void onRender() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 		glPushMatrix();
 		glBindTexture(GL_TEXTURE_2D, 0);
 		_frame.render();

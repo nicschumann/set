@@ -5,9 +5,12 @@ import glfrontend.ScreenFrame;
 import glfrontend.components.GLCamera;
 import glfrontend.components.GLComponent;
 import glfrontend.ScreenFrame;
+
+import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
 import static org.lwjgl.opengl.GL11.*;
 
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -15,6 +18,7 @@ import java.util.Map;
 
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.glu.GLU;
+import org.lwjgl.BufferUtils;
 
 public class SetScreen implements ScreenFrame {
 
@@ -28,12 +32,12 @@ public class SetScreen implements ScreenFrame {
 	public SetScreen(float w, float h) {
 		init();
 		setSize(new Vector2f(w, h));
+		_camera = new GLCamera();
 	}
 
 	private void init() {
 		ul = new Vector2f(0f, 0f);
 		lr = new Vector2f(50f, 50f);
-		_camera = new GLCamera();
 	}
 	
 	public void setStage(Stage s){
@@ -100,6 +104,7 @@ public class SetScreen implements ScreenFrame {
 
 	@Override
 	public void mouseWheelScrolled(int amount) {
+		
 	    _camera.mouseWheel(amount);
 	    this.render();
 	}
@@ -113,6 +118,13 @@ public class SetScreen implements ScreenFrame {
 	@Override
 	public void render() {
 		
+	    //itegrate rendering of ui elements
+		glTranslatef(ul.x, ul.y, 0);
+		for (ScreenFrame frame : frames)
+			frame.render();
+		glTranslatef(-ul.x, -ul.y, 0);
+        
+		//draw white ground plane
 		glMatrixMode(GL_PROJECTION);
 	    glLoadIdentity();
 	    GLU.gluPerspective(55, (float)this.getSize().x / (float)this.getSize().y, (float)(0.01), (float)(1000));
@@ -125,19 +137,10 @@ public class SetScreen implements ScreenFrame {
 	    // set up canvas
 	    glViewport(0, 0, (int)this.getSize().x, (int)this.getSize().y);
 	    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-	    // draw white ground plane
-	    glColor3f(1, 1, 1);
 	    
-	    glBegin(GL_LINES);
-	    glVertex3i(10,0,-10);
-	    glVertex3i(-10,0,10);
-	    glEnd();
-		
-//		glTranslatef(ul.x, ul.y, 0);
-//		for (ScreenFrame frame : frames)
-//			frame.render();
-//		glTranslatef(-ul.x, -ul.y, 0);
+	    _stage.render(); 
+	    glPopMatrix();
+	    
 	}
 
 	@Override
