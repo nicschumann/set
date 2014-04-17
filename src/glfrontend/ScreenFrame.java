@@ -9,6 +9,14 @@ public interface ScreenFrame {
 		RIGHT;
 	}
 	
+	public enum ResizeType {
+		FIT_LEFT,
+		FIT_RIGHT,
+		FIT_BOTTOM,
+		FIT_TOP,
+		RATIO
+	}
+	
 	public void setLocation(Vector2f loc);
 	
 	public Vector2f getLocation();
@@ -18,6 +26,10 @@ public interface ScreenFrame {
 	public Vector2f getSize();
 	
 	public boolean contains(Vector2f p);
+	
+	public void setResizeType(ResizeType type);
+	
+	public ResizeType getResizeType();
 	
 	public void mousePressed(Vector2f p, MouseButton button);
 	

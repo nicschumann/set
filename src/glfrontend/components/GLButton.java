@@ -1,5 +1,6 @@
 package glfrontend.components;
 
+import static com.workshop.set.view.SetScreen.newRatio;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBegin;
@@ -171,17 +172,6 @@ public class GLButton extends GLComponent {
 	public void keyReleased(int key) {}
 
 	@Override
-	public void resize(Vector2f newSize) {
-		if (!isResizable())
-			return;
-		Vector2f size = new Vector2f();
-		Vector2f.sub(lr, ul, size);
-
-		Vector2f.add(ul, newSize, lr);
-		setTextLoc();
-	}
-
-	@Override
 	public void mouseMoved(Vector2f p) {}
 
 	@Override
@@ -196,6 +186,30 @@ public class GLButton extends GLComponent {
 			pressed = false;
 			textLoc.x -= bs;
 			textLoc.y -= bs;
+		}
+	}
+
+	@Override
+	public void resize(Vector2f newSize) {
+		switch (getResizeType()) {
+		case FIT_LEFT:
+			setLocation(new Vector2f(ul.x - (getSize().x - newSize.x), ul.y));
+			break;
+		case FIT_RIGHT:
+			break;
+		case FIT_BOTTOM:
+			break;
+		case FIT_TOP:
+			break;
+		default: // RATIO Type
+			setLocation(newRatio(getLocation(), getSize(), newSize));
+
+			Vector2f size = new Vector2f();
+			Vector2f.sub(lr, ul, size);
+
+			Vector2f.add(ul, newSize, lr);
+			setTextLoc();
+			break;
 		}
 	}
 

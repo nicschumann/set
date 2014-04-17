@@ -27,8 +27,8 @@ public class GLPanel extends GLComponent {
 		contained.put(c, false);
 	}
 
-	public void add(GLComponent c, boolean resizable) {
-		c.setResizable(resizable);
+	public void add(GLComponent c, ResizeType resizable) {
+		c.setResizeType(resizable);
 		comps.add(c);
 		contained.put(c, false);
 	}
@@ -68,24 +68,6 @@ public class GLPanel extends GLComponent {
 	public void keyReleased(int key) {}
 
 	@Override
-	public void resize(Vector2f dim) {
-		if (!isResizable())
-			return;
-		Vector2f size = new Vector2f();
-		Vector2f.sub(lr, ul, size);
-
-		for (ScreenFrame comp : comps) {
-			Vector2f oldSize = comp.getSize();
-			Vector2f oldLoc = comp.getLocation();
-
-			comp.setLocation(newRatio(oldLoc, size, dim));
-			comp.resize(newRatio(oldSize, size, dim));
-		}
-
-		Vector2f.add(ul, dim, lr);
-	}
-
-	@Override
 	public void mouseMoved(Vector2f p) {
 		for (ScreenFrame frame : comps) {
 			if (frame.contains(p)) {
@@ -108,15 +90,40 @@ public class GLPanel extends GLComponent {
 	}
 
 	@Override
-	public void mouseEntered(Vector2f p) {
-		// TODO Auto-generated method stub
-
-	}
+	public void mouseEntered(Vector2f p) {}
 
 	@Override
-	public void mouseExited(Vector2f p) {
-		// TODO Auto-generated method stub
+	public void mouseExited(Vector2f p) {}
 
+	@Override
+	public void resize(Vector2f newSize) {
+		setLocation(newRatio(getLocation(), getSize(), newSize));
+		switch (getResizeType()) {
+		case FIT_LEFT:
+			break;
+		case FIT_RIGHT:
+			setLocation(new Vector2f(ul.x - (getSize().x - newSize.x), ul.y));
+			break;
+		case FIT_BOTTOM:
+			break;
+		case FIT_TOP:
+			break;
+		default: // RATIO Type
+
+			Vector2f size = new Vector2f();
+			Vector2f.sub(lr, ul, size);
+
+			for (ScreenFrame comp : comps) {
+				Vector2f oldSize = comp.getSize();
+				Vector2f oldLoc = comp.getLocation();
+
+				comp.setLocation(newRatio(oldLoc, size, newSize));
+				comp.resize(newRatio(oldSize, size, newSize));
+			}
+
+			Vector2f.add(ul, newSize, lr);
+			break;
+		}
 	}
 
 }

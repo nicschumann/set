@@ -110,4 +110,12 @@ public class Stage implements ScreenFrame {
 	@Override
 	public void mouseExited(Vector2f p) {}
 
+	@Override
+	public void setResizeType(ResizeType type) {}
+
+	@Override
+	public ResizeType getResizeType() {
+		return null;
+	}
+
 }

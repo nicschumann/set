@@ -1,6 +1,5 @@
 package glfrontend.components;
 
-import static com.workshop.set.view.SetScreen.newRatio;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glDisable;
 
@@ -13,20 +12,24 @@ import org.newdawn.slick.UnicodeFont;
 import org.newdawn.slick.font.effects.ColorEffect;
 import org.newdawn.slick.opengl.TextureImpl;
 
-public class GLLabel extends GLComponent {
+import com.workshop.set.view.SetFrontEnd;
 
+public class GLTextBox extends GLComponent {
+
+	private float[] _brightColor = new float[4];
+	private float[] _midColor = new float[4];
 	private String text;
 	private Font awtFont;
 	private UnicodeFont font;
 	private Vector2f textLoc;
 	private Color _foreground;
 
-	public GLLabel() {
+	public GLTextBox() {
 		super();
 		init();
 	}
 
-	public GLLabel(String text) {
+	public GLTextBox(String text) {
 		super();
 		init();
 		setText(text);
@@ -35,6 +38,9 @@ public class GLLabel extends GLComponent {
 	public void init() {
 		text = "";
 		_foreground = Color.BLACK;
+		SetFrontEnd.ORANGE.getColorComponents(_brightColor);
+		SetFrontEnd.ORANGE.darker().darker().getColorComponents(_color);
+		Color.white.getColorComponents(_midColor);
 		setFont(new java.awt.Font("Times New Roman", java.awt.Font.BOLD, 14));
 		TextureImpl.bindNone();
 	}
@@ -84,6 +90,11 @@ public class GLLabel extends GLComponent {
 	}
 
 	@Override
+	public void setBackground(Color color) {
+		color.getComponents(_midColor);
+	}
+
+	@Override
 	public void draw() {
 		if (textLoc != null) {
 			font.drawString(textLoc.x + ul.x, textLoc.y + ul.y, text);
@@ -107,45 +118,15 @@ public class GLLabel extends GLComponent {
 	public void keyReleased(int key) {}
 
 	@Override
-	public void resize(Vector2f newSize) {
-		switch (getResizeType()) {
-		case FIT_LEFT:
-			setLocation(new Vector2f(ul.x - (getSize().x - newSize.x), ul.y));
-			break;
-		case FIT_RIGHT:
-			break;
-		case FIT_BOTTOM:
-			break;
-		case FIT_TOP:
-			break;
-		default: // RATIO Type
-			setLocation(newRatio(getLocation(), getSize(), newSize));
-
-			Vector2f size = new Vector2f();
-			Vector2f.sub(lr, ul, size);
-
-			Vector2f.add(ul, newSize, lr);
-			setTextLoc();
-			break;
-		}
-	}
+	public void mouseMoved(Vector2f p) {}
 
 	@Override
-	public void mouseMoved(Vector2f p) {
-		// TODO Auto-generated method stub
-
-	}
+	public void mouseEntered(Vector2f p) {}
 
 	@Override
-	public void mouseEntered(Vector2f p) {
-		// TODO Auto-generated method stub
-
-	}
+	public void mouseExited(Vector2f p) {}
 
 	@Override
-	public void mouseExited(Vector2f p) {
-		// TODO Auto-generated method stub
-
-	}
+	public void resize(Vector2f newSize) {}
 
 }

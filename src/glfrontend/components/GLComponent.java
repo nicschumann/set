@@ -17,7 +17,7 @@ public abstract class GLComponent implements ScreenFrame {
 	protected float[] _color;
 	protected Vector2f ul;
 	protected Vector2f lr;
-	private boolean resizable;
+	private ResizeType resizeType;
 
 	public GLComponent() {
 		init();
@@ -27,7 +27,7 @@ public abstract class GLComponent implements ScreenFrame {
 		_color = new float[4];
 		ul = new Vector2f(0f, 0f);
 		lr = new Vector2f(50f, 50f);
-		resizable = true;
+		resizeType = ResizeType.RATIO;
 	}
 
 	public void setBackground(Color color) {
@@ -75,18 +75,19 @@ public abstract class GLComponent implements ScreenFrame {
 		return temp1.x >= 0 && temp2.x >= 0 && temp1.y >= 0 && temp2.y >= 0;
 	}
 
-	public void setResizable(boolean resizable) {
-		this.resizable = resizable;
+	@Override
+	public void setResizeType(ResizeType type) {
+		resizeType = type;
 	}
 
-	public boolean isResizable() {
-		return resizable;
+	@Override
+	public ResizeType getResizeType() {
+		return resizeType;
 	}
 
 	public void resize(float width, float height) {
 		resize(new Vector2f(width, height));
 	}
-	
 
 	@Override
 	public void render() {
