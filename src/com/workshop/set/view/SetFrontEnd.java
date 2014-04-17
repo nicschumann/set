@@ -3,6 +3,7 @@ package com.workshop.set.view;
 import glfrontend.GLFrontEnd;
 import glfrontend.ScreenFrame;
 import glfrontend.Triggerable;
+import glfrontend.ScreenFrame.ResizeType;
 import glfrontend.components.GLButton;
 import glfrontend.components.GLLabel;
 import glfrontend.components.GLPanel;
@@ -16,7 +17,7 @@ import org.lwjgl.util.vector.Vector2f;
 
 public class SetFrontEnd extends GLFrontEnd {
 
-	private static Color ORANGE = new Color(255, 128, 0);
+	public static Color ORANGE = new Color(255, 128, 0);
 
 	public SetFrontEnd() {
 		super("Set", new Dimension(750, 600));
@@ -36,11 +37,12 @@ public class SetFrontEnd extends GLFrontEnd {
 
 		SetScreen main = new SetScreen(width, height);
 
-		Stage stage = new Stage(width, height * 4f / 5f);
+		Stage stage = new Stage(width, height);
 		stage.setLocation(new Vector2f(0, 0));
 
 		main.add(stage);
 		main.add(makeSelectionPanel(width, height));
+		main.add(makeConstraintPanel(width, height));
 
 		return main;
 	}
@@ -53,7 +55,7 @@ public class SetFrontEnd extends GLFrontEnd {
 		selectionPanel.setLocation(0, 0);
 		selectionPanel.setSize(panelWidth, panelHeight);
 		selectionPanel.setBackground(new Color(255, 255, 255, 100));
-		selectionPanel.setResizable(false);
+		selectionPanel.setResizeType(ResizeType.FIT_LEFT);
 
 		label = new GLLabel("Label");
 		label.setLocation(panelWidth / 10f, 300);
@@ -73,6 +75,19 @@ public class SetFrontEnd extends GLFrontEnd {
 		selectionPanel.add(makeButton(buttonWidth, 2 * buttonHeight, buttonWidth, buttonHeight, "Button 6", ORANGE));
 
 		return selectionPanel;
+	}
+
+	private GLPanel makeConstraintPanel(float screenWidth, float screenHeight) {
+		float panelWidth = screenWidth / 5f;
+		float panelHeight = screenHeight * 4f / 5f;
+
+		GLPanel constraintPanel = new GLPanel();
+		constraintPanel.setLocation(screenWidth * 4f / 5f, 0);
+		constraintPanel.setSize(panelWidth, panelHeight);
+		constraintPanel.setBackground(new Color(255, 255, 255, 100));
+		constraintPanel.setResizeType(ResizeType.FIT_RIGHT);
+
+		return constraintPanel;
 	}
 
 	private GLButton makeButton(float x, float y, float w, float h, String text, Color color) {

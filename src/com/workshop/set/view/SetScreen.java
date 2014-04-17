@@ -102,28 +102,6 @@ public class SetScreen implements ScreenFrame {
 	}
 
 	@Override
-	public void resize(Vector2f newSize) {
-		Vector2f size = new Vector2f();
-		Vector2f.sub(lr, ul, size);
-
-		for (ScreenFrame frame : frames) {
-			Vector2f oldSize = frame.getSize();
-			Vector2f oldLoc = frame.getLocation();
-
-			frame.setLocation(newRatio(oldLoc, size, newSize));
-			frame.resize(newRatio(oldSize, size, newSize));
-		}
-
-		Vector2f.add(ul, newSize, lr);
-	}
-
-	public static Vector2f newRatio(Vector2f oldTop, Vector2f oldBottom, Vector2f newBottom) {
-		float x = (oldTop.x * newBottom.x) / oldBottom.x;
-		float y = (oldTop.y * newBottom.y) / oldBottom.y;
-		return new Vector2f(x, y);
-	}
-
-	@Override
 	public void mouseMoved(Vector2f p) {
 		for (ScreenFrame frame : frames) {
 			if (frame.contains(p)) {
@@ -146,15 +124,37 @@ public class SetScreen implements ScreenFrame {
 	}
 
 	@Override
-	public void mouseEntered(Vector2f p) {
-		// TODO Auto-generated method stub
+	public void mouseEntered(Vector2f p) {}
 
+	@Override
+	public void mouseExited(Vector2f p) {}
+
+	@Override
+	public void setResizeType(ResizeType type) {}
+
+	@Override
+	public ResizeType getResizeType() {
+		return ResizeType.RATIO;
 	}
 
 	@Override
-	public void mouseExited(Vector2f p) {
-		// TODO Auto-generated method stub
+	public void resize(Vector2f newSize) {
+		Vector2f size = new Vector2f();
+		Vector2f.sub(lr, ul, size);
 
+		for (ScreenFrame frame : frames) {
+			Vector2f oldSize = frame.getSize();
+
+			frame.resize(newRatio(oldSize, size, newSize));
+		}
+
+		Vector2f.add(ul, newSize, lr);
+	}
+
+	public static Vector2f newRatio(Vector2f oldTop, Vector2f oldBottom, Vector2f newBottom) {
+		float x = (oldTop.x * newBottom.x) / oldBottom.x;
+		float y = (oldTop.y * newBottom.y) / oldBottom.y;
+		return new Vector2f(x, y);
 	}
 
 }
