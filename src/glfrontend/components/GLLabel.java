@@ -92,27 +92,12 @@ public class GLLabel extends GLComponent {
 	}
 
 	@Override
-	public void mousePressed(Vector2f p, MouseButton button) {}
-
-	@Override
-	public void mouseReleased(Vector2f p, MouseButton button) {}
-
-	@Override
-	public void mouseWheelScrolled(int amount) {}
-
-	@Override
-	public void keyPressed(int key) {}
-
-	@Override
-	public void keyReleased(int key) {}
-
-	@Override
 	public void resize(Vector2f newSize) {
 		switch (getResizeType()) {
 		case FIT_LEFT:
-			setLocation(new Vector2f(ul.x - (getSize().x - newSize.x), ul.y));
 			break;
 		case FIT_RIGHT:
+			setLocation(new Vector2f(ul.x - (getSize().x - newSize.x), ul.y));
 			break;
 		case FIT_BOTTOM:
 			break;
@@ -130,22 +115,5 @@ public class GLLabel extends GLComponent {
 		}
 	}
 
-	@Override
-	public void mouseMoved(Vector2f p) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseEntered(Vector2f p) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void mouseExited(Vector2f p) {
-		// TODO Auto-generated method stub
-
-	}
 
 }

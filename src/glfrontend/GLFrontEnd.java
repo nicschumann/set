@@ -1,5 +1,8 @@
 package glfrontend;
 
+import static glfrontend.ScreenFrame.MouseButton.LEFT;
+import static glfrontend.ScreenFrame.MouseButton.RIGHT;
+import static glfrontend.ScreenFrame.MouseButton.WHEEL;
 import static org.lwjgl.opengl.GL11.GL_BACK;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
@@ -21,7 +24,7 @@ import static org.lwjgl.opengl.GL11.glOrtho;
 import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.glPushMatrix;
 import static org.lwjgl.opengl.GL11.glViewport;
-import glfrontend.ScreenFrame.MouseButton;
+import glfrontend.ScreenFrame.MouseEvent;
 import glfrontend.components.GLPanel;
 
 import java.awt.Dimension;
@@ -38,10 +41,10 @@ public class GLFrontEnd implements FrontEnd {
 	public static Dimension WINDOW_DIMENSIONS = new Dimension(500, 500);
 	public static Vector2f SCALE = new Vector2f(1, 1);
 	public static String TITLE = "";
-	
-	private boolean leftPressed = false;
-	private boolean rightPressed = false;
+
+	private boolean leftPressed, rightPressed, wheelPressed;
 	private Vector2f prevMouse;
+	private boolean contained;
 
 	private ScreenFrame _frame;
 
@@ -68,12 +71,14 @@ public class GLFrontEnd implements FrontEnd {
 		_frame.setLocation(new Vector2f(0, 0));
 		_frame.setSize(new Vector2f(WINDOW_DIMENSIONS.width, WINDOW_DIMENSIONS.height));
 		prevMouse = new Vector2f(Mouse.getX(), mouseY());
-//		System.out.println(prevMouse.x + ", " + prevMouse.y);
-//		System.out.println(Display.getWidth());
+		leftPressed = false;
+		rightPressed = false;
+		wheelPressed = false;
+		contained = false;
 	}
 
-	public void setMainScreen(ScreenFrame panel) {
-		this._frame = panel;
+	public void setMainScreen(ScreenFrame frame) {
+		this._frame = frame;
 	}
 
 	/**
@@ -111,40 +116,84 @@ public class GLFrontEnd implements FrontEnd {
 	 */
 	@Override
 	public void checkInput() {
-		
+
 		Vector2f mouseLoc = new Vector2f(Mouse.getX(), mouseY());
+		boolean buttonPressed = false;
+		boolean mouseMoved = mouseLoc.x - prevMouse.x != 0 || mouseLoc.y - prevMouse.y != 0;
+		boolean contains = _frame.contains(mouseLoc);
 		
+		if (contained && !contains) {
+			_frame.mouseExited(mouseLoc);
+			contained = contains;
+		} else if (contains && !contained)
+			_frame.mouseEntered(mouseLoc);
+		if (!contains)
+			return;
+
+		// Left button
 		if (Mouse.isButtonDown(0)) {
-				_frame.mousePressed(mouseLoc, MouseButton.LEFT);
+			buttonPressed = true;
+			if (!leftPressed) {
+				_frame.mousePressed(new MouseEvent(mouseLoc, LEFT));
 				leftPressed = true;
-				
-		} else if (leftPressed){
-			_frame.mouseReleased(mouseLoc, MouseButton.LEFT);
+			}
+			if (mouseMoved)
+				_frame.mouseDragged(new MouseEvent(mouseLoc, LEFT));
+		} else if (leftPressed) {
+			_frame.mouseReleased(new MouseEvent(mouseLoc, LEFT));
+			if (contains)
+				_frame.mouseClicked(new MouseEvent(mouseLoc, LEFT));
 			leftPressed = false;
 		}
+
+		// Right button
 		if (Mouse.isButtonDown(1)) {
-			_frame.mousePressed(mouseLoc, MouseButton.RIGHT);
-			rightPressed = true;
+			buttonPressed = true;
+			if (!rightPressed) {
+				_frame.mousePressed(new MouseEvent(mouseLoc, RIGHT));
+				rightPressed = true;
+			}
+			if (mouseMoved)
+				_frame.mouseDragged(new MouseEvent(mouseLoc, RIGHT));
 		} else if (rightPressed) {
-			_frame.mouseReleased(mouseLoc, MouseButton.LEFT);
+			_frame.mouseReleased(new MouseEvent(mouseLoc, RIGHT));
+			if (contains)
+				_frame.mouseClicked(new MouseEvent(mouseLoc, RIGHT));
 			rightPressed = false;
 		}
-//		if (!Mouse.isButtonDown(0) && !Mouse.isButtonDown(1)) {
-			if (mouseLoc.x - prevMouse.x != 0 || mouseLoc.y - prevMouse.x != 0)
-				_frame.mouseMoved(mouseLoc);
-//		}
+
+		// Wheel button
+		if (Mouse.isButtonDown(2)) {
+			buttonPressed = true;
+			if (!wheelPressed) {
+				_frame.mousePressed(new MouseEvent(mouseLoc, WHEEL));
+				wheelPressed = true;
+			}
+			if (mouseMoved)
+				_frame.mouseDragged(new MouseEvent(mouseLoc, WHEEL));
+		} else if (wheelPressed) {
+			_frame.mouseReleased(new MouseEvent(mouseLoc, WHEEL));
+			if (contains)
+				_frame.mouseClicked(new MouseEvent(mouseLoc, WHEEL));
+			wheelPressed = false;
+		}
+
+		if (!buttonPressed && mouseMoved) {
+			_frame.mouseMoved(mouseLoc);
+		}
 		int dWheel = Mouse.getDWheel();
 		if (dWheel != 0)
-			_frame.mouseWheelScrolled(dWheel);
-		
-		while(Keyboard.next()) {
+			_frame.mouseWheelScrolled(mouseLoc, dWheel);
+
+		while (Keyboard.next()) {
 			if (Keyboard.getEventKeyState()) {
 				_frame.keyPressed(Keyboard.getEventKey());
 			} else {
 				_frame.keyReleased(Keyboard.getEventKey());
 			}
 		}
-		
+		prevMouse = mouseLoc;
+		contained = contains;
 	}
 
 	/**
@@ -176,12 +225,12 @@ public class GLFrontEnd implements FrontEnd {
 	 */
 	public void setUpStates() {
 		// Allows for textures(images) to be drawn on shape surfaces.
-//		glEnable(GL_TEXTURE_RECTANGLE_ARB);
+		// glEnable(GL_TEXTURE_RECTANGLE_ARB);
 
 		// Only shows the image on the front of the surface.
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
-//
+		//
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_BLEND);
 	}
@@ -191,9 +240,9 @@ public class GLFrontEnd implements FrontEnd {
 	 * (window_dimensions)
 	 */
 	public void setUpMatrices() {
-        glMatrixMode(GL_PROJECTION);
-        glOrtho(0, Display.getWidth() / SCALE.x, Display.getHeight() / SCALE.y, 0, 1, -1);
-        glMatrixMode(GL_MODELVIEW);
+		glMatrixMode(GL_PROJECTION);
+		glOrtho(0, Display.getWidth() / SCALE.x, Display.getHeight() / SCALE.y, 0, 1, -1);
+		glMatrixMode(GL_MODELVIEW);
 	}
 
 	@Override
@@ -211,7 +260,7 @@ public class GLFrontEnd implements FrontEnd {
 		Display.destroy();
 		System.exit(asCrash ? 1 : 0);
 	}
-	
+
 	public static float mouseY() {
 		return Display.getHeight() - Mouse.getY() - 1;
 	}

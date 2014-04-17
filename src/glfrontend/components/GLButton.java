@@ -1,6 +1,7 @@
 package glfrontend.components;
 
 import static com.workshop.set.view.SetScreen.newRatio;
+import static glfrontend.ScreenFrame.MouseButton.LEFT;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBegin;
@@ -136,8 +137,8 @@ public class GLButton extends GLComponent {
 	}
 
 	@Override
-	public void mousePressed(Vector2f p, MouseButton button) {
-		if (!pressed) {
+	public void mousePressed(MouseEvent e) {
+		if (!pressed && e.button == LEFT) {
 			float[] temp = _brightColor;
 			_brightColor = _color;
 			_color = temp;
@@ -148,8 +149,8 @@ public class GLButton extends GLComponent {
 	}
 
 	@Override
-	public void mouseReleased(Vector2f p, MouseButton button) {
-		if (pressed) {
+	public void mouseReleased(MouseEvent e) {
+		if (pressed && e.button == LEFT) {
 			float[] temp = _brightColor;
 			_brightColor = _color;
 			_color = temp;
@@ -161,21 +162,19 @@ public class GLButton extends GLComponent {
 			}
 		}
 	}
-
+	
 	@Override
-	public void mouseWheelScrolled(int amount) {}
-
-	@Override
-	public void keyPressed(int key) {}
-
-	@Override
-	public void keyReleased(int key) {}
-
-	@Override
-	public void mouseMoved(Vector2f p) {}
-
-	@Override
-	public void mouseEntered(Vector2f p) {}
+	public void mouseDragged(MouseEvent e) {
+		if (!pressed && e.button == LEFT) {
+			float[] temp = _brightColor;
+			_brightColor = _color;
+			_color = temp;
+			pressed = true;
+			textLoc.x += bs;
+			textLoc.y += bs;
+		}
+		
+	}
 
 	@Override
 	public void mouseExited(Vector2f p) {

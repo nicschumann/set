@@ -53,13 +53,19 @@ public class Stage implements ScreenFrame {
 	}
 
 	@Override
-	public void mousePressed(Vector2f p, MouseButton button) {}
+	public void mouseClicked(MouseEvent e) {}
 
 	@Override
-	public void mouseReleased(Vector2f p, MouseButton button) {}
+	public void mousePressed(MouseEvent e) {}
 
 	@Override
-	public void mouseWheelScrolled(int amount) {}
+	public void mouseReleased(MouseEvent e) {}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {}
+
+	@Override
+	public void mouseWheelScrolled(Vector2f p, int amount) {}
 
 	@Override
 	public void keyPressed(int key) {}

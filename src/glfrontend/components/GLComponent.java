@@ -11,7 +11,7 @@ import java.awt.Color;
 
 import org.lwjgl.util.vector.Vector2f;
 
-public abstract class GLComponent implements ScreenFrame {
+public class GLComponent implements ScreenFrame {
 
 	protected float[] _color;
 	protected Vector2f ul;
@@ -32,18 +32,18 @@ public abstract class GLComponent implements ScreenFrame {
 	public void setBackground(Color color) {
 		color.getComponents(_color);
 	}
-	
+
 	public void setLocation(float x, float y) {
 		setLocation(new Vector2f(x, y));
 	}
-	
+
 	@Override
 	public void setLocation(Vector2f p) {
 		Vector2f.sub(lr, ul, lr);
 		ul = p;
 		Vector2f.add(ul, lr, lr);
 	}
-	
+
 	@Override
 	public Vector2f getLocation() {
 		return ul;
@@ -64,7 +64,7 @@ public abstract class GLComponent implements ScreenFrame {
 		Vector2f.sub(lr, ul, result);
 		return result;
 	}
-	
+
 	@Override
 	public boolean contains(Vector2f p) {
 		Vector2f temp1 = new Vector2f();
@@ -101,9 +101,42 @@ public abstract class GLComponent implements ScreenFrame {
 		glVertex2f(lr.x, ul.y);
 		glEnd();
 
-		 draw();
+		draw();
 	}
 
-	public abstract void draw();
+	public void draw() {}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {}
+
+	@Override
+	public void mousePressed(MouseEvent e) {}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {}
+
+	@Override
+	public void mouseWheelScrolled(Vector2f p, int amount) {}
+
+	@Override
+	public void keyPressed(int key) {}
+
+	@Override
+	public void keyReleased(int key) {}
+
+	@Override
+	public void mouseMoved(Vector2f p) {}
+
+	@Override
+	public void mouseEntered(Vector2f p) {}
+
+	@Override
+	public void mouseExited(Vector2f p) {}
+
+	@Override
+	public void resize(Vector2f newSize) {}
 
 }

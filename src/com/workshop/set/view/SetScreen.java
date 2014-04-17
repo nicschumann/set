@@ -59,50 +59,79 @@ public class SetScreen implements ScreenFrame {
 
 	@Override
 	public boolean contains(Vector2f p) {
-		return false;
+		if (p.x <= ul.x)
+			return false;
+		else if (p.x >= lr.x - 1)
+			return false;
+		if (p.y <= ul.y)
+			return false;
+		else if (p.y >= lr.y - 1)
+			return false;
+		return true;
 	}
 
 	@Override
-	public void mousePressed(Vector2f p, MouseButton button) {
+	public void mouseClicked(MouseEvent e) {
+//		System.out.println("MouseClicked: " + e.location + ", Button: " + e.button);
 		for (ScreenFrame frame : frames) {
-			if (frame.contains(p)) {
+			if (frame.contains(e.location)) {
 				Vector2f relativePoint = new Vector2f();
-				Vector2f.sub(p, frame.getLocation(), relativePoint);
-				frame.mousePressed(relativePoint, button);
+				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
+				frame.mouseClicked(new MouseEvent(relativePoint, e.button));
 			}
 		}
 	}
 
 	@Override
-	public void mouseReleased(Vector2f p, MouseButton button) {
+	public void mousePressed(MouseEvent e) {
+//		System.out.println("MousePressed: " + e.location + ", Button: " + e.button);
 		for (ScreenFrame frame : frames) {
-			if (frame.contains(p)) {
+			if (frame.contains(e.location)) {
 				Vector2f relativePoint = new Vector2f();
-				Vector2f.sub(p, frame.getLocation(), relativePoint);
-				frame.mouseReleased(relativePoint, button);
+				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
+				frame.mousePressed(new MouseEvent(relativePoint, e.button));
 			}
 		}
 	}
 
 	@Override
-	public void mouseWheelScrolled(int amount) {}
+	public void mouseReleased(MouseEvent e) {
+//		System.out.println("MouseReleased: " + e.location + ", Button: " + e.button);
+		for (ScreenFrame frame : frames) {
+			if (frame.contains(e.location)) {
+				Vector2f relativePoint = new Vector2f();
+				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
+				frame.mouseReleased(new MouseEvent(relativePoint, e.button));
+			}
+		}
+	}
 
 	@Override
-	public void keyPressed(int key) {}
+	public void mouseDragged(MouseEvent e) {
+//		System.out.println("MouseDragged: " + e.location + ", Button: " + e.button);
+		for (ScreenFrame frame : frames) {
+			if (frame.contains(e.location)) {
+				Vector2f relativePoint = new Vector2f();
+				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
 
-	@Override
-	public void keyReleased(int key) {}
+				if (!contained.get(frame)) {
+					frame.mouseEntered(relativePoint);
+					contained.put(frame, true);
+				}
+				frame.mouseDragged(new MouseEvent(relativePoint, e.button));
+			} else if (contained.get(frame)) {
+				Vector2f relativePoint = new Vector2f();
+				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
 
-	@Override
-	public void render() {
-		glTranslatef(ul.x, ul.y, 0);
-		for (ScreenFrame frame : frames)
-			frame.render();
-		glTranslatef(-ul.x, -ul.y, 0);
+				frame.mouseExited(relativePoint);
+				contained.put(frame, false);
+			}
+		}
 	}
 
 	@Override
 	public void mouseMoved(Vector2f p) {
+//		System.out.println("MouseMoved: " + p);
 		for (ScreenFrame frame : frames) {
 			if (frame.contains(p)) {
 				Vector2f relativePoint = new Vector2f();
@@ -124,10 +153,52 @@ public class SetScreen implements ScreenFrame {
 	}
 
 	@Override
-	public void mouseEntered(Vector2f p) {}
+	public void mouseWheelScrolled(Vector2f p, int amount) {
+//		System.out.println("WheelScrolled: " + amount);
+		for (ScreenFrame frame : frames) {
+			if (frame.contains(p)) {
+				Vector2f relativePoint = new Vector2f();
+				Vector2f.sub(p, frame.getLocation(), relativePoint);
+				frame.mouseWheelScrolled(relativePoint, amount);
+			}
+		}
+	}
 
 	@Override
-	public void mouseExited(Vector2f p) {}
+	public void keyPressed(int key) {}
+
+	@Override
+	public void keyReleased(int key) {}
+
+	@Override
+	public void render() {
+		glTranslatef(ul.x, ul.y, 0);
+		for (ScreenFrame frame : frames)
+			frame.render();
+		glTranslatef(-ul.x, -ul.y, 0);
+	}
+
+	@Override
+	public void mouseEntered(Vector2f p) {
+//		System.out.println("MouseEntered: " + p);
+		for (ScreenFrame frame : frames) {
+			if (frame.contains(p)) {
+				Vector2f relativePoint = new Vector2f();
+				Vector2f.sub(p, frame.getLocation(), relativePoint);
+				frame.mouseEntered(relativePoint);
+			}
+		}
+	}
+
+	@Override
+	public void mouseExited(Vector2f p) {
+//		System.out.println("MouseExited: " + p);
+		for (ScreenFrame frame : frames) {
+			Vector2f relativePoint = new Vector2f();
+			Vector2f.sub(p, frame.getLocation(), relativePoint);
+			frame.mouseExited(relativePoint);
+		}
+	}
 
 	@Override
 	public void setResizeType(ResizeType type) {}
