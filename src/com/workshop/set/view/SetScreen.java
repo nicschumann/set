@@ -153,33 +153,7 @@ public class SetScreen implements ScreenFrame {
 		_stage.render3D();
 	}
 
-//	@Override
-//	public void render() {
-	    //itegrate rendering of ui elements
-		//glTranslatef(ul.x, ul.y, 0);
-//		for (ScreenFrame frame : frames)
-//			frame.render();
-		//glTranslatef(-ul.x, -ul.y, 0);
-        
-//		//draw white ground plane
-//		glMatrixMode(GL_PROJECTION);
-//	    glLoadIdentity();
-//	    GLU.gluPerspective(55, (float)this.getSize().x / (float)this.getSize().y, (float)(0.01), (float)(1000));
-//
-//	    // set up modelview matrix
-//	    glMatrixMode(GL_MODELVIEW);
-//	    glLoadIdentity();
-//	    _camera.multMatrix();
-//
-//	    // set up canvas
-//	    glViewport(0, 0, (int)this.getSize().x, (int)this.getSize().y);
-//	    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//	    
-//	    _stage.render(); 
-//	    glPopMatrix();
-//		
-//	}
-	    
+	@Override 
 	public void render2D() {
 		glTranslatef(ul.x, ul.y, 0);
 		for (ScreenFrame frame : frames)
@@ -220,8 +194,7 @@ public class SetScreen implements ScreenFrame {
 				frame.mouseWheelScrolled(relativePoint, amount);
 			}
 		}
-		_camera.mouseWheel(amount / 12f);
-		// this.render();
+		_camera.mouseWheel(amount / 6f);
 	}
 
 	@Override
