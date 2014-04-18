@@ -39,7 +39,7 @@ public class GLPanel extends GLComponent {
 		// draw sub components
 		glTranslatef(ul.x, ul.y, 0);
 		for (ScreenFrame comp : comps)
-			comp.render();
+			comp.render2D();
 		glTranslatef(-ul.x, -ul.y, 0);
 
 	}
@@ -65,7 +65,7 @@ public class GLPanel extends GLComponent {
 			}
 		}
 	}
-	
+
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		for (ScreenFrame frame : comps) {
@@ -109,7 +109,7 @@ public class GLPanel extends GLComponent {
 			}
 		}
 	}
-	
+
 	@Override
 	public void mouseExited(Vector2f p) {
 		for (ScreenFrame comp : comps) {

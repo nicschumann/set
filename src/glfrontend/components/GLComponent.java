@@ -89,7 +89,7 @@ public class GLComponent implements ScreenFrame {
 	}
 
 	@Override
-	public void render() {
+	public void render2D() {
 		// set color
 		glColor4f(_color[0], _color[1], _color[2], _color[3]);
 
@@ -105,6 +105,9 @@ public class GLComponent implements ScreenFrame {
 	}
 
 	public void draw() {}
+	
+	@Override
+	public void render3D() {}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {}

@@ -1,5 +1,14 @@
 package com.workshop.set.view;
 
+import static org.lwjgl.opengl.GL11.GL_LINES;
+import static org.lwjgl.opengl.GL11.GL_LINE_SMOOTH;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glColor3f;
+import static org.lwjgl.opengl.GL11.glDepthMask;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glLineWidth;
+import static org.lwjgl.opengl.GL11.glVertex3i;
 import glfrontend.ScreenFrame;
 
 import org.lwjgl.util.vector.Vector2f;
@@ -21,6 +30,23 @@ public class Stage implements ScreenFrame {
 	public void init() {
 		ul = new Vector2f(0f, 0f);
 		lr = new Vector2f(50f, 50f);
+	}
+
+	public void drawGrid() {
+		glColor3f(1, 1, 1);
+
+		glLineWidth(1);
+		glDepthMask(false);
+		glEnable(GL_LINE_SMOOTH);
+		glBegin(GL_LINES);
+		for (int i = -10; i <= 10; i++) {
+			glVertex3i(i, 0, -10);
+			glVertex3i(i, 0, 10);
+			glVertex3i(-10, 0, i);
+			glVertex3i(10, 0, i);
+		}
+		glEnd();
+		glDepthMask(true);
 	}
 
 	@Override
@@ -74,7 +100,16 @@ public class Stage implements ScreenFrame {
 	public void keyReleased(int key) {}
 
 	@Override
-	public void render() {}
+	public void render3D() {
+
+		// 1. render the grid
+		this.drawGrid();
+	}
+
+	@Override
+	public void render2D() {
+
+	}
 
 	@Override
 	public void resize(Vector2f newSize) {}

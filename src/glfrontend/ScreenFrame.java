@@ -155,9 +155,14 @@ public interface ScreenFrame {
 	public void mouseExited(Vector2f p);
 
 	/**
-	 * Renders the frame
+	 * Renders the 3D objects
 	 */
-	public void render();
+	public void render3D();
+	
+	/**
+	 * Renders the 2D objects
+	 */
+	public void render2D();
 
 	/**
 	 * Handles resizing the frame and objects contained within (if resize enabled)

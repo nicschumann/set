@@ -63,3 +63,7 @@ Thumbs.db
 set.iml
 .gitignore
 
+# C
+**/*.o
+**/*.s
+/bin
