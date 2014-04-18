@@ -1,24 +1,24 @@
 package com.workshop.set.view;
 
-import static org.lwjgl.opengl.GL11.glTranslatef;
+//import static org.lwjgl.opengl.GL11.glTranslatef;
 import glfrontend.ScreenFrame;
 import glfrontend.components.GLCamera;
-import glfrontend.components.GLComponent;
-import glfrontend.ScreenFrame;
+//import glfrontend.components.GLComponent;
+//import glfrontend.ScreenFrame;
 
-import org.lwjgl.util.vector.Matrix4f;
+//import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
-import static org.lwjgl.opengl.GL11.*;
+//import static org.lwjgl.opengl.GL11.*;
 
-import java.nio.FloatBuffer;
+//import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.lwjgl.util.vector.Vector2f;
-import org.lwjgl.util.glu.GLU;
-import org.lwjgl.BufferUtils;
+//import org.lwjgl.util.vector.Vector2f;
+//import org.lwjgl.util.glu.GLU;
+//import org.lwjgl.BufferUtils;
 
 public class SetScreen implements ScreenFrame {
 
@@ -119,27 +119,27 @@ public class SetScreen implements ScreenFrame {
 	public void render() {
 		
 	    //itegrate rendering of ui elements
-		glTranslatef(ul.x, ul.y, 0);
+		//glTranslatef(ul.x, ul.y, 0);
 		for (ScreenFrame frame : frames)
 			frame.render();
-		glTranslatef(-ul.x, -ul.y, 0);
+		//glTranslatef(-ul.x, -ul.y, 0);
         
-		//draw white ground plane
-		glMatrixMode(GL_PROJECTION);
-	    glLoadIdentity();
-	    GLU.gluPerspective(55, (float)this.getSize().x / (float)this.getSize().y, (float)(0.01), (float)(1000));
-
-	    // set up modelview matrix
-	    glMatrixMode(GL_MODELVIEW);
-	    glLoadIdentity();
-	    _camera.multMatrix();
-
-	    // set up canvas
-	    glViewport(0, 0, (int)this.getSize().x, (int)this.getSize().y);
-	    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	    
-	    _stage.render(); 
-	    glPopMatrix();
+//		//draw white ground plane
+//		glMatrixMode(GL_PROJECTION);
+//	    glLoadIdentity();
+//	    GLU.gluPerspective(55, (float)this.getSize().x / (float)this.getSize().y, (float)(0.01), (float)(1000));
+//
+//	    // set up modelview matrix
+//	    glMatrixMode(GL_MODELVIEW);
+//	    glLoadIdentity();
+//	    _camera.multMatrix();
+//
+//	    // set up canvas
+//	    glViewport(0, 0, (int)this.getSize().x, (int)this.getSize().y);
+//	    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//	    
+//	    _stage.render(); 
+//	    glPopMatrix();
 	    
 	}
 

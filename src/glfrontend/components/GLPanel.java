@@ -37,10 +37,10 @@ public class GLPanel extends GLComponent {
 	public void draw() {
 
 		// draw sub components
-//		glTranslatef(ul.x, ul.y, 0);
-//		for (ScreenFrame comp : comps)
-//			comp.render();
-//		glTranslatef(-ul.x, -ul.y, 0);		
+		glTranslatef(ul.x, ul.y, 0);
+		for (ScreenFrame comp : comps)
+			comp.render();
+		glTranslatef(-ul.x, -ul.y, 0);		
 		
 	}
 
