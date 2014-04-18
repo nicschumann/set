@@ -101,10 +101,8 @@ public class GLFrontEnd implements FrontEnd {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glLoadIdentity();
 		_frame.render3D();
-		// glPushMatrix();
-		// glBindTexture(GL_TEXTURE_2D, 0);
-		// _frame.render2D();
-		// glPopMatrix();
+
+		// load 2D ortho matrix, render 2D, then load perspective matrix 
 		glMatrixMode(GL_PROJECTION);
 		glLoadMatrix(orthographicProjectionMatrix);
 		glMatrixMode(GL_MODELVIEW);
