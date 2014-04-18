@@ -71,7 +71,7 @@ public class GLComponent implements ScreenFrame {
 		Vector2f temp2 = new Vector2f();
 		Vector2f.sub(lr, p, temp1);
 		Vector2f.sub(p, ul, temp2);
-		return temp1.x >= 0 && temp2.x >= 0 && temp1.y >= 0 && temp2.y >= 0;
+		return temp1.x > 0 && temp2.x > 0 && temp1.y > 0 && temp2.y > 0;
 	}
 
 	@Override
