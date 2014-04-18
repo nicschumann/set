@@ -39,33 +39,54 @@ public class GLPanel extends GLComponent {
 		// draw sub components
 		glTranslatef(ul.x, ul.y, 0);
 		for (ScreenFrame comp : comps)
-			comp.render();
-		glTranslatef(-ul.x, -ul.y, 0);		
-		
+			comp.render2D();
+		glTranslatef(-ul.x, -ul.y, 0);
+
 	}
 
 	@Override
-	public void mousePressed(Vector2f p, MouseButton button) {
+	public void mousePressed(MouseEvent e) {
 		for (ScreenFrame frame : comps) {
-			if (frame.contains(p)) {
+			if (frame.contains(e.location)) {
 				Vector2f relativePoint = new Vector2f();
-				Vector2f.sub(p, frame.getLocation(), relativePoint);
-				frame.mousePressed(relativePoint, button);
+				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
+				frame.mousePressed(new MouseEvent(relativePoint, e.button));
 			}
 		}
 	}
 
 	@Override
-	public void mouseReleased(Vector2f p, MouseButton button) {}
+	public void mouseReleased(MouseEvent e) {
+		for (ScreenFrame frame : comps) {
+			if (frame.contains(e.location)) {
+				Vector2f relativePoint = new Vector2f();
+				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
+				frame.mouseReleased(new MouseEvent(relativePoint, e.button));
+			}
+		}
+	}
 
 	@Override
-	public void mouseWheelScrolled(int amount) {}
+	public void mouseDragged(MouseEvent e) {
+		for (ScreenFrame frame : comps) {
+			if (frame.contains(e.location)) {
+				Vector2f relativePoint = new Vector2f();
+				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
 
-	@Override
-	public void keyPressed(int key) {}
+				if (!contained.get(frame)) {
+					frame.mouseEntered(relativePoint);
+					contained.put(frame, true);
+				}
+				frame.mouseDragged(new MouseEvent(relativePoint, e.button));
+			} else if (contained.get(frame)) {
+				Vector2f relativePoint = new Vector2f();
+				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
 
-	@Override
-	public void keyReleased(int key) {}
+				frame.mouseExited(relativePoint);
+				contained.put(frame, false);
+			}
+		}
+	}
 
 	@Override
 	public void mouseMoved(Vector2f p) {
@@ -90,10 +111,11 @@ public class GLPanel extends GLComponent {
 	}
 
 	@Override
-	public void mouseEntered(Vector2f p) {}
-
-	@Override
-	public void mouseExited(Vector2f p) {}
+	public void mouseExited(Vector2f p) {
+		for (ScreenFrame comp : comps) {
+			comp.mouseExited(p);
+		}
+	}
 
 	@Override
 	public void resize(Vector2f newSize) {

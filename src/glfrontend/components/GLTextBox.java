@@ -102,31 +102,4 @@ public class GLTextBox extends GLComponent {
 		}
 	}
 
-	@Override
-	public void mousePressed(Vector2f p, MouseButton button) {}
-
-	@Override
-	public void mouseReleased(Vector2f p, MouseButton button) {}
-
-	@Override
-	public void mouseWheelScrolled(int amount) {}
-
-	@Override
-	public void keyPressed(int key) {}
-
-	@Override
-	public void keyReleased(int key) {}
-
-	@Override
-	public void mouseMoved(Vector2f p) {}
-
-	@Override
-	public void mouseEntered(Vector2f p) {}
-
-	@Override
-	public void mouseExited(Vector2f p) {}
-
-	@Override
-	public void resize(Vector2f newSize) {}
-
 }

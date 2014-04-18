@@ -8,9 +8,9 @@ import glfrontend.components.GLCamera;
 
 //import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
-//import static org.lwjgl.opengl.GL11.*;
-
+import static org.lwjgl.opengl.GL11.*;
 //import java.nio.FloatBuffer;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,8 +23,8 @@ import java.util.Map;
 public class SetScreen implements ScreenFrame {
 
 	private Vector2f ul, lr;
-	private Stage _stage; 
-	private GLCamera _camera; 	
+	private Stage _stage;
+	private GLCamera _camera;
 
 	private List<ScreenFrame> frames;
 	private Map<ScreenFrame, Boolean> contained;
@@ -39,9 +39,9 @@ public class SetScreen implements ScreenFrame {
 		ul = new Vector2f(0f, 0f);
 		lr = new Vector2f(50f, 50f);
 	}
-	
-	public void setStage(Stage s){
-		_stage = s; 
+
+	public void setStage(Stage s) {
+		_stage = s;
 		frames = new ArrayList<>();
 		contained = new HashMap<>();
 	}
@@ -77,51 +77,88 @@ public class SetScreen implements ScreenFrame {
 
 	@Override
 	public boolean contains(Vector2f p) {
-		return false;
+		if (p.x <= ul.x)
+			return false;
+		else if (p.x >= lr.x - 1)
+			return false;
+		if (p.y <= ul.y)
+			return false;
+		else if (p.y >= lr.y - 1)
+			return false;
+		return true;
 	}
 
 	@Override
-	public void mousePressed(Vector2f p, MouseButton button) {
+	public void mouseClicked(MouseEvent e) {
+		// System.out.println("MouseClicked: " + e.location + ", Button: " + e.button);
 		for (ScreenFrame frame : frames) {
-			if (frame.contains(p)) {
+			if (frame.contains(e.location)) {
 				Vector2f relativePoint = new Vector2f();
-				Vector2f.sub(p, frame.getLocation(), relativePoint);
-				frame.mousePressed(relativePoint, button);
+				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
+				frame.mouseClicked(new MouseEvent(relativePoint, e.button));
 			}
 		}
 	}
 
 	@Override
-	public void mouseReleased(Vector2f p, MouseButton button) {
+	public void mousePressed(MouseEvent e) {
+		// System.out.println("MousePressed: " + e.location + ", Button: " + e.button);
 		for (ScreenFrame frame : frames) {
-			if (frame.contains(p)) {
+			if (frame.contains(e.location)) {
 				Vector2f relativePoint = new Vector2f();
-				Vector2f.sub(p, frame.getLocation(), relativePoint);
-				frame.mouseReleased(relativePoint, button);
+				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
+				frame.mousePressed(new MouseEvent(relativePoint, e.button));
 			}
 		}
 	}
 
 	@Override
-	public void mouseWheelScrolled(int amount) {
-		
-	    _camera.mouseWheel(amount);
-	    this.render();
+	public void mouseReleased(MouseEvent e) {
+		// System.out.println("MouseReleased: " + e.location + ", Button: " + e.button);
+		for (ScreenFrame frame : frames) {
+			if (frame.contains(e.location)) {
+				Vector2f relativePoint = new Vector2f();
+				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
+				frame.mouseReleased(new MouseEvent(relativePoint, e.button));
+			}
+		}
 	}
 
 	@Override
-	public void keyPressed(int key) {}
+	public void mouseDragged(MouseEvent e) {
+		// System.out.println("MouseDragged: " + e.location + ", Button: " + e.button);
+		for (ScreenFrame frame : frames) {
+			if (frame.contains(e.location)) {
+				Vector2f relativePoint = new Vector2f();
+				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
+
+				if (!contained.get(frame)) {
+					frame.mouseEntered(relativePoint);
+					contained.put(frame, true);
+				}
+				frame.mouseDragged(new MouseEvent(relativePoint, e.button));
+			} else if (contained.get(frame)) {
+				Vector2f relativePoint = new Vector2f();
+				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
+
+				frame.mouseExited(relativePoint);
+				contained.put(frame, false);
+			}
+		}
+	}
 
 	@Override
-	public void keyReleased(int key) {}
+	public void render3D() {
+		_camera.multMatrix();
+		_stage.render3D();
+	}
 
-	@Override
-	public void render() {
-		
+//	@Override
+//	public void render() {
 	    //itegrate rendering of ui elements
 		//glTranslatef(ul.x, ul.y, 0);
-		for (ScreenFrame frame : frames)
-			frame.render();
+//		for (ScreenFrame frame : frames)
+//			frame.render();
 		//glTranslatef(-ul.x, -ul.y, 0);
         
 //		//draw white ground plane
@@ -140,11 +177,19 @@ public class SetScreen implements ScreenFrame {
 //	    
 //	    _stage.render(); 
 //	    glPopMatrix();
+//		
+//	}
 	    
+	public void render2D() {
+		glTranslatef(ul.x, ul.y, 0);
+		for (ScreenFrame frame : frames)
+			frame.render2D();
+		glTranslatef(-ul.x, -ul.y, 0);
 	}
 
 	@Override
 	public void mouseMoved(Vector2f p) {
+		// System.out.println("MouseMoved: " + p);
 		for (ScreenFrame frame : frames) {
 			if (frame.contains(p)) {
 				Vector2f relativePoint = new Vector2f();
@@ -166,10 +211,46 @@ public class SetScreen implements ScreenFrame {
 	}
 
 	@Override
-	public void mouseEntered(Vector2f p) {}
+	public void mouseWheelScrolled(Vector2f p, int amount) {
+		// System.out.println("WheelScrolled: " + amount);
+		for (ScreenFrame frame : frames) {
+			if (frame.contains(p)) {
+				Vector2f relativePoint = new Vector2f();
+				Vector2f.sub(p, frame.getLocation(), relativePoint);
+				frame.mouseWheelScrolled(relativePoint, amount);
+			}
+		}
+		_camera.mouseWheel(amount / 12f);
+		// this.render();
+	}
 
 	@Override
-	public void mouseExited(Vector2f p) {}
+	public void keyPressed(int key) {}
+
+	@Override
+	public void keyReleased(int key) {}
+
+	@Override
+	public void mouseEntered(Vector2f p) {
+		// System.out.println("MouseEntered: " + p);
+		for (ScreenFrame frame : frames) {
+			if (frame.contains(p)) {
+				Vector2f relativePoint = new Vector2f();
+				Vector2f.sub(p, frame.getLocation(), relativePoint);
+				frame.mouseEntered(relativePoint);
+			}
+		}
+	}
+
+	@Override
+	public void mouseExited(Vector2f p) {
+		// System.out.println("MouseExited: " + p);
+		for (ScreenFrame frame : frames) {
+			Vector2f relativePoint = new Vector2f();
+			Vector2f.sub(p, frame.getLocation(), relativePoint);
+			frame.mouseExited(relativePoint);
+		}
+	}
 
 	@Override
 	public void setResizeType(ResizeType type) {}

@@ -1,9 +1,17 @@
 package com.workshop.set.view;
 
-import glfrontend.components.GLComponent;
+import static org.lwjgl.opengl.GL11.GL_LINES;
+import static org.lwjgl.opengl.GL11.GL_LINE_SMOOTH;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glColor3f;
+import static org.lwjgl.opengl.GL11.glDepthMask;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glLineWidth;
+import static org.lwjgl.opengl.GL11.glVertex3i;
 import glfrontend.ScreenFrame;
+
 import org.lwjgl.util.vector.Vector2f;
-import static org.lwjgl.opengl.GL11.*;
 
 public class Stage implements ScreenFrame {
 
@@ -26,28 +34,22 @@ public class Stage implements ScreenFrame {
 
 	public void drawGrid() {
 		glColor3f(1, 1, 1);
-	    
+
 		glLineWidth(1);
-	    glDepthMask(false);
-	    glEnable(GL_LINE_SMOOTH);
-	    glEnable(GL_BLEND);
-	    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	    glBegin(GL_LINES);
-	    for (int i = -10; i <= 10; i++)
-	    {
-	        glVertex3i(i, 0, -10);
-	        glVertex3i(i, 0, 10);
-	        glVertex3i(-10, 0, i);
-	        glVertex3i(10, 0, i);
-	    }
-	    glEnd();
-	    glDisable(GL_BLEND);
-	    glDisable(GL_LINE_SMOOTH);
-	    glDepthMask(true);	
+		glDepthMask(false);
+		glEnable(GL_LINE_SMOOTH);
+		glBegin(GL_LINES);
+		for (int i = -10; i <= 10; i++) {
+			glVertex3i(i, 0, -10);
+			glVertex3i(i, 0, 10);
+			glVertex3i(-10, 0, i);
+			glVertex3i(10, 0, i);
+		}
+		glEnd();
+		glDepthMask(true);
 	}
 
 	@Override
-
 	public void setLocation(Vector2f p) {
 		Vector2f.sub(lr, ul, lr);
 		ul = p;
@@ -77,13 +79,19 @@ public class Stage implements ScreenFrame {
 	}
 
 	@Override
-	public void mousePressed(Vector2f p, MouseButton button) {}
+	public void mouseClicked(MouseEvent e) {}
 
 	@Override
-	public void mouseReleased(Vector2f p, MouseButton button) {}
+	public void mousePressed(MouseEvent e) {}
 
 	@Override
-	public void mouseWheelScrolled(int amount) {}
+	public void mouseReleased(MouseEvent e) {}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {}
+
+	@Override
+	public void mouseWheelScrolled(Vector2f p, int amount) {}
 
 	@Override
 	public void keyPressed(int key) {}
@@ -92,10 +100,15 @@ public class Stage implements ScreenFrame {
 	public void keyReleased(int key) {}
 
 	@Override
-	public void render() {
-		
-		//1. render the grid
-		this.drawGrid(); 
+	public void render3D() {
+
+		// 1. render the grid
+		this.drawGrid();
+	}
+
+	@Override
+	public void render2D() {
+
 	}
 
 	@Override

@@ -63,10 +63,7 @@ Thumbs.db
 set.iml
 .gitignore
 
-<<<<<<< HEAD
 # C
 **/*.o
 **/*.s
 /bin
-=======
->>>>>>> e983eacf37b6a0c5dd0496513de7a75460c2729f
