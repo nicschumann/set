@@ -159,7 +159,9 @@ public class SetScreen implements ScreenFrame {
 		_camera.multMatrix();
 		_stage.render3D();
 	}
-	    
+
+
+	@Override 
 	public void render2D() {
 		glTranslatef(ul.x, ul.y, 0);
 		for (ScreenFrame frame : frames)
@@ -200,7 +202,8 @@ public class SetScreen implements ScreenFrame {
 				frame.mouseWheelScrolled(relativePoint, amount);
 			}
 		}
-		_camera.mouseWheel(amount / 12f);
+		_camera.mouseWheel(amount / 6f);
+
 	}
 
 	@Override
