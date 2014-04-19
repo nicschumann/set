@@ -1,23 +1,19 @@
 package com.workshop.set.view;
 
 //import static org.lwjgl.opengl.GL11.glTranslatef;
-import glfrontend.ScreenFrame;
-import glfrontend.components.GLCamera;
-import glfrontend.components.GeometricElement;
-//import glfrontend.components.GLComponent;
-//import glfrontend.ScreenFrame;
-
-//import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector2f;
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.glTranslatef;
 //import java.nio.FloatBuffer;
+import glfrontend.ScreenFrame;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
+//import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector2f;
+//import glfrontend.components.GLComponent;
+//import glfrontend.ScreenFrame;
 
 //import org.lwjgl.util.vector.Vector2f;
 //import org.lwjgl.util.glu.GLU;
@@ -26,31 +22,29 @@ import java.util.Set;
 public class SetScreen implements ScreenFrame {
 
 	private Vector2f ul, lr;
-	private Stage _stage;
-	private GLCamera _camera;
+	private Viewport _viewport;
 
 	private List<ScreenFrame> frames;
 	private Map<ScreenFrame, Boolean> contained;
-	
-	private Set<GeometricElement> _currentElements;
+
+	// private Set<GeometricElement> _currentElements;
 
 	public SetScreen(float w, float h) {
 		init();
 		setSize(new Vector2f(w, h));
-		_camera = new GLCamera();
-		_camera.setOrthographicView();  
+		_viewport = new Viewport(w, h);
 	}
 
 	private void init() {
-		_currentElements = new HashSet<GeometricElement>();
+		// _currentElements = new HashSet<GeometricElement>();
 		ul = new Vector2f(0f, 0f);
 		lr = new Vector2f(50f, 50f);
+		frames = new ArrayList<>();
+		contained = new HashMap<>();
 	}
 
 	public void setStage(Stage s) {
-		_stage = s;
-		frames = new ArrayList<>();
-		contained = new HashMap<>();
+		_viewport.setStage(s);
 	}
 
 	public void add(ScreenFrame frame) {
@@ -98,44 +92,58 @@ public class SetScreen implements ScreenFrame {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// System.out.println("MouseClicked: " + e.location + ", Button: " + e.button);
+		boolean onViewport = true;
 		for (ScreenFrame frame : frames) {
 			if (frame.contains(e.location)) {
+				onViewport = false;
 				Vector2f relativePoint = new Vector2f();
 				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
 				frame.mouseClicked(new MouseEvent(relativePoint, e.button));
 			}
 		}
+		if (onViewport)
+			_viewport.mouseClicked(e);
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// System.out.println("MousePressed: " + e.location + ", Button: " + e.button);
+		boolean onViewport = true;
 		for (ScreenFrame frame : frames) {
 			if (frame.contains(e.location)) {
+				onViewport = false;
 				Vector2f relativePoint = new Vector2f();
 				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
 				frame.mousePressed(new MouseEvent(relativePoint, e.button));
 			}
 		}
+		if (onViewport)
+			_viewport.mousePressed(e);
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		// System.out.println("MouseReleased: " + e.location + ", Button: " + e.button);
+		boolean onViewport = true;
 		for (ScreenFrame frame : frames) {
 			if (frame.contains(e.location)) {
+				onViewport = false;
 				Vector2f relativePoint = new Vector2f();
 				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
 				frame.mouseReleased(new MouseEvent(relativePoint, e.button));
 			}
 		}
+		if (onViewport)
+			_viewport.mouseReleased(e);
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		// System.out.println("MouseDragged: " + e.location + ", Button: " + e.button);
+		boolean onViewport = true;
 		for (ScreenFrame frame : frames) {
 			if (frame.contains(e.location)) {
+				onViewport = false;
 				Vector2f relativePoint = new Vector2f();
 				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
 
@@ -152,16 +160,16 @@ public class SetScreen implements ScreenFrame {
 				contained.put(frame, false);
 			}
 		}
+		if (onViewport)
+			_viewport.mouseDragged(e);
 	}
 
 	@Override
 	public void render3D() {
-		_camera.multMatrix();
-		_stage.render3D();
+		_viewport.render3D();
 	}
 
-
-	@Override 
+	@Override
 	public void render2D() {
 		glTranslatef(ul.x, ul.y, 0);
 		for (ScreenFrame frame : frames)
@@ -172,8 +180,10 @@ public class SetScreen implements ScreenFrame {
 	@Override
 	public void mouseMoved(Vector2f p) {
 		// System.out.println("MouseMoved: " + p);
+		boolean onViewport = true;
 		for (ScreenFrame frame : frames) {
 			if (frame.contains(p)) {
+				onViewport = false;
 				Vector2f relativePoint = new Vector2f();
 				Vector2f.sub(p, frame.getLocation(), relativePoint);
 
@@ -190,49 +200,52 @@ public class SetScreen implements ScreenFrame {
 				contained.put(frame, false);
 			}
 		}
+		if (onViewport)
+			_viewport.mouseMoved(p);
 	}
 
 	@Override
 	public void mouseWheelScrolled(Vector2f p, int amount) {
 		// System.out.println("WheelScrolled: " + amount);
+		boolean onViewport = true;
 		for (ScreenFrame frame : frames) {
 			if (frame.contains(p)) {
+				onViewport = false;
 				Vector2f relativePoint = new Vector2f();
 				Vector2f.sub(p, frame.getLocation(), relativePoint);
 				frame.mouseWheelScrolled(relativePoint, amount);
 			}
 		}
-		_camera.mouseWheel(amount / 6f);
+		if (onViewport)
+			_viewport.mouseWheelScrolled(p, amount);
 
 	}
 
 	@Override
 	public void keyPressed(int key) {
-		
-		if(key==57){	//toggle on space bar
-			String currMode = _camera.getMode(); 
-			if(currMode.equalsIgnoreCase("orthographic")){
-				_camera.setPerspView(); 
-			}
-			else if(currMode.equalsIgnoreCase("perspective")){
-				_camera.setOrthographicView();
-			}
-		}
+		_viewport.keyPressed(key);
+
 	}
 
 	@Override
-	public void keyReleased(int key) {}
+	public void keyReleased(int key) {
+		_viewport.keyReleased(key);
+	}
 
 	@Override
 	public void mouseEntered(Vector2f p) {
 		// System.out.println("MouseEntered: " + p);
+		boolean onViewport = true;
 		for (ScreenFrame frame : frames) {
 			if (frame.contains(p)) {
+				onViewport = false;
 				Vector2f relativePoint = new Vector2f();
 				Vector2f.sub(p, frame.getLocation(), relativePoint);
 				frame.mouseEntered(relativePoint);
 			}
 		}
+		if (onViewport)
+			_viewport.mouseEntered(p);
 	}
 
 	@Override
@@ -243,6 +256,7 @@ public class SetScreen implements ScreenFrame {
 			Vector2f.sub(p, frame.getLocation(), relativePoint);
 			frame.mouseExited(relativePoint);
 		}
+		_viewport.mouseExited(p);
 	}
 
 	@Override
@@ -263,7 +277,6 @@ public class SetScreen implements ScreenFrame {
 
 			frame.resize(newRatio(oldSize, size, newSize));
 		}
-
 		Vector2f.add(ul, newSize, lr);
 	}
 
