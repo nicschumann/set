@@ -3,6 +3,7 @@ package com.workshop.set.view;
 //import static org.lwjgl.opengl.GL11.glTranslatef;
 import glfrontend.ScreenFrame;
 import glfrontend.components.GLCamera;
+import glfrontend.components.GeometricElement;
 //import glfrontend.components.GLComponent;
 //import glfrontend.ScreenFrame;
 
@@ -13,8 +14,10 @@ import static org.lwjgl.opengl.GL11.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 //import org.lwjgl.util.vector.Vector2f;
 //import org.lwjgl.util.glu.GLU;
@@ -28,14 +31,18 @@ public class SetScreen implements ScreenFrame {
 
 	private List<ScreenFrame> frames;
 	private Map<ScreenFrame, Boolean> contained;
+	
+	private Set<GeometricElement> _currentElements;
 
 	public SetScreen(float w, float h) {
 		init();
 		setSize(new Vector2f(w, h));
 		_camera = new GLCamera();
+		_camera.setOrthographicView();  
 	}
 
 	private void init() {
+		_currentElements = new HashSet<GeometricElement>();
 		ul = new Vector2f(0f, 0f);
 		lr = new Vector2f(50f, 50f);
 	}
@@ -152,33 +159,6 @@ public class SetScreen implements ScreenFrame {
 		_camera.multMatrix();
 		_stage.render3D();
 	}
-
-//	@Override
-//	public void render() {
-	    //itegrate rendering of ui elements
-		//glTranslatef(ul.x, ul.y, 0);
-//		for (ScreenFrame frame : frames)
-//			frame.render();
-		//glTranslatef(-ul.x, -ul.y, 0);
-        
-//		//draw white ground plane
-//		glMatrixMode(GL_PROJECTION);
-//	    glLoadIdentity();
-//	    GLU.gluPerspective(55, (float)this.getSize().x / (float)this.getSize().y, (float)(0.01), (float)(1000));
-//
-//	    // set up modelview matrix
-//	    glMatrixMode(GL_MODELVIEW);
-//	    glLoadIdentity();
-//	    _camera.multMatrix();
-//
-//	    // set up canvas
-//	    glViewport(0, 0, (int)this.getSize().x, (int)this.getSize().y);
-//	    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//	    
-//	    _stage.render(); 
-//	    glPopMatrix();
-//		
-//	}
 	    
 	public void render2D() {
 		glTranslatef(ul.x, ul.y, 0);
@@ -221,11 +201,21 @@ public class SetScreen implements ScreenFrame {
 			}
 		}
 		_camera.mouseWheel(amount / 12f);
-		// this.render();
 	}
 
 	@Override
-	public void keyPressed(int key) {}
+	public void keyPressed(int key) {
+		
+		if(key==57){	//toggle on space bar
+			String currMode = _camera.getMode(); 
+			if(currMode.equalsIgnoreCase("orthographic")){
+				_camera.setPerspView(); 
+			}
+			else if(currMode.equalsIgnoreCase("perspective")){
+				_camera.setOrthographicView();
+			}
+		}
+	}
 
 	@Override
 	public void keyReleased(int key) {}

@@ -11,6 +11,13 @@ public class Vector4 {
 		w = W; 
 	}
 	
+	public void updateVals(float newX, float newY, float newZ, float newW){
+		x = newX; 
+		y = newY; 
+		z = newZ; 
+		w = newW;
+	}
+	
 	/**
 	 * Returns the normalized form of this vector
 	 */

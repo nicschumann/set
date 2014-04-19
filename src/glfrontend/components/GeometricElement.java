@@ -8,5 +8,5 @@ import java.util.Set;
 public interface GeometricElement {
 	
 	public void render();
-	//should be able to set and get elements 
+	//get and set elements
 }

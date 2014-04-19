@@ -23,7 +23,7 @@ public class Point implements GeometricElement{
 	
 	@Override
 	public void render() {
-		//for now, draw a little square around the point
+		//render a circle/sphere
 	}
 
 }

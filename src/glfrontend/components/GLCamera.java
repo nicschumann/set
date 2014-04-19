@@ -7,13 +7,9 @@ import org.lwjgl.util.glu.GLU;
 public class GLCamera {
 
 	private Vector4 _eye, _look, _up;
+	private String _mode; 
 	
-	public GLCamera(){
-		_eye = new Vector4(4, 4, 8, 1);
-	    _look = new Vector4(-_eye.x, -_eye.y, -_eye.z, 0).getNormalized();
-	    System.out.println("This is the value of look at start: " + _look.x + " " + _look.y + " " + _look.z);
-	    _up = new Vector4(0, 1, 0, 0);
-	}
+	public GLCamera(){}
 	
     public Vector4 getEye(){ 
     	return _eye;
@@ -50,6 +46,30 @@ public class GLCamera {
 	    _look = look;
 	    _up = up;
 	}
+	
+	/**
+	 * Sets view for 2d rendering
+	 */
+	public void setOrthographicView(){
+		_eye = new Vector4(0, 10, 0, 1);
+	    _look = new Vector4(-_eye.x, -_eye.y, -_eye.z, 0).getNormalized();
+	    _up = new Vector4(1, 0, 0, 0);
+	    _mode = "orthographic";
+	}
+	
+	/**
+	 * Sets view for 3d rendering
+	 */
+	public void setPerspView(){
+		_eye = new Vector4(4, 4, 8, 1);
+	    _look = new Vector4(-_eye.x, -_eye.y, -_eye.z, 0).getNormalized();
+	    _up = new Vector4(0, 1, 0, 0);
+	    _mode = "perspective";
+	}
+	
+	public String getMode(){
+		return _mode; 
+	}
 
 	//public void mouseMove(Vector2 delta, MouseButtons buttons, double deltaX, double deltaY)
 //	public void mouseMove(MouseButtons buttons, double deltaX, double deltaY)
@@ -60,11 +80,11 @@ public class GLCamera {
 //		//mouse events to figure out which button pressed 
 //		
 //		
-//	    if (buttons == Qt::RightButton)
+//	    if (RightButton)
 //	    {
 //	        lookVectorRotate(delta);
 //	    }
-//	    else if (buttons == Qt::MidButton)
+//	    else if (MidButton)
 //	    {
 //	        filmPlaneTranslate(delta);
 //	    }
