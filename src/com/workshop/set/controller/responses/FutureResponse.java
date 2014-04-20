@@ -3,9 +3,7 @@ package com.workshop.set.controller.responses;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-/**
- * Created by nicschumann on 4/20/14.
- */
+
 public class FutureResponse<T> implements Response<T> {
     public FutureResponse( Future<T> future ) { value = future; }
 

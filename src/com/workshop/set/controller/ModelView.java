@@ -1,12 +1,11 @@
 package com.workshop.set.controller;
 
 import com.workshop.set.controller.calls.Call;
+import com.workshop.set.controller.responses.FutureResponse;
 import com.workshop.set.controller.responses.Response;
 import com.workshop.set.model.Model;
-import com.workshop.set.model.VectorSpace;
 
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.FutureTask;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
@@ -27,11 +26,19 @@ public class ModelView implements Controller {
     private ExecutorService _dispatchpool;
 
 
-    public Response<VectorSpace.Point> submit( Call<VectorSpace.Point> call ) {
+    public <T> Response<T> submit( Call<T> call ) {
 
-        FutureTask<VectorSpace.Point> f = new FutureTask<>( call );
+        call.bind( _model );
+
+        FutureResponse<T> r = new FutureResponse<>( _jobpool.submit( call ) );
+
+        _dispatchpool.submit( r );
+
+        return r;
 
     }
+
+
 
 
 }
