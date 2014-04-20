@@ -44,7 +44,7 @@ public class TNameGenerator
 
         /**
          * Two symbols are equal if and only if they were produced by the same
-         * symbol factory, and they are indexed by the same de Bruijn number.
+         * symbol factory, and they are indexed by the same number.
          *
          * @param o an object to check this Symbol against
          * @return a boolean indicating whether this and o are equal.
@@ -60,7 +60,7 @@ public class TNameGenerator
         }
         @Override
         public String toString() {
-            return ( readable.isEmpty() ) ? "?" + Long.toString( index ) : readable + Long.toString( index );
+            return ( readable.isEmpty() ) ? "?" + Long.toString( index ) : readable; // + "[" + Long.toString( index ) + "]";
         }
 
         @Override

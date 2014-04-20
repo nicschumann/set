@@ -8,6 +8,7 @@ import com.workshop.set.model.lang.exceptions.PatternMatchException;
 import com.workshop.set.model.lang.exceptions.ProofFailureException;
 import com.workshop.set.model.lang.exceptions.TypecheckingException;
 import com.workshop.set.model.lang.judgements.HasValue;
+import com.workshop.set.model.lang.ops.Judgements;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,7 +16,7 @@ import java.util.Set;
 /**
  * Created by nicschumann on 3/29/14.
  */
-public class TJudgement implements Term,Constraint {
+public class TJudgement implements Term {
     public TJudgement(Term T1, Term T2) {
         left = T1; right = T2;
     }
@@ -83,4 +84,5 @@ public class TJudgement implements Term,Constraint {
         return 37 * (37 * ( (a ^ (a >>> 31))) + (b ^ (b >>> 31)));
 
     }
+
 }
