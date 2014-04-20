@@ -38,7 +38,7 @@ public class Point implements GeometricElement{
 	public void render() {
 		//render a sphere at set location 
 		glTranslatef(_y, 0, _x);
-		_shape.draw(.05f, 10, 10);
+		_shape.draw(.08f, 10, 10);
 		glTranslatef(-_y, 0, -_x);
 	}
 

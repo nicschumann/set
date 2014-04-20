@@ -2,6 +2,7 @@ package com.workshop.set.view;
 
 import glfrontend.ScreenFrame;
 import glfrontend.components.GLCamera;
+import glfrontend.components.GeometricElement;
 import glfrontend.components.Point;
 
 import org.lwjgl.input.Keyboard;
@@ -10,6 +11,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU; 
 import org.lwjgl.util.glu.Quadric; 
 import org.lwjgl.util.glu.Sphere; 
+import static org.lwjgl.opengl.GL11.glColor3f;
 
 
 import com.workshop.set.model.interfaces.Model;
@@ -79,6 +81,7 @@ public class Viewport implements ScreenFrame {
 	public void render3D() {
 		_camera.multMatrix();
 		_stage.render3D();
+		glColor3f(1,0,0);
 		_model.drawGeometricElements();
 	}
 
@@ -95,8 +98,7 @@ public class Viewport implements ScreenFrame {
 //		System.out.println("THE SIZE OF THE VIEWPORT: " + this.getSize().x + " " + this.getSize().y);
 //		System.out.println("Point to make: " + firstPoint + " "+ secondPoint);
 		
-		Point p = new Point(firstPoint,secondPoint);
-		_stage.addElement(p);
+		_model.addElement(new Point(firstPoint, secondPoint));
 	}
 
 	@Override
