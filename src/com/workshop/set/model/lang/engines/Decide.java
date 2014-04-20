@@ -33,9 +33,11 @@ public class Decide {
         try {
             return alpha_equivalence( (TAbstraction)t1, (TAbstraction)t2, g1, g2 );
         } catch ( ClassCastException _ ) {}
+
         try {
             return alpha_equivalence( (TAll)t1, (TAll)t2, g1, g2 );
         } catch ( ClassCastException _ ) {}
+
         try {
             return alpha_equivalence( (TSum)t1, (TSum)t2, g1, g2 );
         } catch ( ClassCastException _ ) {}
