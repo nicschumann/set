@@ -2,6 +2,8 @@ package com.workshop.set;
 
 import glfrontend.FrontEnd;
 
+import com.workshop.set.control.TempEnvironment;
+import com.workshop.set.model.interfaces.Model;
 import com.workshop.set.view.SetFrontEnd;
 
 public class SetMain {
@@ -21,6 +23,8 @@ public class SetMain {
 	}
 
 	private FrontEnd fe;
+//	private Control c;
+	private Model model;
 
 	public SetMain() {
 		// remove flickering
@@ -29,8 +33,10 @@ public class SetMain {
 		System.setProperty("sun.java2d.noddraw", "true");
 		// enable OpenGL Hardware Rendering
 		System.setProperty("sun.java2d.opengl", "true");
+		
+		model = new TempEnvironment();
 
-		fe = new SetFrontEnd();
+		fe = new SetFrontEnd(model);
 		fe.enterLoop();
 		fe.cleanUp(false);
 		fe = null;

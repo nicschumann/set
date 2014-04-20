@@ -6,17 +6,21 @@ import glfrontend.components.GLCamera;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector2f;
 
+import com.workshop.set.model.interfaces.Model;
+
 public class Viewport implements ScreenFrame {
 
 	private Vector2f ul, lr;
 	private Stage _stage;
 	private GLCamera _camera;
+	private Model _model;
 
-	public Viewport(float w, float h) {
+	public Viewport(Model model, float w, float h) {
 		init();
 		setSize(new Vector2f(w, h));
 		_camera = new GLCamera();
 		_camera.setOrthographicView();
+		_model = model;
 	}
 
 	private void init() {
@@ -69,6 +73,7 @@ public class Viewport implements ScreenFrame {
 	public void render3D() {
 		_camera.multMatrix();
 		_stage.render3D();
+		_model.drawGeometricElements();
 	}
 
 	@Override
