@@ -12,7 +12,8 @@ public class ConstraintMatrix {
 
     /**
      * given a set of n > 0 constraint maps, constraint matrix constructs a table of constraints,
-     * 
+     * where each constraint corresponds to a supplied constraint map and unknowns may be shared across maps.
+     *
      * @param maps
      */
     public ConstraintMatrix( ConstraintMap... maps ) {
