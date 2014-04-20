@@ -27,11 +27,20 @@ public class ModelView implements Controller {
     private ExecutorService _dispatchpool;
 
 
-    public Response<VectorSpace.Point> submit( Call<VectorSpace.Point> call ) {
+//    @Override
+//    public Response<VectorSpace.Point> submit( Call<VectorSpace.Point> call ) {
+//
+//        FutureTask<VectorSpace.Point> f = new FutureTask<>( call );
+//        return null;
+//
+//    }
 
-        FutureTask<VectorSpace.Point> f = new FutureTask<>( call );
 
-    }
+	@Override
+	public <T> Response<T> submit(Call<T> message) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 
 }
