@@ -4,9 +4,6 @@ import java.util.Set;
 
 import com.workshop.set.model.lang.exceptions.ProofFailureException;
 
-/**
- * Created by nicschumann on 3/29/14.
- */
 public interface Context<T> {
 
     public boolean contains( T t );
