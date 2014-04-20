@@ -9,7 +9,11 @@ import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glLineWidth;
 import static org.lwjgl.opengl.GL11.glVertex3i;
+
+import java.util.ArrayList;
+
 import glfrontend.ScreenFrame;
+import glfrontend.components.GeometricElement;
 
 import org.lwjgl.util.vector.Vector2f;
 
@@ -98,11 +102,11 @@ public class Stage implements ScreenFrame {
 
 	@Override
 	public void keyReleased(int key) {}
-
+	
 	@Override
 	public void render3D() {
-
-		// 1. render the grid
+		// render the grid
+		glColor3f(1,1,1);
 		this.drawGrid();
 	}
 

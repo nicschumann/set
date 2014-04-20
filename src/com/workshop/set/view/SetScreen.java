@@ -20,6 +20,7 @@ public class SetScreen implements ScreenFrame {
 	private List<ScreenFrame> frames;
 	private Map<ScreenFrame, Boolean> contained;
 
+
 	public SetScreen(Model model, float w, float h) {
 		init();
 		setSize(new Vector2f(w, h));
@@ -154,11 +155,17 @@ public class SetScreen implements ScreenFrame {
 			_viewport.mouseDragged(e);
 	}
 
+	/**
+	 * Renders the stage and its components
+	 */
 	@Override
 	public void render3D() {
 		_viewport.render3D();
 	}
 
+	/**
+	 * Renders the ui elements
+	 */
 	@Override
 	public void render2D() {
 		glTranslatef(ul.x, ul.y, 0);
