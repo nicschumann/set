@@ -8,6 +8,5 @@ import com.workshop.set.view.View;
  * Created by nicschumann on 4/16/14.
  */
 public interface Controller {
-    public Controller bind( View view );
-    public Response submit( Call message );
+    public <T> Response<T> submit( Call<T> message );
 }
