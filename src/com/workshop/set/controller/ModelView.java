@@ -27,11 +27,12 @@ public class ModelView implements Controller {
     private ExecutorService _dispatchpool;
 
 
-    public Response<VectorSpace.Point> submit( Call<VectorSpace.Point> call ) {
-
-        FutureTask<VectorSpace.Point> f = new FutureTask<>( call );
-
+    public <T> Response<T> submit( Call<T> call ) {
+        FutureTask<T> f = new FutureTask<>( call );
+        return null;
     }
+
+
 
 
 }
