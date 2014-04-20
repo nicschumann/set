@@ -2,9 +2,15 @@ package com.workshop.set.view;
 
 import glfrontend.ScreenFrame;
 import glfrontend.components.GLCamera;
+import glfrontend.components.Point;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector2f;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.util.glu.GLU; 
+import org.lwjgl.util.glu.Quadric; 
+import org.lwjgl.util.glu.Sphere; 
+
 
 public class Viewport implements ScreenFrame {
 
@@ -76,7 +82,16 @@ public class Viewport implements ScreenFrame {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-
+		
+		float firstPoint = (e.location.x-(this.getSize().x/2))/75;	//divide to account for units difference
+		float secondPoint = -(e.location.y-(this.getSize().y/2))/75;
+		
+//		System.out.println("Point clicked: " + e.location.x + " " + e.location.y);
+//		System.out.println("THE SIZE OF THE VIEWPORT: " + this.getSize().x + " " + this.getSize().y);
+//		System.out.println("Point to make: " + firstPoint + " "+ secondPoint);
+		
+		Point p = new Point(firstPoint,secondPoint);
+		_stage.addElement(p);
 	}
 
 	@Override

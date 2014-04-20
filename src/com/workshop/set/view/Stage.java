@@ -9,13 +9,18 @@ import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glLineWidth;
 import static org.lwjgl.opengl.GL11.glVertex3i;
+
+import java.util.ArrayList;
+
 import glfrontend.ScreenFrame;
+import glfrontend.components.GeometricElement;
 
 import org.lwjgl.util.vector.Vector2f;
 
 public class Stage implements ScreenFrame {
 
 	private Vector2f ul, lr;
+	private ArrayList<GeometricElement> _currentElements; 
 
 	public Stage(float x, float y) {
 		init();
@@ -28,6 +33,7 @@ public class Stage implements ScreenFrame {
 	}
 
 	public void init() {
+		_currentElements = new ArrayList<GeometricElement>();
 		ul = new Vector2f(0f, 0f);
 		lr = new Vector2f(50f, 50f);
 	}
@@ -99,11 +105,25 @@ public class Stage implements ScreenFrame {
 	@Override
 	public void keyReleased(int key) {}
 
+	
+	
+	public void addElement(GeometricElement e){
+		_currentElements.add(e);
+	}
+	
+	
 	@Override
 	public void render3D() {
 
 		// 1. render the grid
+		glColor3f(1,1,1);
 		this.drawGrid();
+		
+		// 2. render the elements in the stage
+		glColor3f(1,0,0);
+		for(GeometricElement e : _currentElements){
+			e.render(); 
+		}
 	}
 
 	@Override
