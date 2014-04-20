@@ -1,8 +1,8 @@
 package com.workshop.set.model.interfaces;
 
-import com.workshop.set.model.lang.exceptions.ProofFailureException;
-
 import java.util.Set;
+
+import com.workshop.set.model.lang.exceptions.ProofFailureException;
 
 /**
  * Created by nicschumann on 3/29/14.

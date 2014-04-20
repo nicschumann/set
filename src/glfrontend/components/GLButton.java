@@ -1,37 +1,96 @@
 package glfrontend.components;
 
+import static com.workshop.set.view.SetScreen.newRatio;
+import static glfrontend.ScreenFrame.MouseButton.LEFT;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glColor4f;
+import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glVertex2f;
+import glfrontend.Triggerable;
+import glfrontend.Triggerable.TriggerEvent;
 
 import java.awt.Color;
+import java.awt.Font;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.lwjgl.util.vector.Vector2f;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.UnicodeFont;
+import org.newdawn.slick.font.effects.ColorEffect;
 
 public class GLButton extends GLComponent {
 
 	private float[] _brightColor = new float[4];
 	private float[] _midColor = new float[4];
 	private float bs; // border size
+	private String text;
+	private UnicodeFont font;
+	private Vector2f textLoc;
+	private boolean pressed;
+	private List<Triggerable> triggers;
 
 	public GLButton() {
 		super();
+		init();
 	}
 
-	public GLButton(float x, float y) {
-		super(x, y);
+	public GLButton(String text) {
+		super();
+		init();
+		setText(text);
 	}
 
-	public GLButton(Vector2f dim) {
-		super(dim);
+	public void init() {
+		text = "";
+		setFont(new java.awt.Font("Times New Roman", java.awt.Font.BOLD, 14));
+		triggers = new ArrayList<>();
+	}
+
+	public void addTriggerable(Triggerable trigger) {
+		triggers.add(trigger);
+	}
+
+	public void setText(String text) {
+		this.text = text;
+		setTextLoc();
+	}
+
+	public String getText() {
+		return text;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void setFont(Font awtFont) {
+		font = new UnicodeFont(awtFont);
+		font.getEffects().add(new ColorEffect(java.awt.Color.black));
+		font.addAsciiGlyphs();
+		try {
+			font.loadGlyphs();
+		} catch (SlickException e) {
+			e.printStackTrace();
+		}
+		setTextLoc();
+	}
+
+	private void setTextLoc() {
+		if (font == null)
+			return;
+		int textWidth = font.getWidth(text);
+		int textHeight = font.getAscent() + font.getDescent();
+		Vector2f mid = new Vector2f();
+		Vector2f.sub(lr, ul, mid);
+		textLoc = new Vector2f((mid.x - textWidth) / 2, (mid.y - textHeight) / 2);
 	}
 
 	@Override
 	public void setSize(Vector2f dim) {
 		Vector2f.add(ul, dim, lr);
 		bs = (lr.y - ul.y) / 15f;
+		setTextLoc();
 	}
 
 	@Override
@@ -39,7 +98,7 @@ public class GLButton extends GLComponent {
 		Color temp = color.darker().darker();
 		temp.getComponents(_color);
 
-		temp = color.brighter().brighter();
+		temp = color.brighter();
 		temp.getComponents(_brightColor);
 
 		color.getComponents(_midColor);
@@ -70,11 +129,87 @@ public class GLButton extends GLComponent {
 		glVertex2f(lr.x - bs, ul.y + bs);
 		glEnd();
 
+		if (textLoc != null) {
+			font.drawString(textLoc.x + ul.x, textLoc.y + ul.y, text);
+			glDisable(GL_TEXTURE_2D);
+		}
+
 	}
 
 	@Override
-	public void resize(Vector2f dim) {
+	public void mousePressed(MouseEvent e) {
+		if (!pressed && e.button == LEFT) {
+			float[] temp = _brightColor;
+			_brightColor = _color;
+			_color = temp;
+			pressed = true;
+			textLoc.x += bs;
+			textLoc.y += bs;
+		}
+	}
 
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		if (pressed && e.button == LEFT) {
+			float[] temp = _brightColor;
+			_brightColor = _color;
+			_color = temp;
+			pressed = false;
+			textLoc.x -= bs;
+			textLoc.y -= bs;
+			for (Triggerable trigger : triggers) {
+				trigger.trigger(new TriggerEvent(this));
+			}
+		}
+	}
+	
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		if (!pressed && e.button == LEFT) {
+			float[] temp = _brightColor;
+			_brightColor = _color;
+			_color = temp;
+			pressed = true;
+			textLoc.x += bs;
+			textLoc.y += bs;
+		}
+		
+	}
+
+	@Override
+	public void mouseExited(Vector2f p) {
+		if (pressed) {
+			float[] temp = _brightColor;
+			_brightColor = _color;
+			_color = temp;
+			pressed = false;
+			textLoc.x -= bs;
+			textLoc.y -= bs;
+		}
+	}
+
+	@Override
+	public void resize(Vector2f newSize) {
+		switch (getResizeType()) {
+		case FIT_LEFT:
+			setLocation(new Vector2f(ul.x - (getSize().x - newSize.x), ul.y));
+			break;
+		case FIT_RIGHT:
+			break;
+		case FIT_BOTTOM:
+			break;
+		case FIT_TOP:
+			break;
+		default: // RATIO Type
+			setLocation(newRatio(getLocation(), getSize(), newSize));
+
+			Vector2f size = new Vector2f();
+			Vector2f.sub(lr, ul, size);
+
+			Vector2f.add(ul, newSize, lr);
+			setTextLoc();
+			break;
+		}
 	}
 
 }

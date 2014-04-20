@@ -5,86 +5,91 @@ import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glColor4f;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glVertex2f;
+import glfrontend.ScreenFrame;
 
 import java.awt.Color;
 
 import org.lwjgl.util.vector.Vector2f;
 
-public abstract class GLComponent {
+public class GLComponent implements ScreenFrame {
 
 	protected float[] _color;
 	protected Vector2f ul;
 	protected Vector2f lr;
-	protected boolean resizable;
+	private ResizeType resizeType;
 
 	public GLComponent() {
 		init();
-	}
-
-	public GLComponent(float x, float y) {
-		init();
-		setSize(x, y);
-	}
-
-	public GLComponent(Vector2f dim) {
-		init();
-		setSize(dim);
 	}
 
 	private void init() {
 		_color = new float[4];
 		ul = new Vector2f(0f, 0f);
 		lr = new Vector2f(50f, 50f);
-		resizable = true;
+		resizeType = ResizeType.RATIO;
 	}
 
 	public void setBackground(Color color) {
 		color.getComponents(_color);
 	}
 
-	public void setSize(float width, float height) {
-		setSize(new Vector2f(width, height));
-	}
-
-	public void setSize(Vector2f dim) {
-		Vector2f.add(ul, dim, lr);
-	}
-
-	public Vector2f getSize() {
-		Vector2f result = new Vector2f();
-		Vector2f.sub(lr, ul, result);
-		return result;
-	}
-
 	public void setLocation(float x, float y) {
-		Vector2f.sub(lr, ul, lr);
-		ul = new Vector2f(x, y);
-		Vector2f.add(ul, lr, lr);
+		setLocation(new Vector2f(x, y));
 	}
 
+	@Override
 	public void setLocation(Vector2f p) {
 		Vector2f.sub(lr, ul, lr);
 		ul = p;
 		Vector2f.add(ul, lr, lr);
 	}
 
+	@Override
 	public Vector2f getLocation() {
 		return ul;
 	}
 
-	public void setResizable(boolean resizable) {
-		this.resizable = resizable;
+	public void setSize(float width, float height) {
+		setSize(new Vector2f(width, height));
 	}
 
-	public boolean isResizable() {
-		return resizable;
+	@Override
+	public void setSize(Vector2f dim) {
+		Vector2f.add(ul, dim, lr);
+	}
+
+	@Override
+	public Vector2f getSize() {
+		Vector2f result = new Vector2f();
+		Vector2f.sub(lr, ul, result);
+		return result;
+	}
+
+	@Override
+	public boolean contains(Vector2f p) {
+		Vector2f temp1 = new Vector2f();
+		Vector2f temp2 = new Vector2f();
+		Vector2f.sub(lr, p, temp1);
+		Vector2f.sub(p, ul, temp2);
+		return temp1.x > 0 && temp2.x > 0 && temp1.y > 0 && temp2.y > 0;
+	}
+
+	@Override
+	public void setResizeType(ResizeType type) {
+		resizeType = type;
+	}
+
+	@Override
+	public ResizeType getResizeType() {
+		return resizeType;
 	}
 
 	public void resize(float width, float height) {
 		resize(new Vector2f(width, height));
 	}
-	
-	public void render() {
+
+	@Override
+	public void render2D() {
 		// set color
 		glColor4f(_color[0], _color[1], _color[2], _color[3]);
 
@@ -95,12 +100,46 @@ public abstract class GLComponent {
 		glVertex2f(lr.x, lr.y);
 		glVertex2f(lr.x, ul.y);
 		glEnd();
-		
+
 		draw();
 	}
 
-	public abstract void draw();
+	public void draw() {}
+	
+	@Override
+	public void render3D() {}
 
-	public abstract void resize(Vector2f dim);
+	@Override
+	public void mouseClicked(MouseEvent e) {}
+
+	@Override
+	public void mousePressed(MouseEvent e) {}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {}
+
+	@Override
+	public void mouseWheelScrolled(Vector2f p, int amount) {}
+
+	@Override
+	public void keyPressed(int key) {}
+
+	@Override
+	public void keyReleased(int key) {}
+
+	@Override
+	public void mouseMoved(Vector2f p) {}
+
+	@Override
+	public void mouseEntered(Vector2f p) {}
+
+	@Override
+	public void mouseExited(Vector2f p) {}
+
+	@Override
+	public void resize(Vector2f newSize) {}
 
 }

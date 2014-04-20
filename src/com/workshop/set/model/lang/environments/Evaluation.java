@@ -1,10 +1,17 @@
 package com.workshop.set.model.lang.environments;
 
-import com.workshop.set.model.interfaces.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import com.workshop.set.model.interfaces.Context;
+import com.workshop.set.model.interfaces.Environment;
+import com.workshop.set.model.interfaces.Gensym;
+import com.workshop.set.model.interfaces.Judgement;
+import com.workshop.set.model.interfaces.Symbol;
+import com.workshop.set.model.interfaces.Term;
 import com.workshop.set.model.lang.exceptions.EvaluationException;
 import com.workshop.set.model.lang.exceptions.ProofFailureException;
-
-import java.util.*;
 
 /**
  * Created by nicschumann on 4/1/14.

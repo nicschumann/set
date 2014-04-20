@@ -1,12 +1,16 @@
 package com.workshop.set.model.lang.core;
 
-import com.google.common.collect.Sets;
-import com.workshop.set.model.interfaces.*;
-import com.workshop.set.model.lang.core.TNameGenerator.TName;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import com.workshop.set.model.interfaces.Environment;
+import com.workshop.set.model.interfaces.Judgement;
+import com.workshop.set.model.interfaces.Pattern;
+import com.workshop.set.model.interfaces.Symbol;
+import com.workshop.set.model.interfaces.Term;
 import com.workshop.set.model.lang.exceptions.ProofFailureException;
 import com.workshop.set.model.lang.judgements.HasValue;
-
-import java.util.*;
 
 /**
  * Implements a Scalar value of some Field indexed by the Real Numbers

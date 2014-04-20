@@ -1,35 +1,36 @@
 package glfrontend.components;
 
+import static com.workshop.set.view.SetScreen.newRatio;
 import static org.lwjgl.opengl.GL11.glTranslatef;
+import glfrontend.ScreenFrame;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.lwjgl.util.vector.Vector2f;
 
 public class GLPanel extends GLComponent {
 
-	List<GLComponent> comps = new ArrayList<>();
+	private List<ScreenFrame> comps;
+	private Map<ScreenFrame, Boolean> contained;
 
 	public GLPanel() {
 		super();
-	}
-
-	public GLPanel(float x, float y) {
-		super(x, y);
-	}
-
-	public GLPanel(Vector2f dim) {
-		super(dim);
+		comps = new ArrayList<>();
+		contained = new HashMap<>();
 	}
 
 	public void add(GLComponent c) {
 		comps.add(c);
+		contained.put(c, false);
 	}
 
-	public void add(GLComponent c, boolean resizable) {
-		c.setResizable(resizable);
+	public void add(GLComponent c, ResizeType resizable) {
+		c.setResizeType(resizable);
 		comps.add(c);
+		contained.put(c, false);
 	}
 
 	@Override
@@ -37,34 +38,114 @@ public class GLPanel extends GLComponent {
 
 		// draw sub components
 		glTranslatef(ul.x, ul.y, 0);
-		for (GLComponent comp : comps)
-			comp.render();
+		for (ScreenFrame comp : comps)
+			comp.render2D();
 		glTranslatef(-ul.x, -ul.y, 0);
 
 	}
 
 	@Override
-	public void resize(Vector2f dim) {
-		if (!isResizable())
-			return;
-		Vector2f size = new Vector2f();
-		Vector2f.sub(lr, ul, size);
-
-		for (GLComponent comp : comps) {
-			Vector2f oldSize = comp.getSize();
-			Vector2f oldLoc = comp.getLocation();
-
-			comp.setLocation(newRatio(oldLoc, size, dim));
-			comp.resize(newRatio(oldSize, size, dim));
+	public void mousePressed(MouseEvent e) {
+		for (ScreenFrame frame : comps) {
+			if (frame.contains(e.location)) {
+				Vector2f relativePoint = new Vector2f();
+				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
+				frame.mousePressed(new MouseEvent(relativePoint, e.button));
+			}
 		}
-
-		Vector2f.add(ul, dim, lr);
 	}
 
-	public static Vector2f newRatio(Vector2f oldTop, Vector2f oldBottom, Vector2f newBottom) {
-		float x = (oldTop.x * newBottom.x) / oldBottom.x;
-		float y = (oldTop.y * newBottom.y) / oldBottom.y;
-		return new Vector2f(x, y);
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		for (ScreenFrame frame : comps) {
+			if (frame.contains(e.location)) {
+				Vector2f relativePoint = new Vector2f();
+				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
+				frame.mouseReleased(new MouseEvent(relativePoint, e.button));
+			}
+		}
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent e) {
+		for (ScreenFrame frame : comps) {
+			if (frame.contains(e.location)) {
+				Vector2f relativePoint = new Vector2f();
+				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
+
+				if (!contained.get(frame)) {
+					frame.mouseEntered(relativePoint);
+					contained.put(frame, true);
+				}
+				frame.mouseDragged(new MouseEvent(relativePoint, e.button));
+			} else if (contained.get(frame)) {
+				Vector2f relativePoint = new Vector2f();
+				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
+
+				frame.mouseExited(relativePoint);
+				contained.put(frame, false);
+			}
+		}
+	}
+
+	@Override
+	public void mouseMoved(Vector2f p) {
+		for (ScreenFrame frame : comps) {
+			if (frame.contains(p)) {
+				Vector2f relativePoint = new Vector2f();
+				Vector2f.sub(p, frame.getLocation(), relativePoint);
+
+				if (!contained.get(frame)) {
+					frame.mouseEntered(relativePoint);
+					contained.put(frame, true);
+				}
+				frame.mouseMoved(relativePoint);
+			} else if (contained.get(frame)) {
+				Vector2f relativePoint = new Vector2f();
+				Vector2f.sub(p, frame.getLocation(), relativePoint);
+
+				frame.mouseExited(relativePoint);
+				contained.put(frame, false);
+			}
+		}
+	}
+
+	@Override
+	public void mouseExited(Vector2f p) {
+		for (ScreenFrame comp : comps) {
+			comp.mouseExited(p);
+		}
+	}
+
+	@Override
+	public void resize(Vector2f newSize) {
+		setLocation(newRatio(getLocation(), getSize(), newSize));
+		switch (getResizeType()) {
+		case FIT_LEFT:
+			break;
+		case FIT_RIGHT:
+			setLocation(new Vector2f(ul.x - (getSize().x - newSize.x), ul.y));
+			break;
+		case FIT_BOTTOM:
+			break;
+		case FIT_TOP:
+			break;
+		default: // RATIO Type
+
+			Vector2f size = new Vector2f();
+			Vector2f.sub(lr, ul, size);
+
+			for (ScreenFrame comp : comps) {
+				Vector2f oldSize = comp.getSize();
+				Vector2f oldLoc = comp.getLocation();
+
+				comp.setLocation(newRatio(oldLoc, size, newSize));
+				comp.resize(newRatio(oldSize, size, newSize));
+			}
+
+			Vector2f.add(ul, newSize, lr);
+			break;
+		}
 	}
 
 }

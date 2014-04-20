@@ -1,11 +1,5 @@
 package com.workshop.set.model.lang.engines;
 
-import com.workshop.set.model.interfaces.Environment;
-import com.workshop.set.model.interfaces.Term;
-import com.workshop.set.model.interfaces.Value;
-import com.workshop.set.model.lang.environments.Evaluation;
-import com.workshop.set.model.lang.exceptions.EvaluationException;
-import com.workshop.set.model.lang.exceptions.TypecheckingException;
 
 /**
  * Created by nicschumann on 4/1/14.

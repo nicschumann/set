@@ -1,15 +1,19 @@
 package com.workshop.set.model.lang.core;
 
-import com.workshop.set.model.interfaces.*;
+import java.util.HashSet;
+import java.util.Set;
+
+import com.workshop.set.model.interfaces.Environment;
+import com.workshop.set.model.interfaces.Judgement;
+import com.workshop.set.model.interfaces.Pattern;
+import com.workshop.set.model.interfaces.Symbol;
+import com.workshop.set.model.interfaces.Term;
 import com.workshop.set.model.lang.engines.Decide;
 import com.workshop.set.model.lang.exceptions.EvaluationException;
 import com.workshop.set.model.lang.exceptions.PatternMatchException;
 import com.workshop.set.model.lang.exceptions.ProofFailureException;
 import com.workshop.set.model.lang.exceptions.TypecheckingException;
 import com.workshop.set.model.lang.judgements.HasValue;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by nicschumann on 3/29/14.
@@ -90,7 +94,8 @@ public class TTuple implements Pattern {
             b = ((Pattern)domain).binds( n );
             b |= ((Pattern)range).binds( n );
         } catch ( ClassCastException _ ) {}
-        finally { return b; }
+//        finally { return b; }
+        return b;
 
     }
 

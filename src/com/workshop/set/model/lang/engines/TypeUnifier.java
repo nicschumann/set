@@ -1,7 +1,10 @@
 package com.workshop.set.model.lang.engines;
 
-import com.workshop.set.model.interfaces.*;
-import com.workshop.set.model.lang.core.*;
+import com.workshop.set.model.interfaces.Environment;
+import com.workshop.set.model.interfaces.Gensym;
+import com.workshop.set.model.interfaces.Term;
+import com.workshop.set.model.lang.core.TAbstraction;
+import com.workshop.set.model.lang.core.TNameGenerator;
 import com.workshop.set.model.lang.environments.Evaluation;
 import com.workshop.set.model.lang.exceptions.ProofFailureException;
 import com.workshop.set.model.lang.exceptions.TypecheckingException;
@@ -38,9 +41,11 @@ public class TypeUnifier {
                 System.out.println( t + " : " + unify( t, new Evaluation( new TNameGenerator() ) ) );
             } catch ( TypecheckingException e ) {
                 System.out.println( e.getLocalizedMessage() );
-            } finally {
+            } catch (ProofFailureException e) {
+				e.printStackTrace();
+			} finally {
                 //System.out.print( System.lineSeparator() );
-                return this;
             }
+            return this;
     }
 }

@@ -7,19 +7,24 @@ import com.workshop.set.model.interfaces.Term;
  * Created by nicschumann on 3/30/14.
  */
 public class TypecheckingException extends Exception {
-    public TypecheckingException( Term term, Context context ) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1237094502089035017L;
+
+	public TypecheckingException( Term term, Context<?> context ) {
         this.term = term;
         this.context = context;
     }
 
-    public TypecheckingException( Term term, Context context, String s ) {
+    public TypecheckingException( Term term, Context<?> context, String s ) {
         this.term = term;
         this.context = context;
         this.text = s;
     }
 
     private final Term term;
-    private final Context context;
+    private final Context<?> context;
     private String text = "";
 
     @Override

@@ -165,7 +165,7 @@ public class TSet implements Pattern {
         for ( Term t : elements ) {
             try {
                 Set<Symbol> a = ((Pattern)t).names();
-                n.addAll( ((Pattern)t).names() );
+                n.addAll( a );
             } catch ( ClassCastException _ ) {}
         }
         return n;

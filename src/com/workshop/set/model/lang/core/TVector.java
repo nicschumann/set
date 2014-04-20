@@ -1,8 +1,15 @@
 package com.workshop.set.model.lang.core;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Vector;
 
-import com.workshop.set.model.interfaces.*;
+import com.workshop.set.model.interfaces.Environment;
+import com.workshop.set.model.interfaces.Judgement;
+import com.workshop.set.model.interfaces.Pattern;
+import com.workshop.set.model.interfaces.Symbol;
+import com.workshop.set.model.interfaces.Term;
 import com.workshop.set.model.lang.engines.Decide;
 import com.workshop.set.model.lang.exceptions.EvaluationException;
 import com.workshop.set.model.lang.exceptions.PatternMatchException;
