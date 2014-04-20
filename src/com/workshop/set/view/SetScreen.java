@@ -1,8 +1,6 @@
 package com.workshop.set.view;
 
-//import static org.lwjgl.opengl.GL11.glTranslatef;
 import static org.lwjgl.opengl.GL11.glTranslatef;
-//import java.nio.FloatBuffer;
 import glfrontend.ScreenFrame;
 
 import java.util.ArrayList;
@@ -10,14 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector2f;
-//import glfrontend.components.GLComponent;
-//import glfrontend.ScreenFrame;
 
-//import org.lwjgl.util.vector.Vector2f;
-//import org.lwjgl.util.glu.GLU;
-//import org.lwjgl.BufferUtils;
+import com.workshop.set.model.interfaces.Model;
 
 public class SetScreen implements ScreenFrame {
 
@@ -27,10 +20,11 @@ public class SetScreen implements ScreenFrame {
 	private List<ScreenFrame> frames;
 	private Map<ScreenFrame, Boolean> contained;
 
-	public SetScreen(float w, float h) {
+
+	public SetScreen(Model model, float w, float h) {
 		init();
 		setSize(new Vector2f(w, h));
-		_viewport = new Viewport(w, h);
+		_viewport = new Viewport(model, w, h);
 	}
 
 	private void init() {

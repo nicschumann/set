@@ -13,6 +13,7 @@ import com.workshop.set.model.lang.exceptions.PatternMatchException;
 import com.workshop.set.model.lang.exceptions.ProofFailureException;
 import com.workshop.set.model.lang.exceptions.TypecheckingException;
 import com.workshop.set.model.lang.judgements.HasValue;
+import com.workshop.set.model.lang.ops.Judgements;
 
 /**
  * Created by nicschumann on 3/29/14.
@@ -85,4 +86,5 @@ public class TJudgement implements Term {
         return 37 * (37 * ( (a ^ (a >>> 31))) + (b ^ (b >>> 31)));
 
     }
+
 }
