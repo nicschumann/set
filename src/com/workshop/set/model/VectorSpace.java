@@ -57,6 +57,16 @@ public class VectorSpace {
          */
         public abstract Set<Symbol> components();
 
+        /**
+         * Join creates a pointwise symbolic relation between this geometric element
+         * and the supplied geometry. If the two geometries share the same structure,
+         * then the relational join succeeds, if not, the join fails, and a GeometricFailure
+         * exception is thrown.
+         *
+         * @param x the geometry to attempt to join.
+         * @return a mapping from the symbols of this geometry into the corresponding symbols of x
+         * @throws GeometricFailure in case the geometries have different internal structures
+         */
         public abstract Map<Symbol,Symbol> join( Geometry x ) throws GeometricFailure;
 
         /**
