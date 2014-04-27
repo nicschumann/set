@@ -44,10 +44,10 @@ public class Stage implements ScreenFrame {
 		glEnable(GL_LINE_SMOOTH);
 		glBegin(GL_LINES);
 		for (int i = -10; i <= 10; i++) {
-			glVertex3i(i, 0, -10);
-			glVertex3i(i, 0, 10);
-			glVertex3i(-10, 0, i);
-			glVertex3i(10, 0, i);
+			glVertex3i(i, -10, 0);
+			glVertex3i(i, 10, 0);
+			glVertex3i(-10, i, 0);
+			glVertex3i(10, i, 0);
 		}
 		glEnd();
 		glDepthMask(true);
@@ -106,7 +106,6 @@ public class Stage implements ScreenFrame {
 	@Override
 	public void render3D() {
 		// render the grid
-		glColor3f(1,1,1);
 		this.drawGrid();
 	}
 

@@ -3,11 +3,15 @@ package com.workshop.set.view;
 import static org.lwjgl.opengl.GL11.glTranslatef;
 import glfrontend.ScreenFrame;
 
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Vector2f;
 
 import com.workshop.set.model.interfaces.Model;
@@ -19,6 +23,10 @@ public class SetScreen implements ScreenFrame {
 
 	private List<ScreenFrame> frames;
 	private Map<ScreenFrame, Boolean> contained;
+	
+	private FloatBuffer model = BufferUtils.createFloatBuffer(16);
+	private FloatBuffer projection = BufferUtils.createFloatBuffer(16);
+	private IntBuffer viewport = BufferUtils.createIntBuffer(16);
 
 
 	public SetScreen(Model model, float w, float h) {
@@ -92,8 +100,9 @@ public class SetScreen implements ScreenFrame {
 				frame.mouseClicked(new MouseEvent(relativePoint, e.button));
 			}
 		}
-		if (onViewport)
-			_viewport.mouseClicked(e);
+		if (onViewport){
+			_viewport.mouseClicked(e, model, projection, viewport);
+		}
 	}
 
 	@Override
@@ -160,6 +169,9 @@ public class SetScreen implements ScreenFrame {
 	 */
 	@Override
 	public void render3D() {
+		GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, model);
+		GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, projection);
+		GL11.glGetInteger(GL11.GL_VIEWPORT, viewport);
 		_viewport.render3D();
 	}
 
@@ -215,7 +227,6 @@ public class SetScreen implements ScreenFrame {
 		}
 		if (onViewport)
 			_viewport.mouseWheelScrolled(p, amount);
-
 	}
 
 	@Override
