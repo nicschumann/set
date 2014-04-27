@@ -12,7 +12,7 @@ public class SetMain {
 
 		final SetMain set = new SetMain();
 
-		// Cleans up the openAL sound object right before program exits.
+		// Called right before program exits.
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 			@Override
 			public void run() {
