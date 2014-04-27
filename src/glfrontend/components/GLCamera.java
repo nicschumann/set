@@ -51,9 +51,11 @@ public class GLCamera {
 	 * Sets view for 2d rendering
 	 */
 	public void setOrthographicView(){
-		_eye = new Vector4(0, 10, 0, 1);
+		//_eye = new Vector4(0, 10, 0, 1);
+		_eye = new Vector4(0, 0, 10, 1);
 	    _look = new Vector4(-_eye.x, -_eye.y, -_eye.z, 0).getNormalized();
-	    _up = new Vector4(1, 0, 0, 0);
+	    //_up = new Vector4(1, 0, 0, 0);
+	    _up = new Vector4(0, 1, 0, 0);
 	    _mode = "orthographic";
 	}
 	
@@ -72,23 +74,15 @@ public class GLCamera {
 	}
 
 	//public void mouseMove(Vector2 delta, MouseButtons buttons, double deltaX, double deltaY)
-//	public void mouseMove(MouseButtons buttons, double deltaX, double deltaY)
-//	{
-//		
-//		//may only need vector 4 and can use delta x and y for the rest 
-//		
-//		//mouse events to figure out which button pressed 
-//		
-//		
+	public void mouseMove(double deltaX, double deltaY)
+	{
+		//mouse events to figure out which button pressed 
 //	    if (RightButton)
 //	    {
 //	        lookVectorRotate(delta);
 //	    }
-//	    else if (MidButton)
-//	    {
-//	        filmPlaneTranslate(delta);
-//	    }
-//	}
+	    this.filmPlaneTranslate(deltaX, deltaY);
+	}
 
 	public void mouseWheel(float delta){
 	    this.lookVectorTranslate(delta*10);
@@ -100,7 +94,6 @@ public class GLCamera {
 		Vector4 toAdd = (v1.subtract(v2)).uniformScale(.01);
 		_eye = _eye.add(toAdd);
 	}
-
 
 	public void lookVectorRotate(double deltaX, double deltaY)
 	{

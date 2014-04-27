@@ -31,6 +31,8 @@ public class Line implements GeometricElement{
 	
 	@Override
 	public void render() {
+		glLineWidth(1.2f);
+		glEnable(GL_LINE_SMOOTH);
 		glBegin(GL_LINES);
 		glVertex2d(_pt1.getValues()[0], _pt1.getValues()[1]);
 		glVertex2d(_pt2.getValues()[0], _pt2.getValues()[1]);
