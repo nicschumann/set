@@ -1,9 +1,14 @@
 package com.workshop.set.model;
 
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import com.workshop.set.model.interfaces.Gensym;
 import com.workshop.set.model.interfaces.Symbol;
-
-import java.util.*;
 
 /**
  * Created by nicschumann on 4/17/14.
@@ -66,6 +71,10 @@ public class VectorSpace {
          * @return an integer representing the dimension of the vector
          */
         public int dimension() { return dimension; }
+        
+        public abstract Set<Geometry> getGeometries();
+        
+        public abstract double[] getPointArray();
 
     }
 
@@ -215,6 +224,25 @@ public class VectorSpace {
             s.append( ")" );
             return s.toString();
         }
+        
+        @Override
+        public Set<Geometry> getGeometries() {
+        	return new HashSet<>(0);
+        }
+        
+        @Override
+        public double[] getPointArray() {
+        	double[] array = new double[dimension];
+        	try {
+        		for (int i = 0; i < dimension; i++) {
+        			array[i] = getN_(i+1).get();
+        		}
+        	} catch (GeometricFailure e) {
+        		e.printStackTrace();
+        	}
+        	return array;
+        }
+        
     }
 
 
@@ -282,6 +310,24 @@ public class VectorSpace {
             s.append( " )" );
             return s.toString();
         }
+        
+        @Override
+        public Set<Geometry> getGeometries() {
+        	Set<Geometry> geoms = new HashSet<>();
+        	geoms.add(A);
+        	geoms.add(B);
+        	return geoms;
+        }
+        
+        @Override
+        public double[] getPointArray() {
+        	double[] a = A.getPointArray();
+        	double[] b = B.getPointArray();
+        	double[] array = new double[a.length + b.length];
+        	System.arraycopy(a, 0, array, 0, a.length);
+        	System.arraycopy(b, 0, array, a.length, b.length);
+        	return array;
+        }
     }
 
 
@@ -302,6 +348,7 @@ public class VectorSpace {
             return getMessage();
         }
     }
+    
 
     @Override
     public String toString() {

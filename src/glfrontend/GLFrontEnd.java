@@ -281,7 +281,7 @@ public class GLFrontEnd implements FrontEnd {
 		glLoadIdentity();
 		GLU.gluPerspective(55f, Display.getWidth() / Display.getHeight(), 0.01f, 1000f);
 		glPopAttrib();
-
+		
 		glGetFloat(GL_PROJECTION_MATRIX, perspectiveProjectionMatrix);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();

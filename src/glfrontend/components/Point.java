@@ -1,11 +1,8 @@
 package glfrontend.components;
 
-import java.awt.geom.Point2D;
-import java.util.ArrayList;
+import static org.lwjgl.opengl.GL11.glTranslatef;
 
 import org.lwjgl.util.glu.Sphere;
-
-import static org.lwjgl.opengl.GL11.*;
 
 public class Point implements GeometricElement{
 
