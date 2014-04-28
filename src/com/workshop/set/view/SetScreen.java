@@ -273,6 +273,7 @@ public class SetScreen implements ScreenFrame {
 
 			frame.resize(newRatio(oldSize, size, newSize));
 		}
+		_viewport.resize(newSize);
 		Vector2f.add(ul, newSize, lr);
 	}
 
