@@ -23,11 +23,6 @@ public class SetScreen implements ScreenFrame {
 
 	private List<ScreenFrame> frames;
 	private Map<ScreenFrame, Boolean> contained;
-	
-	private FloatBuffer model = BufferUtils.createFloatBuffer(16);
-	private FloatBuffer projection = BufferUtils.createFloatBuffer(16);
-	private IntBuffer viewport = BufferUtils.createIntBuffer(16);
-
 
 	public SetScreen(Model model, float w, float h) {
 		init();
@@ -101,7 +96,7 @@ public class SetScreen implements ScreenFrame {
 			}
 		}
 		if (onViewport){
-			_viewport.mouseClicked(e, model, projection, viewport);
+			_viewport.mouseClicked(e);
 		}
 	}
 
@@ -169,9 +164,6 @@ public class SetScreen implements ScreenFrame {
 	 */
 	@Override
 	public void render3D() {
-		GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, model);
-		GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, projection);
-		GL11.glGetInteger(GL11.GL_VIEWPORT, viewport);
 		_viewport.render3D();
 	}
 

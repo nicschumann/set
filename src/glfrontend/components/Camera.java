@@ -4,12 +4,29 @@ import org.lwjgl.util.glu.GLU;
 //camera class to model the look interactions expected for the user on mouse events in the scene 
 
 
-public class GLCamera {
+public class Camera {
 
 	private Vector4 _eye, _look, _up;
-	private String _mode; 
+	private String _type; 
 	
-	public GLCamera(){}
+	public Camera(){}
+	
+	//ctor for a custom camera (all vectors and type/name)
+	
+	public Camera(String type){	//default cameras
+		if(type.equalsIgnoreCase("orthographic")){	//more descriptive
+			_eye = new Vector4(0, 0, 10, 1);
+		    _look = new Vector4(-_eye.x, -_eye.y, -_eye.z, 0).getNormalized();
+		    _up = new Vector4(0, 1, 0, 0);
+		    _type = "orthographic";
+		}
+		else if(type.equalsIgnoreCase("perspective")){
+			_eye = new Vector4(5, -5, 5, 1);
+		    _look = new Vector4(-_eye.x, -_eye.y, -_eye.z, 0).getNormalized();
+		    _up = new Vector4(0, 0, 1, 0);	    
+		    _type = "perspective";
+		}
+	}
 	
     public Vector4 getEye(){ 
     	return _eye;
@@ -41,39 +58,15 @@ public class GLCamera {
 	}
 
 	public void lookAt(Vector4 eye, Vector4 look, Vector4 up){
-		
 	    _eye = eye;
 	    _look = look;
 	    _up = up;
 	}
 	
-	/**
-	 * Sets view for 2d rendering
-	 */
-	public void setOrthographicView(){
-		//_eye = new Vector4(0, 10, 0, 1);
-		_eye = new Vector4(0, 0, 10, 1);
-	    _look = new Vector4(-_eye.x, -_eye.y, -_eye.z, 0).getNormalized();
-	    //_up = new Vector4(1, 0, 0, 0);
-	    _up = new Vector4(0, 1, 0, 0);
-	    _mode = "orthographic";
-	}
-	
-	/**
-	 * Sets view for 3d rendering
-	 */
-	public void setPerspView(){
-		_eye = new Vector4(4, 4, 8, 1);
-	    _look = new Vector4(-_eye.x, -_eye.y, -_eye.z, 0).getNormalized();
-	    _up = new Vector4(0, 1, 0, 0);
-	    _mode = "perspective";
-	}
-	
-	public String getMode(){
-		return _mode; 
+	public String getType(){
+		return _type; 
 	}
 
-	//public void mouseMove(Vector2 delta, MouseButtons buttons, double deltaX, double deltaY)
 	public void mouseMove(double deltaX, double deltaY)
 	{
 		//mouse events to figure out which button pressed 

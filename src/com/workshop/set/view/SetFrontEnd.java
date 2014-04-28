@@ -43,7 +43,6 @@ public class SetFrontEnd extends GLFrontEnd {
 		stage.setLocation(new Vector2f(0, 0));
 
 		main.setStage(stage);
-		//main.add(stage);
 		main.add(makeSelectionPanel(width, height));
 		main.add(makeConstraintPanel(width, height));
 
