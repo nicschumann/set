@@ -3,6 +3,7 @@ package com.workshop.set.view;
 import static org.lwjgl.opengl.GL11.glColor3f;
 import glfrontend.ScreenFrame;
 import glfrontend.components.Camera;
+import glfrontend.components.Line;
 import glfrontend.components.Point;
 import glfrontend.components.Vector4;
 
@@ -158,22 +159,22 @@ public class Viewport implements ScreenFrame {
 			
 			Point p = this.traceMouseClick(e.location.x, (this.getSize().y-e.location.y));
 			_model.addElement(p);
-//			
-//			//if shift key down, take care of adding this point to the lines renderable queue and creating a 
-//			//new line as well
-//			if(_shiftDown){
-//				_linePoints[_toUpdate] = p; 
-//				
-//				if(_toUpdate==0)	
-//					_toUpdate=1; 
-//				else
-//					_toUpdate=0;
-//				
-//				//if a point in both locations, make a new line
-//				if(_linePoints[0]!=null && _linePoints[1]!=null){
-//					_model.addElement(new Line(_linePoints[0], _linePoints[1]));
-//				}
-//			}
+			
+			//if shift key down, take care of adding this point to the lines renderable queue and creating a 
+			//new line as well
+			if(_shiftDown){
+				_linePoints[_toUpdate] = p; 
+				
+				if(_toUpdate==0)	
+					_toUpdate=1; 
+				else
+					_toUpdate=0;
+				
+				//if a point in both locations, make a new line
+				if(_linePoints[0]!=null && _linePoints[1]!=null){
+					_model.addElement(new Line(_linePoints[0], _linePoints[1]));
+				}
+			}
 		}
 		_dragged = false;
 	}

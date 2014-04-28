@@ -129,7 +129,9 @@ public class GLFrontEnd implements FrontEnd {
 
 			float defaultHeight = 600f;
 			float defaultFov = 1.0f; // Approximately 60 degrees
+			//float fov = (float) Math.atan(h / defaultHeight * Math.tan(defaultFov * 0.5f)) * 2.0f;
 			float fov = (float) Math.atan(h / defaultHeight * Math.tan(defaultFov * 0.5f)) * 2.0f;
+			
 
 			glPushAttrib(GL_TRANSFORM_BIT);
 			glMatrixMode(GL_PROJECTION);
