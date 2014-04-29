@@ -1,10 +1,10 @@
 package com.workshop.set.view;
 
+import static com.workshop.set.SetMain.GENSYM;
+import static com.workshop.set.SetMain.VEC_SPACE_3D;
 import static org.lwjgl.opengl.GL11.glColor3f;
 import glfrontend.ScreenFrame;
 import glfrontend.components.Camera;
-import glfrontend.components.Line;
-import glfrontend.components.Point;
 import glfrontend.components.Vector4;
 
 import java.nio.FloatBuffer;
@@ -17,6 +17,10 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Vector2f;
 
+import com.workshop.set.model.Mutable;
+import com.workshop.set.model.VectorSpace.GeometricFailure;
+import com.workshop.set.model.VectorSpace.Point;
+import com.workshop.set.model.VectorSpace.Relation;
 import com.workshop.set.model.interfaces.Model;
 
 public class Viewport implements ScreenFrame {
@@ -105,7 +109,8 @@ public class Viewport implements ScreenFrame {
 		_currCamera.multMatrix();
 		_stage.render3D();
 		glColor3f(1, 0, 0);
-		_model.drawGeometricElements();
+//		_model.drawGeometricElements();
+		_model.renderGeometries();
 	}
 
 	@Override
@@ -146,7 +151,13 @@ public class Viewport implements ScreenFrame {
 		//System.out.println("The new projection: " + proj.x + " " + proj.y + " " + proj.z);
 		//points off by a factor of two
 		
-		return new Point(proj.x/2, proj.y/2, proj.z/2);
+		Point point = null;
+		try {
+			point = VEC_SPACE_3D.point(GENSYM.generate(), new Mutable<Double>((double)proj.x/2), new Mutable<Double>((double)proj.y/2), new Mutable<Double>((double)proj.z/2));
+		} catch (GeometricFailure e) {
+			e.printStackTrace();
+		}
+		return point;
 	}
 	
 	
@@ -158,7 +169,7 @@ public class Viewport implements ScreenFrame {
 		if(!_dragged){
 			
 			Point p = this.traceMouseClick(e.location.x, (this.getSize().y-e.location.y));
-			_model.addElement(p);
+			_model.addGeometry(p);
 			
 			//if shift key down, take care of adding this point to the lines renderable queue and creating a 
 			//new line as well
@@ -170,9 +181,13 @@ public class Viewport implements ScreenFrame {
 				else
 					_toUpdate=0;
 				
-				//if a point in both locations, make a new line
+//				if a point in both locations, make a new line
 				if(_linePoints[0]!=null && _linePoints[1]!=null){
-					_model.addElement(new Line(_linePoints[0], _linePoints[1]));
+					try {
+						_model.addGeometry(VEC_SPACE_3D.relation(GENSYM.generate(), _linePoints[0], _linePoints[1]));
+					} catch (GeometricFailure e1) {
+						e1.printStackTrace();
+					}
 				}
 			}
 		}
