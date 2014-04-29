@@ -102,7 +102,7 @@ public class GLFrontEnd implements FrontEnd {
 		glLoadIdentity();
 		_frame.render3D();
 
-		// load 2D ortho matrix, render 2D, then load perspective matrix 
+		// load 2D ortho matrix, render 2D, then load perspective matrix
 		glMatrixMode(GL_PROJECTION);
 		glLoadMatrix(orthographicProjectionMatrix);
 		glMatrixMode(GL_MODELVIEW);
@@ -122,13 +122,21 @@ public class GLFrontEnd implements FrontEnd {
 	@Override
 	public void onTick() {
 		if (Display.wasResized()) {
+			float w = Display.getWidth();
+			float h = Display.getHeight();
 			glViewport(0, 0, Display.getWidth(), Display.getHeight());
 			glLoadIdentity();
+
+			float defaultHeight = 600f;
+			float defaultFov = 1.0f; // Approximately 60 degrees
+			//float fov = (float) Math.atan(h / defaultHeight * Math.tan(defaultFov * 0.5f)) * 2.0f;
+			float fov = (float) Math.atan(h / defaultHeight * Math.tan(defaultFov * 0.5f)) * 2.0f;
 			
+
 			glPushAttrib(GL_TRANSFORM_BIT);
 			glMatrixMode(GL_PROJECTION);
 			glLoadIdentity();
-			GLU.gluPerspective(55f, Display.getWidth() / Display.getHeight(), 0.01f, 1000f);
+			GLU.gluPerspective((float) Math.toDegrees(fov), w / h, 0.01f, 1000f);
 			glPopAttrib();
 
 			glGetFloat(GL_PROJECTION_MATRIX, perspectiveProjectionMatrix);
@@ -243,7 +251,7 @@ public class GLFrontEnd implements FrontEnd {
 		try {
 			Display.setDisplayMode(new DisplayMode(WINDOW_DIMENSIONS.width, WINDOW_DIMENSIONS.height));
 			Display.setTitle(TITLE);
-			Display.setVSyncEnabled(true); // Prevents flickering frames.
+			// Display.setVSyncEnabled(true); // Prevents flickering frames.
 			Display.setResizable(true);
 			Display.create();
 		} catch (LWJGLException e) {
@@ -274,10 +282,19 @@ public class GLFrontEnd implements FrontEnd {
 	 * (window_dimensions)
 	 */
 	public void setUpMatrices() {
+		float w = Display.getWidth();
+		float h = Display.getHeight();
+		glViewport(0, 0, Display.getWidth(), Display.getHeight());
+		glLoadIdentity();
+
+		float defaultHeight = 600f;
+		float defaultFov = 1.0f; // Approximately 60 degrees
+		float fov = (float) Math.atan(h / defaultHeight * Math.tan(defaultFov * 0.5f)) * 2.0f;
+
 		glPushAttrib(GL_TRANSFORM_BIT);
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
-		GLU.gluPerspective(55f, Display.getWidth() / Display.getHeight(), 0.01f, 1000f);
+		GLU.gluPerspective((float) Math.toDegrees(fov), w / h, 0.01f, 1000f);
 		glPopAttrib();
 
 		glGetFloat(GL_PROJECTION_MATRIX, perspectiveProjectionMatrix);

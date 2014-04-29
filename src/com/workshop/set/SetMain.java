@@ -3,16 +3,22 @@ package com.workshop.set;
 import glfrontend.FrontEnd;
 
 import com.workshop.set.control.TempEnvironment;
+import com.workshop.set.model.VectorSpace;
+import com.workshop.set.model.interfaces.Gensym;
 import com.workshop.set.model.interfaces.Model;
+import com.workshop.set.model.lang.core.TNameGenerator;
 import com.workshop.set.view.SetFrontEnd;
 
 public class SetMain {
+	
+	public static final Gensym GENSYM = new TNameGenerator();
+	public static final VectorSpace VEC_SPACE_3D = new VectorSpace(3, GENSYM);
 
 	public static void main(String[] args) {
 
 		final SetMain set = new SetMain();
 
-		// Cleans up the openAL sound object right before program exits.
+		// Called right before program exits.
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 			@Override
 			public void run() {

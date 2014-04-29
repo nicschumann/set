@@ -91,8 +91,9 @@ public class SetScreen implements ScreenFrame {
 				frame.mouseClicked(new MouseEvent(relativePoint, e.button));
 			}
 		}
-		if (onViewport)
+		if (onViewport){
 			_viewport.mouseClicked(e);
+		}
 	}
 
 	@Override
@@ -154,11 +155,17 @@ public class SetScreen implements ScreenFrame {
 			_viewport.mouseDragged(e);
 	}
 
+	/**
+	 * Renders the stage and its components
+	 */
 	@Override
 	public void render3D() {
 		_viewport.render3D();
 	}
 
+	/**
+	 * Renders the ui elements
+	 */
 	@Override
 	public void render2D() {
 		glTranslatef(ul.x, ul.y, 0);
@@ -208,7 +215,6 @@ public class SetScreen implements ScreenFrame {
 		}
 		if (onViewport)
 			_viewport.mouseWheelScrolled(p, amount);
-
 	}
 
 	@Override
@@ -267,6 +273,7 @@ public class SetScreen implements ScreenFrame {
 
 			frame.resize(newRatio(oldSize, size, newSize));
 		}
+		_viewport.resize(newSize);
 		Vector2f.add(ul, newSize, lr);
 	}
 

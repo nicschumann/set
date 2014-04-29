@@ -9,7 +9,11 @@ import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glLineWidth;
 import static org.lwjgl.opengl.GL11.glVertex3i;
+
+import java.util.ArrayList;
+
 import glfrontend.ScreenFrame;
+import glfrontend.components.GeometricElement;
 
 import org.lwjgl.util.vector.Vector2f;
 
@@ -40,10 +44,10 @@ public class Stage implements ScreenFrame {
 		glEnable(GL_LINE_SMOOTH);
 		glBegin(GL_LINES);
 		for (int i = -10; i <= 10; i++) {
-			glVertex3i(i, 0, -10);
-			glVertex3i(i, 0, 10);
-			glVertex3i(-10, 0, i);
-			glVertex3i(10, 0, i);
+			glVertex3i(i, -10, 0);
+			glVertex3i(i, 10, 0);
+			glVertex3i(-10, i, 0);
+			glVertex3i(10, i, 0);
 		}
 		glEnd();
 		glDepthMask(true);
@@ -98,11 +102,10 @@ public class Stage implements ScreenFrame {
 
 	@Override
 	public void keyReleased(int key) {}
-
+	
 	@Override
 	public void render3D() {
-
-		// 1. render the grid
+		// render the grid
 		this.drawGrid();
 	}
 

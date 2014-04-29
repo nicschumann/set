@@ -37,13 +37,12 @@ public class SetFrontEnd extends GLFrontEnd {
 		int width = Display.getWidth();
 		int height = Display.getHeight();
 
-		SetScreen main = new SetScreen(model, width, height);
+		SetScreen main = new SetScreen(model, width, height);	
 
 		Stage stage = new Stage(width, height);
 		stage.setLocation(new Vector2f(0, 0));
 
 		main.setStage(stage);
-		//main.add(stage);
 		main.add(makeSelectionPanel(width, height));
 		main.add(makeConstraintPanel(width, height));
 
