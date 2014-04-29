@@ -105,7 +105,6 @@ public class Stage implements ScreenFrame {
 	
 	@Override
 	public void render3D() {
-		// render the grid
 		this.drawGrid();
 	}
 

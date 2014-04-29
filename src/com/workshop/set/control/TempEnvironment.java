@@ -29,7 +29,7 @@ public class TempEnvironment implements Model {
 	public TempEnvironment() {
 		_currentElements = new HashSet<>();
 	}
-
+	
 	@Override
 	public boolean addElement(GeometricElement elmt) {
 		return _currentElements.add(elmt);
@@ -125,5 +125,20 @@ public class TempEnvironment implements Model {
 		} catch (GeometricFailure e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void checkIntersections(glfrontend.components.Point elmt) {		
+		//for now, just a naive iterative check. (improve later with bounding volumes)
+		//if get an intersection, add the item to list of selected objects (to be used for constraints or deletions)
+		boolean intersected;
+		
+		for (GeometricElement element : _currentElements){
+			intersected = element.checkIntersection(elmt);
+			if(intersected){
+				//add to selected items list or something
+			}
+		}
+		
 	}
 }

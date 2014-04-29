@@ -33,6 +33,8 @@ public class Viewport implements ScreenFrame {
 	private boolean _shiftDown; 
 	private Point [] _linePoints = new Point [2]; 
 	private int _toUpdate; 
+	
+	private String _mode;	//controls interaction changes for creation or selection mode
 
 	public Viewport(Model model, float w, float h) {
 		init();
@@ -53,15 +55,13 @@ public class Viewport implements ScreenFrame {
 		_dragged = false; 
 		_shiftDown = false; 
 		_toUpdate = 0; 
+		
+		_mode = "creation";
 	}
 
 	public void setStage(Stage s) {
 		_stage = s;
 	}
-	
-//	public void setScaleFactor(float increment){
-//		_scaleFactor += increment; 
-//	}
 
 	@Override
 	public void setLocation(Vector2f loc) {
@@ -143,14 +143,23 @@ public class Viewport implements ScreenFrame {
 		float t = -(p.z)/d.z; 
 
 		Vector4 proj = new Vector4(p.x+d.x*t, p.y+d.y*t, p.z+d.z*t,0);		
-		//System.out.println("The new projection: " + proj.x + " " + proj.y + " " + proj.z);
+		System.out.println("The new projection: " + proj.x/2 + " " + proj.y/2 + " " + proj.z/2);
+		
 		//points off by a factor of two
 		
 		return new Point(proj.x/2, proj.y/2, proj.z/2);
 	}
 	
 	
-	
+	/**
+	 * Given an intersection point p, checks for intersections with any object in the scene 
+	 */
+	public void checkIntersections(Point p){
+		//may do initial bounds checking here...
+		_model.checkIntersections(p);
+		
+		//if no object is selected, deselect all itmes
+	}
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
@@ -158,22 +167,25 @@ public class Viewport implements ScreenFrame {
 		if(!_dragged){
 			
 			Point p = this.traceMouseClick(e.location.x, (this.getSize().y-e.location.y));
-			_model.addElement(p);
-			
-			//if shift key down, take care of adding this point to the lines renderable queue and creating a 
-			//new line as well
-			if(_shiftDown){
-				_linePoints[_toUpdate] = p; 
-				
-				if(_toUpdate==0)	
-					_toUpdate=1; 
-				else
-					_toUpdate=0;
-				
-				//if a point in both locations, make a new line
-				if(_linePoints[0]!=null && _linePoints[1]!=null){
-					_model.addElement(new Line(_linePoints[0], _linePoints[1]));
+		
+			//if in creation mode, add the element (will add a step to put in right bucket):
+			if(_mode.equalsIgnoreCase("creation")){
+				_model.addElement(p);	
+				if(_shiftDown){		//create a new line if shift down
+					_linePoints[_toUpdate] = p; 
+					if(_toUpdate==0)	
+						_toUpdate=1; 
+					else
+						_toUpdate=0;
+					//if a point in both locations, make a new line
+					if(_linePoints[0]!=null && _linePoints[1]!=null){
+						_model.addElement(new Line(_linePoints[0], _linePoints[1]));
+					}
 				}
+			}
+			//if in selection mode, run intersection tests to find out if anything was selected
+			else if(_mode.equalsIgnoreCase("selection")){
+				this.checkIntersections(p);
 			}
 		}
 		_dragged = false;
@@ -198,7 +210,7 @@ public class Viewport implements ScreenFrame {
 		float deltaX = _currPos.x - e.location.x;
 		float deltaY = _currPos.y - e.location.y;
 		_currPos = e.location; 
-		_currCamera.mouseMove(deltaX, deltaY);
+		_currCamera.mouseMove(deltaX, deltaY, e);
 	}
 
 	@Override
@@ -214,10 +226,12 @@ public class Viewport implements ScreenFrame {
 			_currCamera = _cameras.get(_camIndex%_cameras.size());
 			_camIndex += 1; 
 		}
-
 		if (key == 42)
 			_shiftDown = true;
-
+		if (key == 31 && _mode.equalsIgnoreCase("creation"))
+			_mode = "selection";
+		if (key == 46 && _mode.equalsIgnoreCase("selection"))
+			_mode = "creation";
 	}
 
 	@Override

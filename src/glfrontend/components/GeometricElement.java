@@ -7,5 +7,6 @@ package glfrontend.components;
 public interface GeometricElement {
 	
 	public void render();
-	//get and set elements
+	
+	public boolean checkIntersection(Point elt);
 }

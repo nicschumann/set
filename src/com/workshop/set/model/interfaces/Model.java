@@ -1,8 +1,11 @@
 package com.workshop.set.model.interfaces;
 
+import java.util.Set;
+
 import glfrontend.components.GeometricElement;
 
 import com.workshop.set.model.VectorSpace.Geometry;
+import com.workshop.set.model.VectorSpace.Point;
 
 public interface Model {
 	
@@ -19,5 +22,7 @@ public interface Model {
 	public void removeGeometryAll(Geometry g);
 	
 	public void renderGeometries();
+
+	public void checkIntersections(glfrontend.components.Point elmt);
 
 }
