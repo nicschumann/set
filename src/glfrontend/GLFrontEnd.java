@@ -55,6 +55,7 @@ public class GLFrontEnd implements FrontEnd {
 	private static final FloatBuffer orthographicProjectionMatrix = BufferUtils.createFloatBuffer(16);
 
 	private boolean leftPressed, rightPressed, wheelPressed;
+	private boolean clickLeft, clickRight, clickWheel;
 	private Vector2f prevMouse;
 	private boolean contained;
 
@@ -176,13 +177,18 @@ public class GLFrontEnd implements FrontEnd {
 			if (!leftPressed) {
 				_frame.mousePressed(new MouseEvent(mouseLoc, LEFT));
 				leftPressed = true;
+				clickLeft = true;
 			}
-			if (mouseMoved)
+			if (mouseMoved) {
 				_frame.mouseDragged(new MouseEvent(mouseLoc, LEFT));
+				clickLeft = false;
+			}
 		} else if (leftPressed) {
 			_frame.mouseReleased(new MouseEvent(mouseLoc, LEFT));
-			if (contains)
+			if (contains && clickLeft) {
 				_frame.mouseClicked(new MouseEvent(mouseLoc, LEFT));
+				clickLeft = false;
+			}
 			leftPressed = false;
 		}
 
@@ -192,13 +198,18 @@ public class GLFrontEnd implements FrontEnd {
 			if (!rightPressed) {
 				_frame.mousePressed(new MouseEvent(mouseLoc, RIGHT));
 				rightPressed = true;
+				clickRight = true;
 			}
-			if (mouseMoved)
+			if (mouseMoved) {
 				_frame.mouseDragged(new MouseEvent(mouseLoc, RIGHT));
+				clickRight = false;
+			}
 		} else if (rightPressed) {
 			_frame.mouseReleased(new MouseEvent(mouseLoc, RIGHT));
-			if (contains)
+			if (contains && clickRight) {
 				_frame.mouseClicked(new MouseEvent(mouseLoc, RIGHT));
+				clickRight = false;
+			}
 			rightPressed = false;
 		}
 
@@ -208,13 +219,18 @@ public class GLFrontEnd implements FrontEnd {
 			if (!wheelPressed) {
 				_frame.mousePressed(new MouseEvent(mouseLoc, WHEEL));
 				wheelPressed = true;
+				clickWheel = true;
 			}
-			if (mouseMoved)
+			if (mouseMoved) {
 				_frame.mouseDragged(new MouseEvent(mouseLoc, WHEEL));
+				clickWheel = false;
+			}
 		} else if (wheelPressed) {
 			_frame.mouseReleased(new MouseEvent(mouseLoc, WHEEL));
-			if (contains)
+			if (contains && clickWheel) {
 				_frame.mouseClicked(new MouseEvent(mouseLoc, WHEEL));
+				clickWheel = false;
+			}
 			wheelPressed = false;
 		}
 
