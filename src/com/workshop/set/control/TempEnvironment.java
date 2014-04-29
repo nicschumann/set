@@ -1,14 +1,13 @@
 package com.workshop.set.control;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_LINES;
 import static org.lwjgl.opengl.GL11.GL_LINE_SMOOTH;
 import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glLineWidth;
-import static org.lwjgl.opengl.GL11.glTranslatef;
-import static org.lwjgl.opengl.GL11.glVertex2d;
-import glfrontend.components.GeometricElement;
+import static org.lwjgl.opengl.GL11.glTranslated;
+import static org.lwjgl.opengl.GL11.glVertex3d;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -23,51 +22,33 @@ import com.workshop.set.model.interfaces.Model;
 
 public class TempEnvironment implements Model {
 
-	private Set<GeometricElement> _currentElements;
-	private Set<Geometry> _geoms;
+	private Set<Geometry> _currentElements;
 
 	public TempEnvironment() {
 		_currentElements = new HashSet<>();
 	}
 	
 	@Override
-	public boolean addElement(GeometricElement elmt) {
-		return _currentElements.add(elmt);
-	}
-
-	@Override
-	public boolean removeElement(GeometricElement elmt) {
-		return _currentElements.remove(elmt);
-	}
-
-	@Override
-	public void drawGeometricElements() {
-		for (GeometricElement elmt : _currentElements) {
-			elmt.render();
-		}
-	}
-
-	@Override
 	public void addGeometry(Geometry g) {
-		_geoms.add(g);
+		_currentElements.add(g);
 		Set<Geometry> geoms = g.getGeometries();
 		for (Geometry geom : geoms) {
-			_geoms.remove(geom);
+			_currentElements.remove(geom);
 		}
 	}
 
 	@Override
 	public void removeGeometry(Geometry g) {
-		_geoms.remove(g);
+		_currentElements.remove(g);
 		Set<Geometry> geoms = g.getGeometries();
 		for (Geometry geom : geoms) {
-			_geoms.add(geom);
+			_currentElements.add(geom);
 		}
 	}
 
 	@Override
 	public void removeGeometryAll(Geometry g) {
-		_geoms.remove(g);
+		_currentElements.remove(g);
 		Set<Geometry> geoms = g.getGeometries();
 		for (Geometry geom : geoms) {
 			removeGeometryAll(geom);
@@ -76,38 +57,37 @@ public class TempEnvironment implements Model {
 
 	@Override
 	public void renderGeometries() {
-		for (Geometry geom : _geoms) {
+		for (Geometry geom : _currentElements) {
 			drawGeometry(geom);
 		}
 	}
 
 	private int drawGeometry(Geometry geom) {
-		Set<Geometry> geoms = new HashSet<Geometry>();
+		Set<Geometry> geoms = geom.getGeometries();
 		int depth = 0;
 
 		// point
 		if (geoms.isEmpty()) {
-			drawPoint((Point) geoms);
+			drawPoint((Point) geom);
 			return depth; // 0
 		}
 		for (Geometry g : geoms) {
 			depth = drawGeometry(g) + 1;
 		}
-		drawRelation((Relation) geoms, depth);
+		drawRelation((Relation) geom, depth);
 		return depth;
 	}
-	
+
 	private void drawRelation(Relation geoms, int depth) {
 		double[] pnts = geoms.getPointArray();
-		if (pnts.length == 12) {
+		if (pnts.length == 6) {
 			glLineWidth(1.2f);
 			glEnable(GL_LINE_SMOOTH);
 			glBegin(GL_LINES);
 			glVertex3d(pnts[0], pnts[1], pnts[2]);
 			glVertex3d(pnts[3], pnts[4], pnts[5]);
 			glEnd();
-		}
-		else if (pnts.length == 24) {
+		} else if (pnts.length == 12) {
 			// TODO: draw plane
 		}
 	}
@@ -128,17 +108,41 @@ public class TempEnvironment implements Model {
 	}
 
 	@Override
-	public void checkIntersections(glfrontend.components.Point elmt) {		
+	public void checkIntersections(Point elmt) {		
 		//for now, just a naive iterative check. (improve later with bounding volumes)
 		//if get an intersection, add the item to list of selected objects (to be used for constraints or deletions)
 		boolean intersected;
 		
-		for (GeometricElement element : _currentElements){
-			intersected = element.checkIntersection(elmt);
-			if(intersected){
-				//add to selected items list or something
+		for (Geometry element : _currentElements){
+			
+			
+			Set<Geometry> geoms = element.getGeometries();
+
+			// point
+			if (geoms.isEmpty()) {
+				//check intersection with a point
 			}
-		}
+			else{
+				//check intersection with relation 
+			}	
+		}	
+	}
+	
+	public void checkPtIntersection(){
+//		float[] loc = pt.getValues(); 
+//		double dist = Math.sqrt((_x-loc[0])*(_x-loc[0]) + (_y-loc[1])*(_y-loc[1]) + (_z-loc[2])*(_z-loc[2]));
+//		
+//		if(dist<=.08){
+//			_highlighted=true; 
+//			return true; 
+//		}
+//		return false;
+	}
+	
+	public void checkLineIntersection(){
 		
 	}
+	
+	
+	
 }
