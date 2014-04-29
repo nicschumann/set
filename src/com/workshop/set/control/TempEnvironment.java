@@ -8,6 +8,7 @@ import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glLineWidth;
 import static org.lwjgl.opengl.GL11.glTranslated;
 import static org.lwjgl.opengl.GL11.glVertex3d;
+import static org.lwjgl.opengl.GL11.glColor3f;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -98,6 +99,11 @@ public class TempEnvironment implements Model {
 			double y = p.getN_(2).get();
 			double z = p.getN_(3).get();
 
+			if(p.getHighlight())
+				glColor3f(0,1,0);
+			else
+				glColor3f(1,0,0);
+			
 			glTranslated(x, y, z);
 			new Sphere().draw(.08f, 10, 10);
 			glTranslated(-x, -y, -z);
@@ -114,13 +120,15 @@ public class TempEnvironment implements Model {
 		boolean intersected;
 		
 		for (Geometry element : _currentElements){
-			
-			
 			double[] pts = element.getPointArray();
 
 			// point
 			if (pts.length==3) {
-				//check intersection with a point
+				intersected = this.checkPtIntersection(elmt, pts);
+				if(intersected){
+					//highlight and add to selected items
+					element.setHighlight(true);
+				}
 			}
 			else if (pts.length==6){
 				//check intersection with relation 
@@ -128,19 +136,14 @@ public class TempEnvironment implements Model {
 		}	
 	}
 	
-	public void checkPtIntersection(){
-//		float[] loc = pt.getValues(); 
-//		double dist = Math.sqrt((_x-loc[0])*(_x-loc[0]) + (_y-loc[1])*(_y-loc[1]) + (_z-loc[2])*(_z-loc[2]));
-//		
-//		if(dist<=.08){
-//			_highlighted=true; 
-//			return true; 
-//		}
-//		return false;
+	public boolean checkPtIntersection(Point toCheck, double[] oldLoc){
+		double[] newLoc = toCheck.getPointArray(); 
+		double dist = Math.sqrt((oldLoc[0]-newLoc[0])*(oldLoc[0]-newLoc[0]) + (oldLoc[1]-newLoc[1])*(oldLoc[1]-newLoc[1]) + (oldLoc[2]-newLoc[2])*(oldLoc[2]-newLoc[2]));
+		return(dist<=.08);
 	}
 	
-	public void checkLineIntersection(){
-		
+	public boolean checkLineIntersection(){
+		return false; 
 	}
 	
 	
