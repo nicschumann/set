@@ -13,7 +13,6 @@ import static org.lwjgl.opengl.GL11.glVertex3i;
 import java.util.ArrayList;
 
 import glfrontend.ScreenFrame;
-import glfrontend.components.GeometricElement;
 
 import org.lwjgl.util.vector.Vector2f;
 

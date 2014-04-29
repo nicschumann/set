@@ -116,13 +116,13 @@ public class TempEnvironment implements Model {
 		for (Geometry element : _currentElements){
 			
 			
-			Set<Geometry> geoms = element.getGeometries();
+			double[] pts = element.getPointArray();
 
 			// point
-			if (geoms.isEmpty()) {
+			if (pts.length==3) {
 				//check intersection with a point
 			}
-			else{
+			else if (pts.length==6){
 				//check intersection with relation 
 			}	
 		}	
