@@ -27,7 +27,7 @@ public class TempEnvironment implements Model {
 	public TempEnvironment() {
 		_currentElements = new HashSet<>();
 	}
-
+	
 	@Override
 	public void addGeometry(Geometry g) {
 		_currentElements.add(g);
@@ -106,4 +106,43 @@ public class TempEnvironment implements Model {
 			e.printStackTrace();
 		}
 	}
+
+	@Override
+	public void checkIntersections(Point elmt) {		
+		//for now, just a naive iterative check. (improve later with bounding volumes)
+		//if get an intersection, add the item to list of selected objects (to be used for constraints or deletions)
+		boolean intersected;
+		
+		for (Geometry element : _currentElements){
+			
+			
+			double[] pts = element.getPointArray();
+
+			// point
+			if (pts.length==3) {
+				//check intersection with a point
+			}
+			else if (pts.length==6){
+				//check intersection with relation 
+			}	
+		}	
+	}
+	
+	public void checkPtIntersection(){
+//		float[] loc = pt.getValues(); 
+//		double dist = Math.sqrt((_x-loc[0])*(_x-loc[0]) + (_y-loc[1])*(_y-loc[1]) + (_z-loc[2])*(_z-loc[2]));
+//		
+//		if(dist<=.08){
+//			_highlighted=true; 
+//			return true; 
+//		}
+//		return false;
+	}
+	
+	public void checkLineIntersection(){
+		
+	}
+	
+	
+	
 }
