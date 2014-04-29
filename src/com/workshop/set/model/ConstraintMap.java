@@ -2,10 +2,10 @@ package com.workshop.set.model;
 
 import com.workshop.set.model.interfaces.Constraint;
 import com.workshop.set.model.interfaces.Symbol;
+import com.workshop.set.model.interfaces.Value;
 import com.workshop.set.model.lang.core.TNameGenerator;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * A constraint map represents a judgement between
@@ -24,33 +24,77 @@ public class ConstraintMap {
         this.rule = rule;
         judgements = new LinkedHashMap<>();
         values = new LinkedHashMap<>();
+        orbits = new HashSet<>();
+        UID = Math.random();
     }
 
+    private double UID;
     private Constraint rule;
-    private Map<Symbol,Symbol> judgements;
+    private Map<Symbol,Set<Symbol>> judgements;
     private Map<Symbol,Mutable<Double>> values;
+    private Set<Symbol> orbits;
 
     /**
      * constraining geometry with respect to a specific judgement means creating a symbolic
      * equation, and maintaining the current values of the vectors ( as synchronized, boxed mutable references. )
+     * One pivot may maintain multiple orbits.
      *
-     * @param lhs the left hand side of the binary relation
-     * @param rhs the right hand side of the binary relation
+     * @param pivot the left hand side of the binary relation, which is defined to be the fixed member
+     * @param orbit the right hand side of the binary relation, which is defined as the varying member
      * @return this constraint map;
      */
-    public ConstraintMap constrain( VectorSpace.Geometry lhs, VectorSpace.Geometry rhs ) throws VectorSpace.GeometricFailure {
-        values.putAll( lhs.values() );
-        values.putAll( rhs.values() );
+    public ConstraintMap constrain( VectorSpace.Geometry pivot, VectorSpace.Geometry orbit ) throws VectorSpace.GeometricFailure {
+        if ( ) {
 
-        judgements.putAll( lhs.join( rhs ) );
+        }
+
+        judgements.putAll( pivot.join( orbit ) );
+
+        values.putAll( pivot.values() );
+        values.putAll( orbit.values() );
+        orbits.addAll( orbit.components() );
 
         return this;
+
     }
+
+    /**
+     * the constructRow builds a row for the constraint matrix
+     * @return a mapping from symbols into values
+     */
+    public List<Map<Symbol,Double>> constructRows() {
+        return rule.constructRows(judgements);
+    }
+
 
     /**
      * @return the number of unknowns in this constraint map
      */
     public int arity() { return values.size(); }
+
+    /**
+     * @return returns the constraint that governs this constraint map.
+     */
+    public Constraint constraint() { return rule; }
+
+    /**
+     * @return the current values of the ground symbols in this constraint map.
+     */
+    public Map<Symbol,Mutable<Double>> currentValues() { return new HashMap<>( values ); }
+
+    /**
+     * @return the set of pivot values that this map contains
+     */
+    public Set<Symbol> orbitSet() { return new HashSet<>( orbits ); }
+
+    /**
+     * this method returns the constraintMap's unique identifier, used to indentify it
+     * in the constraint matrix.
+     * @return a unique double for this instance.
+     */
+    public Double UID() {
+        return UID;
+    }
 
     @Override
     public String toString() {
@@ -72,6 +116,11 @@ public class ConstraintMap {
         return s.toString();
     }
 
+    @Override
+    public int hashCode() {
+        return (int)UID >>> 31;
+    }
+
     /**
      * testing method
      */
@@ -91,17 +140,16 @@ public class ConstraintMap {
 
 
             ConstraintMap cn = new ConstraintMap( new Equality() );
-
-            //cn.constrain( a, b );
             cn.constrain( ab,uv );
 
+            ConstraintMatrix mat = new ConstraintMatrix( cn );
+
             System.out.println( cn );
+            System.out.println( mat );
 
         } catch ( VectorSpace.GeometricFailure exn ) {
             System.err.println( "ERROR: " + exn.getLocalizedMessage() );
         }
-
-
     }
 
 

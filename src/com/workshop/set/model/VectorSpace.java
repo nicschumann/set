@@ -154,8 +154,7 @@ public class VectorSpace {
          * select a component with subscript i and return it.
          *
          * @param i the subscript of the component to select
-         * @return the Symbol represented by the corresponding X_i
-         */
+         * @return the Symbol represented by the corresponding X_i */
         public Symbol getX_( int i ) throws GeometricFailure {
             if ( i <= 0 || i > dimension ) throw new GeometricFailure( i );
             return names[ i-1 ];

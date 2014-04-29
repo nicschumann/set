@@ -3,21 +3,19 @@ package com.workshop.set.model.lang.parser;
 import java.io.*;
 import java.util.ArrayList;
 
-import com.workshop.set.model.interfaces.Symbol;
 import com.workshop.set.model.lang.exceptions.LexException;
-import com.workshop.set.model.lang.parser.Grammar.Terminal.*;
-/**
- * Created by nicschumann on 4/21/14.
- */
+import com.workshop.set.model.lang.parser.Grammar.*;
+
+
 public class Lexer {
 
 
 
-    public ArrayList<TERM> lex( String input ) throws LexException,IOException {
+    public ArrayList<TERMINAL> lex( String input ) throws LexException,IOException {
         return _lex( new BufferedReader( new StringReader( input ) ) );
     }
 
-    public ArrayList<TERM> lex( File input ) throws LexException,IOException {
+    public ArrayList<TERMINAL> lex( File input ) throws LexException,IOException {
         return _lex( new BufferedReader( new FileReader( input ) ) );
     }
 
@@ -28,11 +26,11 @@ public class Lexer {
     private int parenCount      = 0;
 
 
-    private ArrayList<TERM> _lex( BufferedReader inputstream ) throws LexException,IOException {
+    private ArrayList<TERMINAL> _lex( BufferedReader inputstream ) throws LexException,IOException {
 
         reset();
 
-        ArrayList<TERM> tokenstream = new ArrayList<>();
+        ArrayList<TERMINAL> tokenstream = new ArrayList<>();
         StringBuilder termBuffer = new StringBuilder();
 
         char current;
@@ -42,14 +40,12 @@ public class Lexer {
             System.out.println( position );
             position++;
             if ( Character.isWhitespace(current) ) {
-                System.out.println( "whitespace "+current );
                if ( termBuffer.length() <= 0 ) continue;
 
                 tokenstream.add( tokenize( termBuffer.toString(), position-termBuffer.length() ) );
                 termBuffer.delete(0, termBuffer.length());
 
             } else if ( reservedSymbols.indexOf( current ) != -1 ) {
-                System.out.println( "reserved "+current );
                 if ( termBuffer.length() > 0 ) {
                     tokenstream.add( tokenize( termBuffer.toString(), position-termBuffer.length() ) );
                     termBuffer.delete(0, termBuffer.length());
@@ -58,7 +54,6 @@ public class Lexer {
                 tokenstream.add( tokenize( ""+current, position ) );
 
             } else {
-                System.out.println( "appending "+current );
                 termBuffer.append( current );
             }
         }
@@ -75,7 +70,7 @@ public class Lexer {
 
 
 
-    private TERM tokenize( String token, int position ) {
+    private TERMINAL tokenize( String token, int position ) {
         if ( token.equals( "lambda" ) || token.equals( "function" ) ) { return new LAMBDA( position ); }
         else if ( token.equals( "product" ) || token.equals( "forall" ) ) { return new FORALL( position ); }
         else if ( token.equals( "sum" ) || token.equals( "exists" ) ) { return new SUM( position ); }
@@ -117,16 +112,14 @@ public class Lexer {
         braceCount = 0;
     }
 
-
-
     public static void main( String[] args ) {
         Lexer l = new Lexer();
 
         try {
+
             System.out.println( l.lex( ")[{[][}]()" ));
-        } catch ( LexException e ) {
-            System.out.print( e.getLocalizedMessage() );
-        } catch ( IOException e ) {
+
+        } catch ( Exception e ) {
             System.out.print( e.getLocalizedMessage() );
         }
 

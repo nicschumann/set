@@ -10,7 +10,7 @@ T1, T2      :=      lambda V : T1 . T2              ( TAbstraction )
             |       T1 T2                           ( TApplication )
             |       Univ N                          ( TUniverse )
             |       Field                           ( TField )
-            |       (V)                             ( TPattern )
+            |       V                             	( TPattern )
 
 V1, V2      :=      ( V1 V2 ... VN )                ( TVector )
             |       { V1, V2, ..., VN }             ( TSet )
@@ -18,6 +18,40 @@ V1, V2      :=      ( V1 V2 ... VN )                ( TVector )
             |       V1 O V2                         ( TOp )
             |       s                               ( TScalar )
             |       a                               ( TName )
+
+
+##      | lam   | all    | sum     | :   | .  | ,     |  (         | )         | [         | ]         | {        | }     | *    | +     | -     | /     | =     | id    | num
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+
+
+
+
+
+
+
+
+
+
+
 
 
 ##The statement of a constraint problem
