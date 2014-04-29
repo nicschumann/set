@@ -30,7 +30,7 @@ public class ConstraintMap {
 
     private double UID;
     private Constraint rule;
-    private Map<Symbol,Set<Symbol>> judgements;
+    private Map<Symbol,Symbol> judgements;
     private Map<Symbol,Mutable<Double>> values;
     private Set<Symbol> orbits;
 
@@ -44,9 +44,6 @@ public class ConstraintMap {
      * @return this constraint map;
      */
     public ConstraintMap constrain( VectorSpace.Geometry pivot, VectorSpace.Geometry orbit ) throws VectorSpace.GeometricFailure {
-        if ( ) {
-
-        }
 
         judgements.putAll( pivot.join( orbit ) );
 
