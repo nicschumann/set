@@ -75,6 +75,10 @@ public class VectorSpace {
         public abstract Set<Geometry> getGeometries();
         
         public abstract double[] getPointArray();
+        
+        public abstract void setHighlight(boolean b);
+        
+        public abstract boolean getHighlight();
 
     }
 
@@ -95,6 +99,7 @@ public class VectorSpace {
                 this.names[ i ] = e.getKey();
                 i++;
             }
+            this.init(); 
         }
 
         public Point( Symbol name, Mutable<Double>... components  ) throws GeometricFailure {
@@ -110,6 +115,7 @@ public class VectorSpace {
                 this.names[ i ] = s;
 
             }
+            this.init(); 
         }
 
         public Point( Symbol name, List<Mutable<Double>> components  ) throws GeometricFailure {
@@ -125,12 +131,18 @@ public class VectorSpace {
                 this.names[ i ] = s;
 
             }
+            this.init(); 
+        }
+        
+        public void init(){
+        	highlighted=false; 
         }
 
         private Symbol name;
         private Symbol[] names = new Symbol[ dimension ];
         private Mutable<Double>[] components = new Mutable[ dimension ]; // TODO ensure safety
         private Map<Symbol,Mutable<Double>> namedComponents = new LinkedHashMap<>();
+        private boolean highlighted; 
 
         /**
          * getN_( i...n ) is defined.
@@ -243,6 +255,16 @@ public class VectorSpace {
         	return array;
         }
         
+		@Override
+		public void setHighlight(boolean b) {
+			highlighted=b;
+		}
+
+		@Override
+		public boolean getHighlight() {
+			return highlighted;
+		}
+        
     }
 
 
@@ -253,16 +275,23 @@ public class VectorSpace {
     public class Relation extends Geometry {
         public Relation( Symbol name, Geometry A, Geometry B ) {
             this.name = name; this.A = A; this.B = B;
+            this.init();
         }
 
         public Relation( Geometry A, Geometry B ) {
             this.A = A; this.B = B;
+            this.init(); 
         }
-
+        
+        public void init(){
+        	highlighted=false; 
+        }
+        
         private Symbol name;
         private Geometry A;
         private Geometry B;
-
+        private boolean highlighted;
+        
         public Symbol name() { return name; }
 
         public Geometry domain() { return A; }
@@ -328,6 +357,16 @@ public class VectorSpace {
         	System.arraycopy(b, 0, array, a.length, b.length);
         	return array;
         }
+
+		@Override
+		public void setHighlight(boolean b) {
+			highlighted=b;
+		}
+
+		@Override
+		public boolean getHighlight() {
+			return highlighted; 
+		}
     }
 
 
