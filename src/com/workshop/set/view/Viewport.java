@@ -3,6 +3,8 @@ package com.workshop.set.view;
 import static com.workshop.set.SetMain.GENSYM;
 import static com.workshop.set.SetMain.VEC_SPACE_3D;
 import static org.lwjgl.opengl.GL11.glColor3f;
+
+import com.workshop.set.model.DoubleReference;
 import glfrontend.ScreenFrame;
 import glfrontend.components.Camera;
 import glfrontend.components.Vector4;
@@ -150,8 +152,8 @@ public class Viewport implements ScreenFrame {
 
 		Point point = null;
 		try {
-			point = VEC_SPACE_3D.point(GENSYM.generate(), new Mutable<Double>((double) proj.x / 2),
-					new Mutable<Double>((double) proj.y / 2), new Mutable<Double>((double) proj.z / 2));
+			point = VEC_SPACE_3D.point(GENSYM.generate(), new DoubleReference((double) proj.x / 2),
+					new DoubleReference((double) proj.y / 2), new DoubleReference((double) proj.z / 2));
 		} catch (GeometricFailure e) {
 			e.printStackTrace();
 		}
