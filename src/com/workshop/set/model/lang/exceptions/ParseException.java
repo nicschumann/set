@@ -12,23 +12,13 @@ import java.util.List;
  * Created by nicschumann on 4/21/14.
  */
 public class ParseException extends Exception {
-    public ParseException( List<String> logs ) {
-        this.log = logs;
+    public ParseException( String msg, Collection<TERMINAL> parsed, Collection<TERMINAL> remaining ) {
+        this.msg = "ParseError:" + System.lineSeparator();
+        this.msg += msg + System.lineSeparator();
+        this.msg += "parser position: " + parsed + " $ " + remaining + System.lineSeparator();
     }
 
-    public ParseException( Collection<TERMINAL> parsed, Collection<TERMINAL> remaining ) {
-        this.log = new LinkedList<>(Arrays.asList( "ParseError: parser position: " + parsed + " $ " + remaining ) );
-    }
-
-    private List<String> log;
-
-    public List<String> getLog() {
-        return log;
-    }
-
-    public void updateLog( String... errors ) {
-        log.addAll( Arrays.asList( errors ) );
-    }
+    private String msg;
 
     @Override
     public String getLocalizedMessage() {
@@ -37,6 +27,6 @@ public class ParseException extends Exception {
 
     @Override
     public String getMessage() {
-        return log.toString();
+        return msg;
     }
 }
