@@ -83,6 +83,8 @@ public class VectorSpace {
 
 		public abstract boolean getHighlight();
 
+		public abstract String displayString();
+
 	}
 
 	/**
@@ -239,19 +241,6 @@ public class VectorSpace {
 
 		}
 
-		/**
-		 * @return A string representation of this point.
-		 */
-		@Override
-		public String toString() {
-			StringBuilder s = new StringBuilder(name.toString()).append(" -> ( ");
-			for (Mutable<Double> X_i : components) {
-				s.append(X_i).append(" ");
-			}
-			s.append(")");
-			return s.toString();
-		}
-
 		@Override
 		public Set<Geometry> getGeometries() {
 			return new HashSet<>(0);
@@ -280,6 +269,25 @@ public class VectorSpace {
 			return highlighted;
 		}
 
+		/**
+		 * @return A string representation of this point.
+		 */
+		@Override
+		public String toString() {
+			StringBuilder s = new StringBuilder(name.toString()).append(" -> ( ");
+			for (Mutable<Double> X_i : components) {
+				s.append(X_i).append(" ");
+			}
+			s.append(")");
+			return s.toString();
+		}
+
+		@Override
+		public String displayString() {
+			double[] pnts = getPointArray();
+			String result = String.format("Point \"%s\": (%.2f, %.2f, %.2f)", name, pnts[0], pnts[1], pnts[2]);
+			return result;
+		}
 	}
 
 	public class Relation extends Geometry {
@@ -356,14 +364,6 @@ public class VectorSpace {
 		}
 
 		@Override
-		public String toString() {
-			StringBuilder s = new StringBuilder(name.toString()).append(" -> ( ");
-			s.append(A.toString()).append(", ").append(B.toString());
-			s.append(" )");
-			return s.toString();
-		}
-
-		@Override
 		public Set<Geometry> getGeometries() {
 			Set<Geometry> geoms = new HashSet<>();
 			geoms.add(A);
@@ -389,6 +389,20 @@ public class VectorSpace {
 		@Override
 		public boolean getHighlight() {
 			return highlighted;
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder s = new StringBuilder(name.toString()).append(" -> ( ");
+			s.append(A.toString()).append(", ").append(B.toString());
+			s.append(" )");
+			return s.toString();
+		}
+
+		@Override
+		public String displayString() {
+			String result = String.format("Relation \"%s\": {A: '%s', B: '%s'}", name, A.name(), B.name());
+			return result;
 		}
 	}
 

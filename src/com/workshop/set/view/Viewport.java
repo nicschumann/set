@@ -146,7 +146,6 @@ public class Viewport extends ScreenFrameAdapter {
 		float t = -(p.z) / d.z;
 
 		Vector4 proj = new Vector4(p.x + d.x * t, p.y + d.y * t, p.z + d.z * t, 0);
-		System.out.println("The new projection: " + proj.x / 2 + " " + proj.y / 2 + " " + proj.z / 2);
 
 		// points off by a factor of two
 

@@ -73,6 +73,6 @@ public class ScreenFrameAdapter implements ScreenFrame {
 	public void resize(Vector2f newSize) {}
 
 	@Override
-	public void animate(long nanosSincePrev) {}
+	public void animate(long millisSincePrev) {}
 
 }

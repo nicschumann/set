@@ -8,14 +8,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector2f;
 
+import com.workshop.set.model.VectorSpace.Geometry;
 import com.workshop.set.model.interfaces.Model;
 
 public class SetScreen implements ScreenFrame {
 
 	private Vector2f ul, lr;
 	private Viewport _viewport;
+	private OptionPanel _options;
 
 	private List<ScreenFrame> frames;
 	private Map<ScreenFrame, Boolean> contained;
@@ -24,6 +27,8 @@ public class SetScreen implements ScreenFrame {
 		init();
 		setSize(new Vector2f(w, h));
 		_viewport = new Viewport(model, w, h);
+		_options = new OptionPanel(300, 30);
+		this.add(_options);
 	}
 
 	private void init() {
@@ -40,6 +45,17 @@ public class SetScreen implements ScreenFrame {
 	public void add(ScreenFrame frame) {
 		frames.add(frame);
 		contained.put(frame, false);
+	}
+
+	public void displaySelected(Geometry selected) {
+		_options.setLabelText(selected.displayString());
+		if (!_options.isVisible())
+			_options.toggle();
+	}
+
+	public void removeSelection() {
+		if (!_options.isMoving() && _options.isVisible())
+			_options.toggle();
 	}
 
 	@Override
@@ -81,7 +97,7 @@ public class SetScreen implements ScreenFrame {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-//		 System.out.println("MouseClicked: " + e.location + ", Button: " + e.button);
+		// System.out.println("MouseClicked: " + e.location + ", Button: " + e.button);
 		boolean onViewport = true;
 		for (ScreenFrame frame : frames) {
 			if (frame.contains(e.location)) {
@@ -91,14 +107,14 @@ public class SetScreen implements ScreenFrame {
 				frame.mouseClicked(new MouseEvent(relativePoint, e.button));
 			}
 		}
-		if (onViewport){
+		if (onViewport) {
 			_viewport.mouseClicked(e);
 		}
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-//		 System.out.println("MousePressed: " + e.location + ", Button: " + e.button);
+		// System.out.println("MousePressed: " + e.location + ", Button: " + e.button);
 		boolean onViewport = true;
 		for (ScreenFrame frame : frames) {
 			if (frame.contains(e.location)) {
@@ -114,7 +130,7 @@ public class SetScreen implements ScreenFrame {
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-//		 System.out.println("MouseReleased: " + e.location + ", Button: " + e.button);
+		// System.out.println("MouseReleased: " + e.location + ", Button: " + e.button);
 		boolean onViewport = true;
 		for (ScreenFrame frame : frames) {
 			if (frame.contains(e.location)) {
@@ -130,7 +146,7 @@ public class SetScreen implements ScreenFrame {
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-//		 System.out.println("MouseDragged: " + e.location + ", Button: " + e.button);
+		// System.out.println("MouseDragged: " + e.location + ", Button: " + e.button);
 		boolean onViewport = true;
 		for (ScreenFrame frame : frames) {
 			if (frame.contains(e.location)) {
@@ -176,7 +192,7 @@ public class SetScreen implements ScreenFrame {
 
 	@Override
 	public void mouseMoved(Vector2f p) {
-//		 System.out.println("MouseMoved: " + p);
+		// System.out.println("MouseMoved: " + p);
 		boolean onViewport = true;
 		for (ScreenFrame frame : frames) {
 			if (frame.contains(p)) {
@@ -219,6 +235,11 @@ public class SetScreen implements ScreenFrame {
 
 	@Override
 	public void keyPressed(int key) {
+
+		if (key == Keyboard.KEY_T) {
+			_options.toggle();
+		}
+
 		_viewport.keyPressed(key);
 
 	}
@@ -284,8 +305,10 @@ public class SetScreen implements ScreenFrame {
 	}
 
 	@Override
-	public void animate(long nanosSincePrev) {
-		
+	public void animate(long millisSincePrev) {
+		for (ScreenFrame frame : frames) {
+			frame.animate(millisSincePrev);
+		}
 	}
 
 }

@@ -1,8 +1,8 @@
 package com.workshop.set.model.interfaces;
 
-import java.util.Set;
 import com.workshop.set.model.VectorSpace.Geometry;
 import com.workshop.set.model.VectorSpace.Point;
+import com.workshop.set.view.SetScreen;
 
 public interface Model {
 	
@@ -17,5 +17,7 @@ public interface Model {
 	public void checkIntersections(Point elmt, boolean shift);
 	
 	public void deleteSelections();
+
+	public void setScreen(SetScreen main);
 
 }

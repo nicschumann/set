@@ -176,10 +176,10 @@ public interface ScreenFrame {
 	 * Allows UI elements to animate themselves by calling this method on every iteration of the
 	 * lwjgl loop.
 	 * 
-	 * @param nanosSincePrev
+	 * @param millisSincePrev
 	 *            - time since method was last called
 	 */
-	public void animate(long nanosSincePrev);
+	public void animate(long millisSincePrev);
 
 	/**
 	 * A class containing mouse button and location data stored in public variables

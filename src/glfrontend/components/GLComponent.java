@@ -16,6 +16,8 @@ public class GLComponent extends ScreenFrameAdapter {
 	protected float[] _color;
 	protected Vector2f ul;
 	protected Vector2f lr;
+
+	private boolean _visible;
 	private ResizeType resizeType;
 
 	public GLComponent() {
@@ -27,6 +29,15 @@ public class GLComponent extends ScreenFrameAdapter {
 		ul = new Vector2f(0f, 0f);
 		lr = new Vector2f(50f, 50f);
 		resizeType = ResizeType.RATIO;
+		_visible = true;
+	}
+	
+	public void setVisible(boolean visible) {
+		_visible = visible;
+	}
+	
+	public boolean isVisible() {
+		return _visible;
 	}
 
 	public void setBackground(Color color) {
@@ -90,6 +101,10 @@ public class GLComponent extends ScreenFrameAdapter {
 
 	@Override
 	public void render2D() {
+		
+		if (!_visible)
+			return;
+		
 		// set color
 		glColor4f(_color[0], _color[1], _color[2], _color[3]);
 

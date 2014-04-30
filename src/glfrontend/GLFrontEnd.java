@@ -90,7 +90,6 @@ public class GLFrontEnd implements FrontEnd {
 		rightPressed = false;
 		wheelPressed = false;
 		contained = false;
-		animationTime = System.nanoTime();
 	}
 
 	public void setMainScreen(ScreenFrame frame) {
@@ -153,7 +152,7 @@ public class GLFrontEnd implements FrontEnd {
 			glLoadIdentity();
 			_frame.resize(new Vector2f(Display.getWidth(), Display.getHeight()));
 		}
-		long currentTime = System.nanoTime();
+		long currentTime = System.currentTimeMillis();
 		_frame.animate(currentTime - animationTime);
 		animationTime = currentTime;
 	}
@@ -275,6 +274,7 @@ public class GLFrontEnd implements FrontEnd {
 			Display.setTitle(TITLE);
 			Display.setVSyncEnabled(true); // Prevents flickering frames.
 			Display.setResizable(true);
+			Display.setInitialBackground(0.3f, 0.3f, 0.3f);
 			Display.create();
 		} catch (LWJGLException e) {
 			System.err.println("ERROR: " + e.getMessage());
@@ -330,6 +330,7 @@ public class GLFrontEnd implements FrontEnd {
 
 	@Override
 	public void enterLoop() {
+		animationTime = System.currentTimeMillis();
 		while (!Display.isCloseRequested()) {
 			onRender();
 			onTick();
