@@ -55,6 +55,7 @@ public class GLFrontEnd implements FrontEnd {
 	private static final FloatBuffer orthographicProjectionMatrix = BufferUtils.createFloatBuffer(16);
 
 	private boolean leftPressed, rightPressed, wheelPressed;
+	private boolean clickLeft, clickRight, clickWheel;
 	private Vector2f prevMouse;
 	private boolean contained;
 
@@ -129,9 +130,9 @@ public class GLFrontEnd implements FrontEnd {
 
 			float defaultHeight = 600f;
 			float defaultFov = 1.0f; // Approximately 60 degrees
-			//float fov = (float) Math.atan(h / defaultHeight * Math.tan(defaultFov * 0.5f)) * 2.0f;
+			// float fov = (float) Math.atan(h / defaultHeight * Math.tan(defaultFov * 0.5f)) *
+			// 2.0f;
 			float fov = (float) Math.atan(h / defaultHeight * Math.tan(defaultFov * 0.5f)) * 2.0f;
-			
 
 			glPushAttrib(GL_TRANSFORM_BIT);
 			glMatrixMode(GL_PROJECTION);
@@ -176,13 +177,18 @@ public class GLFrontEnd implements FrontEnd {
 			if (!leftPressed) {
 				_frame.mousePressed(new MouseEvent(mouseLoc, LEFT));
 				leftPressed = true;
+				clickLeft = true;
 			}
-			if (mouseMoved)
+			if (mouseMoved) {
 				_frame.mouseDragged(new MouseEvent(mouseLoc, LEFT));
+				clickLeft = false;
+			}
 		} else if (leftPressed) {
 			_frame.mouseReleased(new MouseEvent(mouseLoc, LEFT));
-			if (contains)
+			if (contains && clickLeft) {
 				_frame.mouseClicked(new MouseEvent(mouseLoc, LEFT));
+				clickLeft = false;
+			}
 			leftPressed = false;
 		}
 
@@ -192,13 +198,18 @@ public class GLFrontEnd implements FrontEnd {
 			if (!rightPressed) {
 				_frame.mousePressed(new MouseEvent(mouseLoc, RIGHT));
 				rightPressed = true;
+				clickRight = true;
 			}
-			if (mouseMoved)
+			if (mouseMoved) {
 				_frame.mouseDragged(new MouseEvent(mouseLoc, RIGHT));
+				clickRight = false;
+			}
 		} else if (rightPressed) {
 			_frame.mouseReleased(new MouseEvent(mouseLoc, RIGHT));
-			if (contains)
+			if (contains && clickRight) {
 				_frame.mouseClicked(new MouseEvent(mouseLoc, RIGHT));
+				clickRight = false;
+			}
 			rightPressed = false;
 		}
 
@@ -208,13 +219,18 @@ public class GLFrontEnd implements FrontEnd {
 			if (!wheelPressed) {
 				_frame.mousePressed(new MouseEvent(mouseLoc, WHEEL));
 				wheelPressed = true;
+				clickWheel = true;
 			}
-			if (mouseMoved)
+			if (mouseMoved) {
 				_frame.mouseDragged(new MouseEvent(mouseLoc, WHEEL));
+				clickWheel = false;
+			}
 		} else if (wheelPressed) {
 			_frame.mouseReleased(new MouseEvent(mouseLoc, WHEEL));
-			if (contains)
+			if (contains && clickWheel) {
 				_frame.mouseClicked(new MouseEvent(mouseLoc, WHEEL));
+				clickWheel = false;
+			}
 			wheelPressed = false;
 		}
 
@@ -251,7 +267,7 @@ public class GLFrontEnd implements FrontEnd {
 		try {
 			Display.setDisplayMode(new DisplayMode(WINDOW_DIMENSIONS.width, WINDOW_DIMENSIONS.height));
 			Display.setTitle(TITLE);
-			// Display.setVSyncEnabled(true); // Prevents flickering frames.
+			Display.setVSyncEnabled(true); // Prevents flickering frames.
 			Display.setResizable(true);
 			Display.create();
 		} catch (LWJGLException e) {

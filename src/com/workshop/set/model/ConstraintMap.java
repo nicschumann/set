@@ -125,10 +125,10 @@ public class ConstraintMap {
             TNameGenerator gensym = new TNameGenerator();
             VectorSpace R3 = new VectorSpace( 3, gensym );
 
-            VectorSpace.Point a = R3.point( gensym.generate("X"), new Mutable<Double>(1.0),new Mutable<Double>(2.0),new Mutable<Double>(3.0) );
-            VectorSpace.Point b = R3.point( gensym.generate("Y"), new Mutable<Double>(5.0),new Mutable<Double>(3.442),new Mutable<Double>(0.3) );
-            VectorSpace.Point u = R3.point( gensym.generate("U"), new Mutable<Double>(1.0),new Mutable<Double>(2.0),new Mutable<Double>(3.0) );
-            VectorSpace.Point v = R3.point( gensym.generate("V"), new Mutable<Double>(5.0),new Mutable<Double>(3.442),new Mutable<Double>(0.3) );
+            VectorSpace.Point a = R3.point( gensym.generate("X"), new DoubleReference(1.0),new DoubleReference(2.0),new DoubleReference(3.0) );
+            VectorSpace.Point b = R3.point( gensym.generate("Y"), new DoubleReference(5.0),new DoubleReference(3.442),new DoubleReference(0.3) );
+            VectorSpace.Point u = R3.point( gensym.generate("U"), new DoubleReference(1.0),new DoubleReference(2.0),new DoubleReference(3.0) );
+            VectorSpace.Point v = R3.point( gensym.generate("V"), new DoubleReference(5.0),new DoubleReference(3.442),new DoubleReference(0.3) );
 
             VectorSpace.Relation ab = R3.relation( gensym.generate("XY"), a, b );
             VectorSpace.Relation uv = R3.relation( gensym.generate("UV"), u, v );

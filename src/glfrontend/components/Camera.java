@@ -1,5 +1,8 @@
 package glfrontend.components;
 
+import glfrontend.ScreenFrame;
+import glfrontend.ScreenFrame.MouseEvent;
+
 import org.lwjgl.util.glu.GLU;
 //camera class to model the look interactions expected for the user on mouse events in the scene 
 
@@ -38,8 +41,8 @@ public class Camera {
     	return _up; }
 
     public Vector4 getU(){ 
-    	Vector4 lookCopy = new Vector4(_look.x, _look.y, _look.z, _look.w);
-    	Vector4 upCopy = new Vector4(_up.x, _up.y, _up.z, _up.w);
+//    	Vector4 lookCopy = new Vector4(_look.x, _look.y, _look.z, _look.w);
+//    	Vector4 upCopy = new Vector4(_up.x, _up.y, _up.z, _up.w);
     	return _look.getCrossProd(_up).getNormalized();
     }
     public Vector4 getV(){ 
@@ -67,14 +70,12 @@ public class Camera {
 		return _type; 
 	}
 
-	public void mouseMove(double deltaX, double deltaY)
+	public void mouseMove(double deltaX, double deltaY, MouseEvent e)
 	{
-		//mouse events to figure out which button pressed 
-//	    if (RightButton)
-//	    {
-//	        lookVectorRotate(delta);
-//	    }
-	    this.filmPlaneTranslate(deltaX, deltaY);
+		if(e.button==ScreenFrame.MouseButton.LEFT)
+			this.filmPlaneTranslate(deltaX, deltaY);
+		else if(e.button==ScreenFrame.MouseButton.RIGHT)
+			this.lookVectorRotate(deltaX, deltaY);
 	}
 
 	public void mouseWheel(float delta){
@@ -94,7 +95,7 @@ public class Camera {
 	    float angleX = (float)(Math.asin(-w.y) - deltaY * 0.0025);
 	    float angleY = (float)(Math.atan2(-w.z, -w.x) + deltaX * 0.0025);
 	    angleX = (float)(Math.max(-Math.PI / 2 + 0.001, Math.min(Math.PI / 2 - 0.001, (double)angleX)));
-	    _look = new Vector4((float)(Math.cos(angleY) * Math.cos(angleX)), (float)(Math.sin(angleX)), (float)(Math.sin(angleY) * Math.cos(angleX)), 0);
+	    _look = _look.updateVals((float)(Math.cos(angleY) * Math.cos(angleX)), (float)(Math.sin(angleX)), (float)(Math.sin(angleY) * Math.cos(angleX)), 0);
 	}
 
 	public void lookVectorTranslate(float delta){

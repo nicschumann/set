@@ -5,6 +5,6 @@ import com.workshop.set.controller.responses.Response;
 /**
  * Created by nicschumann on 4/16/14.
  */
-public interface View {
-    public boolean submit( Response response );
+public interface View<T> {
+    public boolean submit( Response<T> response );
 }
