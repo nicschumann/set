@@ -158,7 +158,7 @@ public interface ScreenFrame {
 	 * Renders the 3D objects
 	 */
 	public void render3D();
-	
+
 	/**
 	 * Renders the 2D objects
 	 */
@@ -171,6 +171,15 @@ public interface ScreenFrame {
 	 *            - the new size of the frame
 	 */
 	public void resize(Vector2f newSize);
+
+	/**
+	 * Allows UI elements to animate themselves by calling this method on every iteration of the
+	 * lwjgl loop.
+	 * 
+	 * @param nanosSincePrev
+	 *            - time since method was last called
+	 */
+	public void animate(long nanosSincePrev);
 
 	/**
 	 * A class containing mouse button and location data stored in public variables

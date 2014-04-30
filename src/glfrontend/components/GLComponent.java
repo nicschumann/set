@@ -5,13 +5,13 @@ import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glColor4f;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glVertex2f;
-import glfrontend.ScreenFrame;
+import glfrontend.ScreenFrameAdapter;
 
 import java.awt.Color;
 
 import org.lwjgl.util.vector.Vector2f;
 
-public class GLComponent implements ScreenFrame {
+public class GLComponent extends ScreenFrameAdapter {
 
 	protected float[] _color;
 	protected Vector2f ul;
@@ -105,41 +105,5 @@ public class GLComponent implements ScreenFrame {
 	}
 
 	public void draw() {}
-	
-	@Override
-	public void render3D() {}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {}
-
-	@Override
-	public void mousePressed(MouseEvent e) {}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {}
-
-	@Override
-	public void mouseDragged(MouseEvent e) {}
-
-	@Override
-	public void mouseWheelScrolled(Vector2f p, int amount) {}
-
-	@Override
-	public void keyPressed(int key) {}
-
-	@Override
-	public void keyReleased(int key) {}
-
-	@Override
-	public void mouseMoved(Vector2f p) {}
-
-	@Override
-	public void mouseEntered(Vector2f p) {}
-
-	@Override
-	public void mouseExited(Vector2f p) {}
-
-	@Override
-	public void resize(Vector2f newSize) {}
 
 }

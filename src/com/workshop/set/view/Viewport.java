@@ -4,7 +4,7 @@ import static com.workshop.set.SetMain.GENSYM;
 import static com.workshop.set.SetMain.VEC_SPACE_3D;
 import static org.lwjgl.opengl.GL11.glColor3f;
 import static org.lwjgl.opengl.GL11.glLoadIdentity;
-import glfrontend.ScreenFrame;
+import glfrontend.ScreenFrameAdapter;
 import glfrontend.components.Camera;
 import glfrontend.components.Vector4;
 
@@ -23,7 +23,7 @@ import com.workshop.set.model.VectorSpace.GeometricFailure;
 import com.workshop.set.model.VectorSpace.Point;
 import com.workshop.set.model.interfaces.Model;
 
-public class Viewport implements ScreenFrame {
+public class Viewport extends ScreenFrameAdapter {
 
 	private Vector2f ul, lr;
 	private Stage _stage;
@@ -234,8 +234,6 @@ public class Viewport implements ScreenFrame {
 		_currCamera.mouseWheel(amount / 6f);
 	}
 
-	// TODO mouse clicked should only be called if no dragging occurred
-
 	@Override
 	public void keyPressed(int key) {
 		if (key == Keyboard.KEY_SPACE) { // flip through list of cameras
@@ -261,18 +259,6 @@ public class Viewport implements ScreenFrame {
 			_toUpdate = 0;
 		}
 	}
-
-	@Override
-	public void mouseMoved(Vector2f p) {}
-
-	@Override
-	public void mouseEntered(Vector2f p) {}
-
-	@Override
-	public void mouseExited(Vector2f p) {}
-
-	@Override
-	public void setResizeType(ResizeType type) {}
 
 	@Override
 	public ResizeType getResizeType() {

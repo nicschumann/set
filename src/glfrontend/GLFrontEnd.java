@@ -58,6 +58,8 @@ public class GLFrontEnd implements FrontEnd {
 	private boolean clickLeft, clickRight, clickWheel;
 	private Vector2f prevMouse;
 	private boolean contained;
+	
+	private long animationTime;
 
 	private ScreenFrame _frame;
 
@@ -88,6 +90,7 @@ public class GLFrontEnd implements FrontEnd {
 		rightPressed = false;
 		wheelPressed = false;
 		contained = false;
+		animationTime = System.nanoTime();
 	}
 
 	public void setMainScreen(ScreenFrame frame) {
@@ -150,6 +153,9 @@ public class GLFrontEnd implements FrontEnd {
 			glLoadIdentity();
 			_frame.resize(new Vector2f(Display.getWidth(), Display.getHeight()));
 		}
+		long currentTime = System.nanoTime();
+		_frame.animate(currentTime - animationTime);
+		animationTime = currentTime;
 	}
 
 	/**

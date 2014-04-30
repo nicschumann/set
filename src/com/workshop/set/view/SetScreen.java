@@ -283,4 +283,9 @@ public class SetScreen implements ScreenFrame {
 		return new Vector2f(x, y);
 	}
 
+	@Override
+	public void animate(long nanosSincePrev) {
+		
+	}
+
 }

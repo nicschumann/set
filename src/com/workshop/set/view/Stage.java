@@ -9,11 +9,11 @@ import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glLineWidth;
 import static org.lwjgl.opengl.GL11.glVertex3i;
-import glfrontend.ScreenFrame;
+import glfrontend.ScreenFrameAdapter;
 
 import org.lwjgl.util.vector.Vector2f;
 
-public class Stage implements ScreenFrame {
+public class Stage extends ScreenFrameAdapter {
 
 	private Vector2f ul, lr;
 
@@ -74,59 +74,8 @@ public class Stage implements ScreenFrame {
 	}
 
 	@Override
-	public boolean contains(Vector2f p) {
-		return false;
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {}
-
-	@Override
-	public void mousePressed(MouseEvent e) {}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {}
-
-	@Override
-	public void mouseDragged(MouseEvent e) {}
-
-	@Override
-	public void mouseWheelScrolled(Vector2f p, int amount) {}
-
-	@Override
-	public void keyPressed(int key) {}
-
-	@Override
-	public void keyReleased(int key) {}
-	
-	@Override
 	public void render3D() {
 		this.drawGrid();
-	}
-
-	@Override
-	public void render2D() {
-
-	}
-
-	@Override
-	public void resize(Vector2f newSize) {}
-
-	@Override
-	public void mouseMoved(Vector2f p) {}
-
-	@Override
-	public void mouseEntered(Vector2f p) {}
-
-	@Override
-	public void mouseExited(Vector2f p) {}
-
-	@Override
-	public void setResizeType(ResizeType type) {}
-
-	@Override
-	public ResizeType getResizeType() {
-		return null;
 	}
 
 }
