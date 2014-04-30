@@ -20,7 +20,6 @@ import org.lwjgl.util.vector.Vector2f;
 import com.workshop.set.model.Mutable;
 import com.workshop.set.model.VectorSpace.GeometricFailure;
 import com.workshop.set.model.VectorSpace.Point;
-import com.workshop.set.model.VectorSpace.Relation;
 import com.workshop.set.model.interfaces.Model;
 
 public class Viewport implements ScreenFrame {
@@ -28,38 +27,36 @@ public class Viewport implements ScreenFrame {
 	private Vector2f ul, lr;
 	private Stage _stage;
 	private Camera _currCamera;
-	private ArrayList<Camera> _cameras; 
-	private int _camIndex=0; 
+	private ArrayList<Camera> _cameras;
+	private int _camIndex = 0;
 	private Model _model;
-	
-	private Vector2f _currPos; 
-	private boolean _dragged; 
-	private boolean _shiftDown; 
-	private Point [] _linePoints = new Point [2]; 
-	private int _toUpdate; 
-	
-	private String _mode;	//controls interaction changes for creation or selection mode
+
+	private Vector2f _currPos;
+	private boolean _shiftDown;
+	private Point[] _linePoints = new Point[2];
+	private int _toUpdate;
+
+	private String _mode; // controls interaction changes for creation or selection mode
 
 	public Viewport(Model model, float w, float h) {
 		init();
 		setSize(new Vector2f(w, h));
-		
+
 		_cameras = new ArrayList<Camera>();
 		_cameras.add(0, new Camera("orthographic"));
 		_cameras.add(1, new Camera("perspective"));
-		_currCamera = _cameras.get(_camIndex%_cameras.size());
-		_camIndex += 1; 
-		
+		_currCamera = _cameras.get(_camIndex % _cameras.size());
+		_camIndex += 1;
+
 		_model = model;
 	}
 
 	private void init() {
 		ul = new Vector2f(0f, 0f);
 		lr = new Vector2f(50f, 50f);
-		_dragged = false; 
-		_shiftDown = false; 
-		_toUpdate = 0; 
-		
+		_shiftDown = false;
+		_toUpdate = 0;
+
 		_mode = "creation";
 	}
 
@@ -109,106 +106,102 @@ public class Viewport implements ScreenFrame {
 		_currCamera.multMatrix();
 		_stage.render3D();
 		glColor3f(1, 0, 0);
-//		_model.drawGeometricElements();
 		_model.renderGeometries();
 	}
 
 	@Override
 	public void render2D() {}
-	
-	
+
 	/**
-	 * Given a mouse position, generates a 3d ray and intersects with the projection plane, returning the point of intersection
+	 * Given a mouse position, generates a 3d ray and intersects with the projection plane,
+	 * returning the point of intersection
 	 */
-	public Point traceMouseClick(float x, float y){
-		
-		_currCamera.multMatrix(); //keep matrices up to date
-		
-		FloatBuffer nearPlanePos = BufferUtils.createFloatBuffer(4); 
+	public Point traceMouseClick(float x, float y) {
+
+		_currCamera.multMatrix(); // keep matrices up to date
+
+		FloatBuffer nearPlanePos = BufferUtils.createFloatBuffer(4);
 		FloatBuffer farPlanePos = BufferUtils.createFloatBuffer(4);
-		FloatBuffer model = BufferUtils.createFloatBuffer(16); 
+		FloatBuffer model = BufferUtils.createFloatBuffer(16);
 		FloatBuffer projection = BufferUtils.createFloatBuffer(16);
 		IntBuffer viewport = BufferUtils.createIntBuffer(16);
-		
+
 		GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, model);
 		GL11.glGetFloat(GL11.GL_PROJECTION_MATRIX, projection);
 		GL11.glGetInteger(GL11.GL_VIEWPORT, viewport);
-		
-		GLU.gluUnProject(x,y,0.0f,model,projection,viewport,nearPlanePos);
-		GLU.gluUnProject(x,y,1.0f,model,projection,viewport,farPlanePos);
-		
-		//initial p will be near plane pos
-		Vector4 p = new Vector4(nearPlanePos.get(0), nearPlanePos.get(1), nearPlanePos.get(2),0);
-		
-		//direction vector: 
-		Vector4 d = new Vector4(farPlanePos.get(0)-p.x, farPlanePos.get(1)-p.y, farPlanePos.get(2)-p.z,0); 
-		d = d.getNormalized(); 
-		
-		//solve for t
-		float t = -(p.z)/d.z; 
 
-		Vector4 proj = new Vector4(p.x+d.x*t, p.y+d.y*t, p.z+d.z*t,0);		
-		System.out.println("The new projection: " + proj.x/2 + " " + proj.y/2 + " " + proj.z/2);
-		
-		//points off by a factor of two
-		
+		GLU.gluUnProject(x, y, 0.0f, model, projection, viewport, nearPlanePos);
+		GLU.gluUnProject(x, y, 1.0f, model, projection, viewport, farPlanePos);
+
+		// initial p will be near plane pos
+		Vector4 p = new Vector4(nearPlanePos.get(0), nearPlanePos.get(1), nearPlanePos.get(2), 0);
+
+		// direction vector:
+		Vector4 d = new Vector4(farPlanePos.get(0) - p.x, farPlanePos.get(1) - p.y, farPlanePos.get(2) - p.z, 0);
+		d = d.getNormalized();
+
+		// solve for t
+		float t = -(p.z) / d.z;
+
+		Vector4 proj = new Vector4(p.x + d.x * t, p.y + d.y * t, p.z + d.z * t, 0);
+		System.out.println("The new projection: " + proj.x / 2 + " " + proj.y / 2 + " " + proj.z / 2);
+
+		// points off by a factor of two
+
 		Point point = null;
 		try {
-			point = VEC_SPACE_3D.point(GENSYM.generate(), new Mutable<Double>((double)proj.x/2), new Mutable<Double>((double)proj.y/2), new Mutable<Double>((double)proj.z/2));
+			point = VEC_SPACE_3D.point(GENSYM.generate(), new Mutable<Double>((double) proj.x / 2),
+					new Mutable<Double>((double) proj.y / 2), new Mutable<Double>((double) proj.z / 2));
 		} catch (GeometricFailure e) {
 			e.printStackTrace();
 		}
 		return point;
 	}
-	
-	
+
 	/**
-	 * Given an intersection point p, checks for intersections with any object in the scene 
+	 * Given an intersection point p, checks for intersections with any object in the scene
 	 */
+
 	public void checkIntersections(Point p){
 		//may do initial bounds checking here...
 		_model.checkIntersections(p, _shiftDown);
 	}
-	
+
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		
-		if(!_dragged){
-			
-			Point p = this.traceMouseClick(e.location.x, (this.getSize().y-e.location.y));
-		
-			//if in creation mode, add the element (will add a step to put in right bucket):
-			if(_mode.equalsIgnoreCase("creation")){
-				
-				_model.addGeometry(p);
-				//if shift key down, take care of adding this point to the lines renderable queue and creating a 
-				//new line as well
-				if(_shiftDown){
-					_linePoints[_toUpdate] = p; 
-					
-					if(_toUpdate==0)	
-						_toUpdate=1; 
-					else
-						_toUpdate=0;
-					
-					//if a point in both locations, make a new line
-					if(_linePoints[0]!=null && _linePoints[1]!=null){
-						try {
-							_model.addGeometry(VEC_SPACE_3D.relation(GENSYM.generate(), _linePoints[0], _linePoints[1]));
-						} catch (GeometricFailure e1) {
-							e1.printStackTrace();
-						}
+
+		Point p = this.traceMouseClick(e.location.x, (this.getSize().y - e.location.y));
+
+		// if in creation mode, add the element (will add a step to put in right bucket):
+		if (_mode.equalsIgnoreCase("creation")) {
+
+			_model.addGeometry(p);
+			// if shift key down, take care of adding this point to the lines renderable queue and
+			// creating a
+			// new line as well
+			if (_shiftDown) {
+				_linePoints[_toUpdate] = p;
+
+				if (_toUpdate == 0)
+					_toUpdate = 1;
+				else
+					_toUpdate = 0;
+
+				// if a point in both locations, make a new line
+				if (_linePoints[0] != null && _linePoints[1] != null) {
+					try {
+						_model.addGeometry(VEC_SPACE_3D.relation(GENSYM.generate(), _linePoints[0], _linePoints[1]));
+					} catch (GeometricFailure e1) {
+						e1.printStackTrace();
 					}
 				}
-			//if in selection mode, run intersection tests to find out if anything was selected
 			}
-			
-			else if(_mode.equalsIgnoreCase("selection")){
-				this.checkIntersections(p);
-			}
+			// if in selection mode, run intersection tests to find out if anything was selected
 		}
-		
-		_dragged = false;
+
+		else if (_mode.equalsIgnoreCase("selection")) {
+			this.checkIntersections(p);
+		}
 	}
 
 	@Override
@@ -225,11 +218,12 @@ public class Viewport implements ScreenFrame {
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		// get difference between current location and old location and use for translate
-		_dragged = true;
+		if (_currPos == null)
+			return;
 
 		float deltaX = _currPos.x - e.location.x;
 		float deltaY = _currPos.y - e.location.y;
-		_currPos = e.location; 
+		_currPos = e.location;
 		_currCamera.mouseMove(deltaX, deltaY, e);
 	}
 
@@ -243,8 +237,8 @@ public class Viewport implements ScreenFrame {
 	@Override
 	public void keyPressed(int key) {
 		if (key == Keyboard.KEY_SPACE) { // flip through list of cameras
-			_currCamera = _cameras.get(_camIndex%_cameras.size());
-			_camIndex += 1; 
+			_currCamera = _cameras.get(_camIndex % _cameras.size());
+			_camIndex += 1;
 		}
 		if (key == 42)
 			_shiftDown = true;

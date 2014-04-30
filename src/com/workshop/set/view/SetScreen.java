@@ -81,7 +81,7 @@ public class SetScreen implements ScreenFrame {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// System.out.println("MouseClicked: " + e.location + ", Button: " + e.button);
+//		 System.out.println("MouseClicked: " + e.location + ", Button: " + e.button);
 		boolean onViewport = true;
 		for (ScreenFrame frame : frames) {
 			if (frame.contains(e.location)) {
@@ -98,7 +98,7 @@ public class SetScreen implements ScreenFrame {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// System.out.println("MousePressed: " + e.location + ", Button: " + e.button);
+//		 System.out.println("MousePressed: " + e.location + ", Button: " + e.button);
 		boolean onViewport = true;
 		for (ScreenFrame frame : frames) {
 			if (frame.contains(e.location)) {
@@ -114,7 +114,7 @@ public class SetScreen implements ScreenFrame {
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// System.out.println("MouseReleased: " + e.location + ", Button: " + e.button);
+//		 System.out.println("MouseReleased: " + e.location + ", Button: " + e.button);
 		boolean onViewport = true;
 		for (ScreenFrame frame : frames) {
 			if (frame.contains(e.location)) {
@@ -130,7 +130,7 @@ public class SetScreen implements ScreenFrame {
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		// System.out.println("MouseDragged: " + e.location + ", Button: " + e.button);
+//		 System.out.println("MouseDragged: " + e.location + ", Button: " + e.button);
 		boolean onViewport = true;
 		for (ScreenFrame frame : frames) {
 			if (frame.contains(e.location)) {
@@ -176,7 +176,7 @@ public class SetScreen implements ScreenFrame {
 
 	@Override
 	public void mouseMoved(Vector2f p) {
-		// System.out.println("MouseMoved: " + p);
+//		 System.out.println("MouseMoved: " + p);
 		boolean onViewport = true;
 		for (ScreenFrame frame : frames) {
 			if (frame.contains(p)) {
