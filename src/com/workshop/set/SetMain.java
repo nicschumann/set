@@ -10,7 +10,7 @@ import com.workshop.set.model.lang.core.TNameGenerator;
 import com.workshop.set.view.SetFrontEnd;
 
 public class SetMain {
-	
+
 	public static final Gensym GENSYM = new TNameGenerator();
 	public static final VectorSpace VEC_SPACE_3D = new VectorSpace(3, GENSYM);
 
@@ -29,7 +29,7 @@ public class SetMain {
 	}
 
 	private FrontEnd fe;
-//	private Control c;
+	// private Control c;
 	private Model model;
 
 	public SetMain() {
@@ -39,7 +39,7 @@ public class SetMain {
 		System.setProperty("sun.java2d.noddraw", "true");
 		// enable OpenGL Hardware Rendering
 		System.setProperty("sun.java2d.opengl", "true");
-		
+
 		model = new TempEnvironment();
 
 		fe = new SetFrontEnd(model);

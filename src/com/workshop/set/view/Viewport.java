@@ -4,9 +4,7 @@ import static com.workshop.set.SetMain.GENSYM;
 import static com.workshop.set.SetMain.VEC_SPACE_3D;
 import static org.lwjgl.opengl.GL11.glColor3f;
 import static org.lwjgl.opengl.GL11.glLoadIdentity;
-
-import com.workshop.set.model.DoubleReference;
-import glfrontend.ScreenFrame;
+import glfrontend.ScreenFrameAdapter;
 import glfrontend.components.Camera;
 import glfrontend.components.Vector4;
 
@@ -20,12 +18,12 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Vector2f;
 
-import com.workshop.set.model.Mutable;
+import com.workshop.set.model.DoubleReference;
 import com.workshop.set.model.VectorSpace.GeometricFailure;
 import com.workshop.set.model.VectorSpace.Point;
 import com.workshop.set.model.interfaces.Model;
 
-public class Viewport implements ScreenFrame {
+public class Viewport extends ScreenFrameAdapter {
 
 	private Vector2f ul, lr;
 	private Stage _stage;
@@ -148,14 +146,13 @@ public class Viewport implements ScreenFrame {
 		float t = -(p.z) / d.z;
 
 		Vector4 proj = new Vector4(p.x + d.x * t, p.y + d.y * t, p.z + d.z * t, 0);
-		System.out.println("The new projection: " + proj.x / 2 + " " + proj.y / 2 + " " + proj.z / 2);
 
 		// points off by a factor of two
 
 		Point point = null;
 		try {
-			point = VEC_SPACE_3D.point(GENSYM.generate(), new DoubleReference((double) proj.x),
-					new DoubleReference((double) proj.y), new DoubleReference((double) proj.z));
+			point = VEC_SPACE_3D.point(GENSYM.generate(), new DoubleReference((double) proj.x), new DoubleReference(
+					(double) proj.y), new DoubleReference((double) proj.z));
 		} catch (GeometricFailure e) {
 			e.printStackTrace();
 		}
@@ -166,8 +163,8 @@ public class Viewport implements ScreenFrame {
 	 * Given an intersection point p, checks for intersections with any object in the scene
 	 */
 
-	public void checkIntersections(Point p){
-		//may do initial bounds checking here...
+	public void checkIntersections(Point p) {
+		// may do initial bounds checking here...
 		_model.checkIntersections(p, _shiftDown);
 	}
 
@@ -236,8 +233,6 @@ public class Viewport implements ScreenFrame {
 		_currCamera.mouseWheel(amount / 6f);
 	}
 
-	// TODO mouse clicked should only be called if no dragging occurred
-
 	@Override
 	public void keyPressed(int key) {
 		if (key == Keyboard.KEY_SPACE) { // flip through list of cameras
@@ -250,7 +245,7 @@ public class Viewport implements ScreenFrame {
 			_mode = "selection";
 		if (key == 46 && _mode.equalsIgnoreCase("selection"))
 			_mode = "creation";
-		if(key == 14)	//delete
+		if (key == 14) // delete
 			_model.deleteSelections();
 	}
 
@@ -263,18 +258,6 @@ public class Viewport implements ScreenFrame {
 			_toUpdate = 0;
 		}
 	}
-
-	@Override
-	public void mouseMoved(Vector2f p) {}
-
-	@Override
-	public void mouseEntered(Vector2f p) {}
-
-	@Override
-	public void mouseExited(Vector2f p) {}
-
-	@Override
-	public void setResizeType(ResizeType type) {}
 
 	@Override
 	public ResizeType getResizeType() {

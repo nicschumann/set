@@ -5,17 +5,19 @@ import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glColor4f;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glVertex2f;
-import glfrontend.ScreenFrame;
+import glfrontend.ScreenFrameAdapter;
 
 import java.awt.Color;
 
 import org.lwjgl.util.vector.Vector2f;
 
-public class GLComponent implements ScreenFrame {
+public class GLComponent extends ScreenFrameAdapter {
 
 	protected float[] _color;
 	protected Vector2f ul;
 	protected Vector2f lr;
+
+	private boolean _visible;
 	private ResizeType resizeType;
 
 	public GLComponent() {
@@ -27,6 +29,15 @@ public class GLComponent implements ScreenFrame {
 		ul = new Vector2f(0f, 0f);
 		lr = new Vector2f(50f, 50f);
 		resizeType = ResizeType.RATIO;
+		_visible = true;
+	}
+	
+	public void setVisible(boolean visible) {
+		_visible = visible;
+	}
+	
+	public boolean isVisible() {
+		return _visible;
 	}
 
 	public void setBackground(Color color) {
@@ -90,6 +101,10 @@ public class GLComponent implements ScreenFrame {
 
 	@Override
 	public void render2D() {
+		
+		if (!_visible)
+			return;
+		
 		// set color
 		glColor4f(_color[0], _color[1], _color[2], _color[3]);
 
@@ -105,41 +120,5 @@ public class GLComponent implements ScreenFrame {
 	}
 
 	public void draw() {}
-	
-	@Override
-	public void render3D() {}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {}
-
-	@Override
-	public void mousePressed(MouseEvent e) {}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {}
-
-	@Override
-	public void mouseDragged(MouseEvent e) {}
-
-	@Override
-	public void mouseWheelScrolled(Vector2f p, int amount) {}
-
-	@Override
-	public void keyPressed(int key) {}
-
-	@Override
-	public void keyReleased(int key) {}
-
-	@Override
-	public void mouseMoved(Vector2f p) {}
-
-	@Override
-	public void mouseEntered(Vector2f p) {}
-
-	@Override
-	public void mouseExited(Vector2f p) {}
-
-	@Override
-	public void resize(Vector2f newSize) {}
 
 }

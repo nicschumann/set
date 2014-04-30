@@ -1,6 +1,7 @@
 package glfrontend.components;
 
 import static com.workshop.set.view.SetScreen.newRatio;
+import static glfrontend.components.GLLabel.TextAlignment.*;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glDisable;
 
@@ -20,6 +21,13 @@ public class GLLabel extends GLComponent {
 	private UnicodeFont font;
 	private Vector2f textLoc;
 	private Color _foreground;
+	private TextAlignment _textAlign;
+	
+	public enum TextAlignment {
+		LEFT,
+		CENTER,
+		RIGHT;
+	}
 
 	public GLLabel() {
 		super();
@@ -35,7 +43,9 @@ public class GLLabel extends GLComponent {
 	public void init() {
 		text = "";
 		_foreground = Color.BLACK;
-		setFont(new java.awt.Font("Times New Roman", java.awt.Font.BOLD, 14));
+		_textAlign = LEFT;
+		
+		setFont(new java.awt.Font("Sans Serif", java.awt.Font.BOLD, 16));
 		TextureImpl.bindNone();
 	}
 
@@ -51,6 +61,10 @@ public class GLLabel extends GLComponent {
 
 	public String getText() {
 		return text;
+	}
+	
+	public void setAlignment(TextAlignment align) {
+		_textAlign = align;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -70,11 +84,26 @@ public class GLLabel extends GLComponent {
 	private void setTextLoc() {
 		if (font == null)
 			return;
-		int textWidth = font.getWidth(text);
+		
+		float x;
 		int textHeight = font.getAscent() + font.getDescent();
 		Vector2f mid = new Vector2f();
 		Vector2f.sub(lr, ul, mid);
-		textLoc = new Vector2f((mid.x - textWidth) / 2, (mid.y - textHeight) / 2);
+		
+		if (_textAlign == LEFT) {
+			x = 10;
+		} else {
+			int textWidth = font.getWidth(text);
+			if (_textAlign == RIGHT) {
+				x = lr.x - textWidth - 10;
+			} else { // CENTER
+				x = (mid.x - textWidth) / 2;
+			}
+		}
+			
+		
+		
+		textLoc = new Vector2f(x, (mid.y - textHeight) / 2);
 	}
 
 	@Override

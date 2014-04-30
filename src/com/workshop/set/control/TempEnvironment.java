@@ -3,13 +3,12 @@ package com.workshop.set.control;
 import static org.lwjgl.opengl.GL11.GL_LINES;
 import static org.lwjgl.opengl.GL11.GL_LINE_SMOOTH;
 import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glColor3f;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glLineWidth;
 import static org.lwjgl.opengl.GL11.glTranslated;
 import static org.lwjgl.opengl.GL11.glVertex3d;
-import static org.lwjgl.opengl.GL11.glColor3f;
-
 import glfrontend.components.Vector4;
 
 import java.util.HashSet;
@@ -22,33 +21,43 @@ import com.workshop.set.model.VectorSpace.Geometry;
 import com.workshop.set.model.VectorSpace.Point;
 import com.workshop.set.model.VectorSpace.Relation;
 import com.workshop.set.model.interfaces.Model;
+import com.workshop.set.view.SetScreen;
 
 public class TempEnvironment implements Model {
 
+	private SetScreen _screen;
+
 	private Set<Geometry> _currentElements;
-	private Set<Geometry> _currentSelections; 
+	private Set<Geometry> _currentSelections;
+
+	private final float[] _color = { 0f, 0f, 0f };
+	private final float[] _colorH = { 1f, 1f, 1f };
 
 	public TempEnvironment() {
 		_currentElements = new HashSet<>();
 		_currentSelections = new HashSet<>();
 	}
-	
+
+	public void setScreen(SetScreen screen) {
+		_screen = screen;
+	}
+
 	@Override
-	public void addGeometry(Geometry g) {		
+	public void addGeometry(Geometry g) {
 		_currentElements.add(g);
-//		Set<Geometry> geoms = g.getGeometries();
-//		for (Geometry geom : geoms) {
-//			_currentElements.remove(geom);
-//		}
+		// Set<Geometry> geoms = g.getGeometries();
+		// for (Geometry geom : geoms) {
+		// _currentElements.remove(geom);
+		// }
 	}
 
 	@Override
 	public void removeGeometry(Geometry g) {
 		_currentElements.remove(g);
-//		Set<Geometry> geoms = g.getGeometries();
-//		for (Geometry geom : geoms) {
-//			_currentElements.add(geom);
-//		}
+		// Set<Geometry> geoms = g.getGeometries();
+		// for (Geometry geom : geoms) {
+		// _currentElements.add(geom);
+		// }
 	}
 
 	@Override
@@ -76,19 +85,19 @@ public class TempEnvironment implements Model {
 			drawPoint((Point) geom);
 			return depth; // 0
 		}
-//		for (Geometry g : geoms) {
-//			depth = drawGeometry(g) + 1;
-//		}
+		// for (Geometry g : geoms) {
+		// depth = drawGeometry(g) + 1;
+		// }
 		drawRelation((Relation) geom, depth);
 		return depth;
 	}
 
 	private void drawRelation(Relation geoms, int depth) {
 		double[] pnts = geoms.getPointArray();
-		if(geoms.getHighlight())
-			glColor3f(0,1,0);
+		if (geoms.getHighlight())
+			glColor3f(_colorH[0], _colorH[1], _colorH[2]);
 		else
-			glColor3f(1,0,0);
+			glColor3f(_color[0], _color[1], _color[2]);
 		if (pnts.length == 6) {
 			glLineWidth(1.2f);
 			glEnable(GL_LINE_SMOOTH);
@@ -107,11 +116,11 @@ public class TempEnvironment implements Model {
 			double y = p.getN_(2).get();
 			double z = p.getN_(3).get();
 
-			if(p.getHighlight())
-				glColor3f(0,1,0);
+			if (p.getHighlight())
+				glColor3f(_colorH[0], _colorH[1], _colorH[2]);
 			else
-				glColor3f(1,0,0);
-			
+				glColor3f(_color[0], _color[1], _color[2]);
+
 			glTranslated(x, y, z);
 			new Sphere().draw(.08f, 10, 10);
 			glTranslated(-x, -y, -z);
@@ -120,80 +129,85 @@ public class TempEnvironment implements Model {
 			e.printStackTrace();
 		}
 	}
-	
-	public void deselectAll(){
-		for(Geometry elt : _currentSelections){
+
+	public void deselectAll() {
+		for (Geometry elt : _currentSelections) {
 			elt.setHighlight(false);
 		}
-		_currentSelections.clear(); 
+		_currentSelections.clear();
 	}
-	
+
 	@Override
-	public void deleteSelections(){
-		for(Geometry elt : _currentSelections){
+	public void deleteSelections() {
+		for (Geometry elt : _currentSelections) {
 			_currentElements.remove(elt);
 		}
-		_currentSelections.clear(); 
+		_currentSelections.clear();
 	}
 
 	@Override
-	public void checkIntersections(Point elmt, boolean shift) {		
+	public void checkIntersections(Point elmt, boolean shift) {
 
-		boolean intersected=false;
-		boolean selected=false;
-		
-		for (Geometry element : _currentElements){
+		boolean intersected = false;
+		boolean selected = false;
+
+		for (Geometry element : _currentElements) {
 			double[] pts = element.getPointArray();
 
-			if (pts.length==3) 	//point
+			if (pts.length == 3) // point
 				intersected = this.checkPtIntersection(elmt, pts);
-			else if (pts.length==6)  //line
+			else if (pts.length == 6) // line
 				intersected = this.checkLineIntersection(elmt, pts);
 
-			if(intersected){
-				if(!shift)	//if no shift, must first empty previous selections 
-					this.deselectAll(); 
+			if (intersected) {
+				if (!shift) // if no shift, must first empty previous selections
+					this.deselectAll();
 				element.setHighlight(true);
 				_currentSelections.add(element);
-				selected=true; 
+				_screen.displaySelected(element);
+				selected = true;
 			}
 		}
-		
-		//if no object was selected deselect all items
-		if(!selected)
+
+		// if no object was selected deselect all items
+		if (!selected) {
 			this.deselectAll();
+			_screen.removeSelection();
+		}
 	}
-	
-	public boolean checkPtIntersection(Point toCheck, double[] oldLoc){
-		double[] newLoc = toCheck.getPointArray(); 
-		double dist = Math.sqrt((oldLoc[0]-newLoc[0])*(oldLoc[0]-newLoc[0]) + (oldLoc[1]-newLoc[1])*(oldLoc[1]-newLoc[1]) + (oldLoc[2]-newLoc[2])*(oldLoc[2]-newLoc[2]));
-		return(dist<=.08);
+
+	public boolean checkPtIntersection(Point toCheck, double[] oldLoc) {
+		double[] newLoc = toCheck.getPointArray();
+		double dist = Math.sqrt((oldLoc[0] - newLoc[0]) * (oldLoc[0] - newLoc[0]) + (oldLoc[1] - newLoc[1])
+				* (oldLoc[1] - newLoc[1]) + (oldLoc[2] - newLoc[2]) * (oldLoc[2] - newLoc[2]));
+		return (dist <= .08);
 	}
-	
+
 	/**
 	 * returns whether two values are "close enough" or equal within epsilon
 	 */
-	public boolean equalsWithinEps(double val1, double val2){
-		return (Math.abs(val1-val2))<.15;
+	public boolean equalsWithinEps(double val1, double val2) {
+		return (Math.abs(val1 - val2)) < .15;
 	}
-	
-	public boolean checkLineIntersection(Point check, double[] pts){
-		
-		double[] toCheck = check.getPointArray();  
-		//direction of line
-		Vector4 d = new Vector4((float)(pts[0]-pts[3]), (float)(pts[1]-pts[4]), (float)(pts[2]-pts[5]),0f).getNormalized();
-		
-		//solve linear system for the results toCheck.x,toCheck.y (toCheck.z always 0)
-		double t1 = (toCheck[0] - pts[0])/d.x; 
-		double t2 = (toCheck[1] - pts[1])/d.y;
-		
-		//bounds checking
-		double maxX = Math.max(pts[0], pts[3])-.08;
-		double minX = Math.min(pts[0], pts[3])+.08;
-		double maxY = Math.max(pts[1], pts[4])-.08;
-		double minY = Math.min(pts[1], pts[4])+.08;
-		
-		//if t values are "close enough, and between clipping bounds then point is on the line
-		return (equalsWithinEps(t1,t2) && toCheck[0]<=maxX && toCheck[0]>=minX && toCheck[1]<=maxY && toCheck[1]>=minY);
+
+	public boolean checkLineIntersection(Point check, double[] pts) {
+
+		double[] toCheck = check.getPointArray();
+		// direction of line
+		Vector4 d = new Vector4((float) (pts[0] - pts[3]), (float) (pts[1] - pts[4]), (float) (pts[2] - pts[5]), 0f)
+				.getNormalized();
+
+		// solve linear system for the results toCheck.x,toCheck.y (toCheck.z always 0)
+		double t1 = (toCheck[0] - pts[0]) / d.x;
+		double t2 = (toCheck[1] - pts[1]) / d.y;
+
+		// bounds checking
+		double maxX = Math.max(pts[0], pts[3]) - .08;
+		double minX = Math.min(pts[0], pts[3]) + .08;
+		double maxY = Math.max(pts[1], pts[4]) - .08;
+		double minY = Math.min(pts[1], pts[4]) + .08;
+
+		// if t values are "close enough, and between clipping bounds then point is on the line
+		return (equalsWithinEps(t1, t2) && toCheck[0] <= maxX && toCheck[0] >= minX && toCheck[1] <= maxY && toCheck[1] >= minY);
 	}
 }
