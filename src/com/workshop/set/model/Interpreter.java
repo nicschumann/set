@@ -33,21 +33,6 @@ public class Interpreter {
        }
     }
 
-
-    /**
-     * @param line
-     */
-    private static void handle( String line ) {
-        String[] sep = line.split("\\s+");
-        switch( sep.length ) {
-            case 1:
-                handleCommand( sep[ 0 ] );
-                break;
-
-
-        }
-    }
-
     public static void prompt() {
         System.out.print( prompt );
     }

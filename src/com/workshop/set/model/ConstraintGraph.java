@@ -17,7 +17,7 @@ public class ConstraintGraph {
     private static final double ADDITIVE_IDENTITY = 0.0D;
 
     private class Edge {
-        public Edge( Symbol at, Mutable<Double> val, Edge orbits, Double scalar ) {
+        public Edge( Symbol at, DoubleReference val, Edge orbits, Double scalar ) {
             this.scalar = scalar;
             following = orbits;
             current = val;
@@ -66,8 +66,8 @@ public class ConstraintGraph {
             for ( ConstraintSet.Pivot tuple : set.getRelation() ) {
                 Mutable<Double> pVal =
                         ( set.getValuation().get( tuple.pivot ) != null )
-                                ? new Mutable<>( set.getValuation().get( tuple.pivot ).get() )
-                                : new Mutable<>( ADDITIVE_IDENTITY );
+                                ? new DoubleReference( set.getValuation().get( tuple.pivot ).get() )
+                                : new DoubleReference( ADDITIVE_IDENTITY );
                 Edge edge = construct( new ArrayList<>( tuple.orbits ), set.getValuation() );
                 if ( !tuple.orbits.isEmpty() ) {
                     adjacencies.put( tuple.pivot, tuple.orbits.get( 0 ), edge );
@@ -82,12 +82,12 @@ public class ConstraintGraph {
     private Table<Symbol,Symbol,Edge> adjacencies;
     private Map<Symbol,Mutable<Double>> values;
 
-    private Edge construct( ArrayList<Symbol> orbits, Map<Symbol,Mutable<Double>> values ) {
+    private Edge construct( ArrayList<Symbol> orbits, Map<Symbol,DoubleReference> values ) {
         if ( orbits.isEmpty() ) return null;
         else {
             Symbol top = orbits.remove( 0 );
-            Mutable<Double> topV = values.get( top );
-            return new Edge( top, ((topV != null) ? topV : new Mutable<>(0.0D)), construct( orbits, values), MULTIPLICATIVE_INVERSE  );
+            DoubleReference topV = values.get( top );
+            return new Edge( top, ((topV != null) ? topV : new DoubleReference(0.0D)), construct( orbits, values), MULTIPLICATIVE_INVERSE  );
         }
     }
 
@@ -104,7 +104,7 @@ public class ConstraintGraph {
     public static void main( String[] args ) {
 
         VectorSpace R3 = new VectorSpace( 3, new TNameGenerator() );
-        VectorSpace.Relation lineXY = R3.relation( )
+
     }
 
 }
