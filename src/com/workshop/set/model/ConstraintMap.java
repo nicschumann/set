@@ -1,8 +1,6 @@
 package com.workshop.set.model;
 
-import com.workshop.set.model.interfaces.Constraint;
 import com.workshop.set.model.interfaces.Symbol;
-import com.workshop.set.model.interfaces.Value;
 import com.workshop.set.model.lang.core.TNameGenerator;
 
 import java.util.*;

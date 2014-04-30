@@ -1,4 +1,4 @@
-package com.workshop.set.model.interfaces;
+package com.workshop.set.model;
 
 import com.workshop.set.model.Mutable;
 

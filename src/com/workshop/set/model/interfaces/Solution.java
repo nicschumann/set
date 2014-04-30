@@ -1,5 +1,7 @@
 package com.workshop.set.model.interfaces;
 
+import com.workshop.set.model.Constraint;
+
 import java.util.Map;
 import java.util.Set;
 

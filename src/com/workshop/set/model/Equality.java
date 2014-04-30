@@ -1,6 +1,5 @@
 package com.workshop.set.model;
 
-import com.workshop.set.model.interfaces.Constraint;
 import com.workshop.set.model.interfaces.Symbol;
 
 import java.util.ArrayList;

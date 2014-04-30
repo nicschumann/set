@@ -203,12 +203,12 @@ public class VectorSpace {
          * @param x a geometry in the vector space to attempt to join.
          * @return a mapping from this into x.
          */
-        public Map<Symbol,Symbol> join( Geometry x ) throws GeometricFailure {
+        public Map<Symbol,Symbol> join( Geometry geom ) throws GeometricFailure {
             Map<Symbol,Symbol> m = new LinkedHashMap<>();
             try {
-                if ( dimension != x.dimension() ) throw new GeometricFailure( x.dimension() );
+                if ( dimension != geom.dimension() ) throw new GeometricFailure( geom.dimension() );
 
-                Point b = (Point)x;
+                Point b = (Point)geom;
                 for ( int i = 0; i < dimension; i++ ) {
                     m.put( getX_( i+1 ), b.getX_( i+1 ) );
                 }
@@ -216,7 +216,7 @@ public class VectorSpace {
                 return m;
 
             } catch ( ClassCastException _ ) {
-                throw new GeometricFailure( x.dimension() );
+                throw new GeometricFailure( geom.dimension() );
             }
 
         }
