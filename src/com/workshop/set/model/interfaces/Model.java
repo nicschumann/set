@@ -14,6 +14,8 @@ public interface Model {
 	
 	public void renderGeometries();
 
-	void checkIntersections(Point elmt);
+	public void checkIntersections(Point elmt, boolean shift);
+	
+	public void deleteSelections();
 
 }

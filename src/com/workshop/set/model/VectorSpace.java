@@ -1,5 +1,7 @@
 package com.workshop.set.model;
 
+import glfrontend.components.Vector4;
+
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;

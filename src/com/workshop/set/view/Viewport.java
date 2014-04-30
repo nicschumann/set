@@ -167,8 +167,7 @@ public class Viewport implements ScreenFrame {
 	 */
 	public void checkIntersections(Point p){
 		//may do initial bounds checking here...
-		_model.checkIntersections(p);
-		//if no object is selected, deselect all itmes
+		_model.checkIntersections(p, _shiftDown);
 	}
 	
 	@Override
@@ -253,6 +252,8 @@ public class Viewport implements ScreenFrame {
 			_mode = "selection";
 		if (key == 46 && _mode.equalsIgnoreCase("selection"))
 			_mode = "creation";
+		if(key == 14)	//delete
+			_model.deleteSelections();
 	}
 
 	@Override
