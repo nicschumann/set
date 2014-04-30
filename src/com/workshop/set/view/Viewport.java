@@ -4,8 +4,6 @@ import static com.workshop.set.SetMain.GENSYM;
 import static com.workshop.set.SetMain.VEC_SPACE_3D;
 import static org.lwjgl.opengl.GL11.glColor3f;
 import static org.lwjgl.opengl.GL11.glLoadIdentity;
-
-import com.workshop.set.model.DoubleReference;
 import glfrontend.ScreenFrame;
 import glfrontend.components.Camera;
 import glfrontend.components.Vector4;
@@ -20,7 +18,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Vector2f;
 
-import com.workshop.set.model.Mutable;
+import com.workshop.set.model.DoubleReference;
 import com.workshop.set.model.VectorSpace.GeometricFailure;
 import com.workshop.set.model.VectorSpace.Point;
 import com.workshop.set.model.interfaces.Model;
@@ -154,8 +152,8 @@ public class Viewport implements ScreenFrame {
 
 		Point point = null;
 		try {
-			point = VEC_SPACE_3D.point(GENSYM.generate(), new DoubleReference((double) proj.x),
-					new DoubleReference((double) proj.y), new DoubleReference((double) proj.z));
+			point = VEC_SPACE_3D.point(GENSYM.generate(), new DoubleReference((double) proj.x), new DoubleReference(
+					(double) proj.y), new DoubleReference((double) proj.z));
 		} catch (GeometricFailure e) {
 			e.printStackTrace();
 		}
@@ -166,8 +164,8 @@ public class Viewport implements ScreenFrame {
 	 * Given an intersection point p, checks for intersections with any object in the scene
 	 */
 
-	public void checkIntersections(Point p){
-		//may do initial bounds checking here...
+	public void checkIntersections(Point p) {
+		// may do initial bounds checking here...
 		_model.checkIntersections(p, _shiftDown);
 	}
 
@@ -250,7 +248,7 @@ public class Viewport implements ScreenFrame {
 			_mode = "selection";
 		if (key == 46 && _mode.equalsIgnoreCase("selection"))
 			_mode = "creation";
-		if(key == 14)	//delete
+		if (key == 14) // delete
 			_model.deleteSelections();
 	}
 
