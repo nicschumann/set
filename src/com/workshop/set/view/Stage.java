@@ -9,9 +9,6 @@ import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glLineWidth;
 import static org.lwjgl.opengl.GL11.glVertex3i;
-
-import java.util.ArrayList;
-
 import glfrontend.ScreenFrame;
 
 import org.lwjgl.util.vector.Vector2f;
@@ -36,7 +33,7 @@ public class Stage implements ScreenFrame {
 	}
 
 	public void drawGrid() {
-		glColor3f(1, 1, 1);
+		glColor3f(0.5f, 0.5f, 0.5f);
 
 		glLineWidth(1);
 		glDepthMask(false);

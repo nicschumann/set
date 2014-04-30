@@ -3,6 +3,7 @@ package com.workshop.set.view;
 import static com.workshop.set.SetMain.GENSYM;
 import static com.workshop.set.SetMain.VEC_SPACE_3D;
 import static org.lwjgl.opengl.GL11.glColor3f;
+import static org.lwjgl.opengl.GL11.glLoadIdentity;
 import glfrontend.ScreenFrame;
 import glfrontend.components.Camera;
 import glfrontend.components.Vector4;
@@ -118,6 +119,7 @@ public class Viewport implements ScreenFrame {
 	 */
 	public Point traceMouseClick(float x, float y) {
 
+		glLoadIdentity();
 		_currCamera.multMatrix(); // keep matrices up to date
 
 		FloatBuffer nearPlanePos = BufferUtils.createFloatBuffer(4);
@@ -150,8 +152,8 @@ public class Viewport implements ScreenFrame {
 
 		Point point = null;
 		try {
-			point = VEC_SPACE_3D.point(GENSYM.generate(), new Mutable<Double>((double) proj.x / 2),
-					new Mutable<Double>((double) proj.y / 2), new Mutable<Double>((double) proj.z / 2));
+			point = VEC_SPACE_3D.point(GENSYM.generate(), new Mutable<Double>((double) proj.x),
+					new Mutable<Double>((double) proj.y), new Mutable<Double>((double) proj.z));
 		} catch (GeometricFailure e) {
 			e.printStackTrace();
 		}

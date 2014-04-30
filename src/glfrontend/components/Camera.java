@@ -41,8 +41,8 @@ public class Camera {
     	return _up; }
 
     public Vector4 getU(){ 
-    	Vector4 lookCopy = new Vector4(_look.x, _look.y, _look.z, _look.w);
-    	Vector4 upCopy = new Vector4(_up.x, _up.y, _up.z, _up.w);
+//    	Vector4 lookCopy = new Vector4(_look.x, _look.y, _look.z, _look.w);
+//    	Vector4 upCopy = new Vector4(_up.x, _up.y, _up.z, _up.w);
     	return _look.getCrossProd(_up).getNormalized();
     }
     public Vector4 getV(){ 
