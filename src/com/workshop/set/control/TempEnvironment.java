@@ -45,19 +45,11 @@ public class TempEnvironment implements Model {
 	@Override
 	public void addGeometry(Geometry g) {
 		_currentElements.add(g);
-		// Set<Geometry> geoms = g.getGeometries();
-		// for (Geometry geom : geoms) {
-		// _currentElements.remove(geom);
-		// }
 	}
 
 	@Override
 	public void removeGeometry(Geometry g) {
 		_currentElements.remove(g);
-		// Set<Geometry> geoms = g.getGeometries();
-		// for (Geometry geom : geoms) {
-		// _currentElements.add(geom);
-		// }
 	}
 
 	@Override
@@ -85,9 +77,7 @@ public class TempEnvironment implements Model {
 			drawPoint((Point) geom);
 			return depth; // 0
 		}
-		// for (Geometry g : geoms) {
-		// depth = drawGeometry(g) + 1;
-		// }
+		
 		drawRelation((Relation) geom, depth);
 		return depth;
 	}
