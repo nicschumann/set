@@ -28,6 +28,12 @@
 		<jar destfile="${derived.jar}" basedir="${derived.classes}" includes="**/*.class" />
 	</target>
 
+	<target name="run" depends="jar">
+	    <java fork="true" classpath="${derived.classes}" classpathref="class.path" classname="com.workshop.set.SetMain" maxmemory="2048m">
+	    	<jvmarg value="-Djava.library.path=lib/natives" />
+	    </java>
+	</target>
+
 	<target name="javadoc">
 		<javadoc sourcepath="src" destdir="${derived.javadoc}">
 			<classpath refid="class.path" />

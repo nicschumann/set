@@ -1,11 +1,8 @@
 package com.workshop.set.model;
 
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import glfrontend.components.Vector4;
+
+import java.util.*;
 
 import com.workshop.set.model.interfaces.Gensym;
 import com.workshop.set.model.interfaces.Symbol;
@@ -52,7 +49,7 @@ public class VectorSpace {
          *
          * @return a mapping from component names to values.
          */
-        public abstract Map<Symbol,Mutable<Double>> values();
+        public abstract Map<Symbol,DoubleReference> values();
 
         /**
          * this method returns the set of components that this geometry has named. for example,
@@ -87,14 +84,14 @@ public class VectorSpace {
      * This class represents a location in n-dimensional space
      */
     public class Point extends Geometry {
-        public Point( Symbol name, Map<Symbol,Mutable<Double>> components ) throws GeometricFailure {
+        public Point( Symbol name, Map<Symbol,DoubleReference> components ) throws GeometricFailure {
             if ( components.size() != dimension ) throw new GeometricFailure( components.size() );
 
             this.name = name;
             this.namedComponents = new LinkedHashMap<>( components );
 
             int i = 0;
-            for ( Map.Entry<Symbol,Mutable<Double>> e : namedComponents.entrySet() ) {
+            for ( Map.Entry<Symbol,DoubleReference> e : namedComponents.entrySet() ) {
                 this.components[ i ] = e.getValue();
                 this.names[ i ] = e.getKey();
                 i++;
@@ -102,7 +99,7 @@ public class VectorSpace {
             this.init(); 
         }
 
-        public Point( Symbol name, Mutable<Double>... components  ) throws GeometricFailure {
+        public Point( Symbol name, DoubleReference... components  ) throws GeometricFailure {
             if ( components.length != dimension ) throw new GeometricFailure( components.length );
 
             this.name = name;
@@ -118,7 +115,7 @@ public class VectorSpace {
             this.init(); 
         }
 
-        public Point( Symbol name, List<Mutable<Double>> components  ) throws GeometricFailure {
+        public Point( Symbol name, List<DoubleReference> components  ) throws GeometricFailure {
             if ( components.size() != dimension ) throw new GeometricFailure( components.size() );
 
             this.name = name;
@@ -140,8 +137,8 @@ public class VectorSpace {
 
         private Symbol name;
         private Symbol[] names = new Symbol[ dimension ];
-        private Mutable<Double>[] components = new Mutable[ dimension ]; // TODO ensure safety
-        private Map<Symbol,Mutable<Double>> namedComponents = new LinkedHashMap<>();
+        private DoubleReference[] components = new DoubleReference[ dimension ]; // TODO ensure safety
+        private Map<Symbol,DoubleReference> namedComponents = new LinkedHashMap<>();
         private boolean highlighted; 
 
         /**
@@ -153,9 +150,9 @@ public class VectorSpace {
          * @param i the subscript of the component to select
          * @return the double box represented by the corresponding X_i
          */
-        public Mutable<Double> getN_( int i ) throws GeometricFailure {
+        public DoubleReference getN_( int i ) throws GeometricFailure {
             if ( i <= 0 || i > dimension ) throw new GeometricFailure( i );
-            return components[ i-1 ];
+            return components[ i - 1 ];
         }
 
         /**
@@ -182,7 +179,7 @@ public class VectorSpace {
          * @return the ( component, value ) pairs contained in this point.
          */
         @Override
-        public Map<Symbol,Mutable<Double>> values() { return namedComponents; }
+        public Map<Symbol,DoubleReference> values() { return namedComponents; }
 
         /**
          * @return the set of unknowns ( represented as symbols ) in this point
@@ -298,8 +295,8 @@ public class VectorSpace {
         public Geometry codomain() { return B; }
 
         @Override
-        public Map<Symbol,Mutable<Double>> values() {
-            Map<Symbol,Mutable<Double>> union = new LinkedHashMap<>();
+        public Map<Symbol,DoubleReference> values() {
+            Map<Symbol,DoubleReference> union = new LinkedHashMap<>();
 
             union.putAll( A.values() );
             union.putAll( B.values() );
@@ -375,6 +372,7 @@ public class VectorSpace {
     public class GeometricFailure extends Exception {
         public GeometricFailure( int i ) { this.i = i; }
 
+        private static final long serialVersionUID = 432234L;
         private int i;
 
         @Override
@@ -395,15 +393,15 @@ public class VectorSpace {
     }
 
     // generators : Point
-    public Point point( Symbol name, Mutable<Double>... comp ) throws GeometricFailure {
+    public Point point( Symbol name, DoubleReference... comp ) throws GeometricFailure {
         return new Point( name, comp );
     }
-    public Point point( Symbol name, Map<Symbol,Mutable<Double>> comp ) throws GeometricFailure {
+    public Point point( Symbol name, Map<Symbol,DoubleReference> comp ) throws GeometricFailure {
         return new Point( name, comp );
     }
     public Point point( Symbol name, double... comp ) throws GeometricFailure {
-        List<Mutable<Double>> l = new LinkedList<>();
-        for ( double d : comp ) { l.add( new Mutable<Double>( d ) ); }
+        List<DoubleReference> l = new LinkedList<>();
+        for ( double d : comp ) { l.add( new DoubleReference( d ) ); }
         return new Point( name, l );
     }
     public Relation relation( Symbol name, Geometry a, Geometry b) throws GeometricFailure {
