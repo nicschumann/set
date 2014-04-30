@@ -40,7 +40,7 @@ public class ConstraintSet {
     }
 
     private Constraint<Symbol,Double> rule;
-    private Map<Symbol,Mutable<Double>> values;
+    private Map<Symbol,DoubleReference> values;
     private Set<Pivot> relation;
 
 
@@ -55,5 +55,5 @@ public class ConstraintSet {
     }
 
     public Set<Pivot> getRelation() { return new HashSet<>( relation ); }
-    public Map<Symbol,Mutable<Double>> getValuation() { return new HashMap<>( values ); }
+    public Map<Symbol,DoubleReference> getValuation() { return new HashMap<>( values ); }
 }

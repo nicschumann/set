@@ -16,8 +16,8 @@ public class ParseException extends Exception {
         this.log = logs;
     }
 
-    public ParseException( Collection<Term> partialTerms, Collection<TERMINAL> parsed, Collection<TERMINAL> remaining ) {
-        this.log = new LinkedList<>(Arrays.asList( "ParseError: Partially Constructed Derivation: " + partialTerms + ", parser position: " + parsed + " $ " + remaining ) );
+    public ParseException( Collection<TERMINAL> parsed, Collection<TERMINAL> remaining ) {
+        this.log = new LinkedList<>(Arrays.asList( "ParseError: parser position: " + parsed + " $ " + remaining ) );
     }
 
     private List<String> log;
