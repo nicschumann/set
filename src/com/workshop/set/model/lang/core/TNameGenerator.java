@@ -150,6 +150,7 @@ public class TNameGenerator
      */
     public TName generate() { return new TName( this, state++, "" ); }
     public TName generate( String h ) { return new TName( this, state++, h ); }
+    public TName bypass( String h ) { return new TName( this, 0, h ); }
 
 
 }

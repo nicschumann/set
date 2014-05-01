@@ -275,51 +275,51 @@ public class TypeTester {
             // TESTS
 
             eval.title( apply.toString() ).trial(apply).title(apply2.toString()).trial( apply2 ).title(apply3.toString()).trial( apply3 )
-//                    .header("Initial Typechecking Tests")
-//                    .title("field typing").trial(field)
-//                    .title("kind typing").trial( univ0 )
-//                    .title("scalar typing").trial( scalar )
-//                    .title("identity on reals").trial(idA  )
-//                    .title("judgemental equality on reals").trial( eq    )
-//                    .title("polymorphic identity function").trial( dep    )
-//                    .title("polymorphic application").trial(
-//                        new TApplication( dep, field )
-//                    )
-//
-//
-//
-//                    .title("identity on reals, applied, A").trial( idA_app )
-//                    .title("identity on reals, applied, B").trial( idA_app2 )
-//                    .title("identity on reals, applied, C").trial( idA_app3 )
-//                    .title("partially applied equality").trial( eq_app_h )
-//                    .title("totally applied equality").trial( eq_app_f )
-//                    .title("partially applied identity").trial( dep_app )
-//                    .title("totally applied equality").trial( dep_app_f )
-//
-//                    .error(dep_app_bot).error(judge).error(idB)
-//
-//                    .header("Pattern Checking Tests")
-//                    .trial(pat1)
-//                    .trial( pat2 )
-//                    .trial( pat3 )
-//                    .trial( pat5 )
-//
-//                    .error(pat4)
-//
-//                    .header("Pattern Based Lambdas")
-//                    .trial(lam1)
-//                    .trial( lam1_app )
-//                    .trial( lam2 )
-//                    .trial( lam3 )
-//                    .trial( lam4 )
-//                    .trial( lam4_app )
-//                    .trial( shadow )
-//                    .trial( shadow_app )
-//                    .trial( shadow_app_app )
-//                      .error(lam4_univerr).error(lam2_err).error( lam3_bot ).error(lam2_err2)
-//
-//                    .error(app_err).error(app_succ)
-//                     .title("RANK-2 Term").trial(rank2)
+                    .header("Initial Typechecking Tests")
+                    .title("field typing").trial(field)
+                    .title("kind typing").trial( univ0 )
+                    .title("scalar typing").trial( scalar )
+                    .title("identity on reals").trial(idA  )
+                    .title("judgemental equality on reals").trial( eq    )
+                    .title("polymorphic identity function").trial( dep    )
+                    .title("polymorphic application").trial(
+                        new TApplication( dep, field )
+                    )
+
+
+
+                    .title("identity on reals, applied, A").trial( idA_app )
+                    .title("identity on reals, applied, B").trial( idA_app2 )
+                    .title("identity on reals, applied, C").trial( idA_app3 )
+                    .title("partially applied equality").trial( eq_app_h )
+                    .title("totally applied equality").trial( eq_app_f )
+                    .title("partially applied identity").trial( dep_app )
+                    .title("totally applied equality").trial( dep_app_f )
+
+                    .error(dep_app_bot).error(judge).error(idB)
+
+                    .header("Pattern Checking Tests")
+                    .trial(pat1)
+                    .trial( pat2 )
+                    .trial( pat3 )
+                    .trial( pat5 )
+
+                    .error(pat4)
+
+                    .header("Pattern Based Lambdas")
+                    .trial(lam1)
+                    .trial( lam1_app )
+                    .trial( lam2 )
+                    .trial( lam3 )
+                    .trial( lam4 )
+                    .trial( lam4_app )
+                    .trial( shadow )
+                    .trial( shadow_app )
+                    .trial( shadow_app_app )
+                      .error(lam4_univerr).error(lam2_err).error( lam3_bot ).error(lam2_err2)
+
+                    .error(app_err).error(app_succ)
+                     .title("RANK-2 Term").trial(rank2)
                     .title("RANK-2 Term, Application, 1").trial( rank2_app )
                     .title("RANK-2 Term, Application, 2").trial( rank2_app2 )
                     .title("RANK-2 Term, Application, 3").trial( rank2_app3 )

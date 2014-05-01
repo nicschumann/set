@@ -45,7 +45,7 @@ public class GLLabel extends GLComponent {
 		_foreground = Color.BLACK;
 		_textAlign = LEFT;
 		
-		setFont(new java.awt.Font("Sans Serif", java.awt.Font.BOLD, 16));
+		setFont(new java.awt.Font("Sans Serif", java.awt.Font.BOLD, 13));
 		TextureImpl.bindNone();
 	}
 
@@ -91,11 +91,11 @@ public class GLLabel extends GLComponent {
 		Vector2f.sub(lr, ul, mid);
 		
 		if (_textAlign == LEFT) {
-			x = 10;
+			x = 5;
 		} else {
 			int textWidth = font.getWidth(text);
 			if (_textAlign == RIGHT) {
-				x = lr.x - textWidth - 10;
+				x = lr.x - textWidth - 5;
 			} else { // CENTER
 				x = (mid.x - textWidth) / 2;
 			}
