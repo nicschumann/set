@@ -191,7 +191,6 @@ public class TempEnvironment implements Model {
 		double t1 = (toCheck[0] - pts[0]) / d.x;
 		double t2 = (toCheck[1] - pts[1]) / d.y;
 
-		// bounds checking
 		double maxX = Math.max(pts[0], pts[3]) - .08;
 		double minX = Math.min(pts[0], pts[3]) + .08;
 		double maxY = Math.max(pts[1], pts[4]) - .08;
