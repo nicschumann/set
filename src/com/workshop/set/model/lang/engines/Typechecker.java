@@ -11,8 +11,8 @@ import com.workshop.set.model.lang.exceptions.TypecheckingException;
  * Created by nicschumann on 3/30/14.
  */
 public class Typechecker {
-    public Typechecker() {
-        this.g = new TNameGenerator();
+    public Typechecker( TNameGenerator g ) {
+        this.g = g;
     }
 
     private TNameGenerator g;

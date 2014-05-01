@@ -5,7 +5,7 @@ import static com.workshop.set.SetMain.VEC_SPACE_3D;
 import static org.lwjgl.opengl.GL11.glColor3f;
 import static org.lwjgl.opengl.GL11.glLoadIdentity;
 
-import com.workshop.set.model.MDouble;
+import com.workshop.set.model.ref.MDouble;
 
 import glfrontend.ScreenFrameAdapter;
 import glfrontend.components.Camera;

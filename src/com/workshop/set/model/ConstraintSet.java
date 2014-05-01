@@ -1,6 +1,7 @@
 package com.workshop.set.model;
 
 import com.workshop.set.model.interfaces.Symbol;
+import com.workshop.set.model.ref.MDouble;
 
 import java.util.*;
 
@@ -54,7 +55,11 @@ public class ConstraintSet {
         return this;
     }
 
-    //public ConstraintSet constrain( )
+    public ConstraintSet constrain( Reference pivot, Reference orbit )
+        throws VectorSpace.GeometricFailure {
+        
+
+    }
 
     public Set<Pivot> getRelation() { return new HashSet<>( relation ); }
     public Map<Symbol,MDouble> getValuation() { return new HashMap<>( values ); }

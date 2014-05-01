@@ -9,6 +9,8 @@ import com.google.common.collect.HashBasedTable;
 import com.workshop.set.model.interfaces.Symbol;
 import com.workshop.set.model.lang.core.TNameGenerator;
 import com.workshop.set.model.VectorSpace.*;
+import com.workshop.set.model.ref.MDouble;
+import com.workshop.set.model.ref.Mutable;
 
 
 public class ConstraintGraph {
@@ -73,7 +75,7 @@ public class ConstraintGraph {
 
         for ( ConstraintSet set : sets ) {
             for ( ConstraintSet.Pivot tuple : set.getRelation() ) {
-                Mutable<Double> pVal =
+                MDouble pVal =
                         ( set.getValuation().get( tuple.pivot ) != null )
                                 ? new MDouble( set.getValuation().get( tuple.pivot ).get() )
                                 : new MDouble( ADDITIVE_IDENTITY );
@@ -85,11 +87,8 @@ public class ConstraintGraph {
         }
     }
 
-    // Sparse representation of the ConstraintGraph as an Adjacency Matrix
-
-
     private Table<Symbol,Symbol,Edge> adjacencies;
-    private Map<Symbol,Mutable<Double>> values;
+    private Map<Symbol,MDouble> values;
 
     private Edge construct( ArrayList<Symbol> orbits, Map<Symbol,MDouble> values ) {
         if ( orbits.isEmpty() ) return null;

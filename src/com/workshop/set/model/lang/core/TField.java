@@ -29,6 +29,7 @@ public class TField implements Term {
     public Environment<Term> type( Environment<Term> gamma )
         throws ProofFailureException {
          TUniverse ty = new TUniverse(0L);
+                gamma.compute( this, ty );
          return gamma.extend( this, ty );
 
     }
