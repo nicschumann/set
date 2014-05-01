@@ -1,17 +1,11 @@
 package com.workshop.set.model.lang.environments;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import com.workshop.set.model.interfaces.Context;
-import com.workshop.set.model.interfaces.Environment;
-import com.workshop.set.model.interfaces.Gensym;
-import com.workshop.set.model.interfaces.Judgement;
-import com.workshop.set.model.interfaces.Symbol;
-import com.workshop.set.model.interfaces.Term;
+import com.workshop.set.model.interfaces.*;
 import com.workshop.set.model.lang.exceptions.EvaluationException;
 import com.workshop.set.model.lang.exceptions.ProofFailureException;
+import com.workshop.set.model.lang.exceptions.TypecheckingException;
 
 /**
  * Created by nicschumann on 4/1/14.
@@ -22,6 +16,9 @@ public class Evaluation implements Environment<Term> {
 
         typings = new ArrayList<Derivation<Term>>();
         evaluations = new ArrayList<Derivation<Term>>();
+
+        valueContext = new HashMap<>();
+        typeContext = new HashMap<>();
 
         typings.add( 0, new Derivation<Term>( g ) );
         evaluations.add( 0, new Derivation<Term>( g ) );
@@ -42,8 +39,41 @@ public class Evaluation implements Environment<Term> {
     private List<Derivation<Term>> typings;
     private List<Derivation<Term>> evaluations;
 
+    private Map<Symbol,Term> valueContext;
+    private Map<Symbol,Term> typeContext;
+
     private Term value;
 
+    // LANG_EXTERNAL Methods
+    public Term getValue( Symbol s ) throws ProofFailureException {
+        if ( valueContext.containsKey(s) ) {
+            return valueContext.get( s );
+        } else throw new ProofFailureException( "Unbound Identifier : " + s.toString() );
+    }
+
+    public Term getType( Symbol s ) throws ProofFailureException {
+        if ( valueContext.containsKey( s ) ) {
+            return typeContext.get( s );
+        } else throw new ProofFailureException( "Unbound Identifier : " + s.toString() );
+    }
+
+    public Environment<Term> name( Symbol s, Term t )
+        throws ProofFailureException,
+            TypecheckingException {
+
+        t.type( this );
+        typeContext.put( s, proves( t ) );
+        valueContext.put( s, value() );
+        page();
+
+        for ( Map.Entry<Symbol,Term> VTPair : typeContext.entrySet() ) {
+            extend( VTPair.getKey(), VTPair.getValue() );
+        }
+
+        return this;
+    }
+
+    // LANG_INTERNAL methods:
     // Context<Term> Methods
 
     /**
@@ -59,8 +89,7 @@ public class Evaluation implements Environment<Term> {
         throws ProofFailureException {
         try {
             Derivation<Term> current = typings.get( deriving );
-            Term T = current.proves( t );
-            return T;
+            return current.proves( t );
         } catch ( ArrayIndexOutOfBoundsException _ ) {
             throw new ProofFailureException( "No Recorded Derivation on this page"  );
         }
@@ -71,8 +100,7 @@ public class Evaluation implements Environment<Term> {
         throws ProofFailureException {
         try {
             Derivation<Term> current = typings.get( deriving );
-            Term T = current.provesAt( i, t );
-            return T;
+            return current.provesAt( i, t );
         } catch ( ArrayIndexOutOfBoundsException _ ) {
             throw new ProofFailureException( "No Recorded Derivation on this page"  );
         }
@@ -85,8 +113,8 @@ public class Evaluation implements Environment<Term> {
             current = new Derivation<Term>( gensym );
         } else {
             current = typings.get( deriving );
-
         }
+
         current.extend( x, t );
         typings.set(deriving, current);
         return this;
@@ -128,6 +156,9 @@ public class Evaluation implements Environment<Term> {
 
     @Override
     public Symbol freshname( String s ) { return gensym.generate( s ); }
+
+    @Override
+    public Symbol basename( String s ) { return gensym.bypass( s ); }
 
     @Override
     public Environment<Term> step() {
@@ -191,13 +222,22 @@ public class Evaluation implements Environment<Term> {
         deriving += 1;
         typings.add( deriving, new Derivation<Term>( gensym ) );
         evaluations.add( deriving, new Derivation<Term>( gensym ) );
+        value = null;
         return this;
     }
 
     @Override
     public String toString() {
-        Derivation<Term> t = evaluations.get( deriving );
-        return t.toString();
+        StringBuilder s = new StringBuilder();
+        for ( Map.Entry<Symbol,Term> VTPair : typeContext.entrySet() ) {
+            s.append( VTPair.getKey() )
+             .append( " : " )
+             .append( VTPair.getValue() )
+             .append( "\t=>\t" )
+             .append( valueContext.get( VTPair.getKey() ).toString() )
+             .append( System.lineSeparator() );
+        }
+        return s.toString();
     }
 
 

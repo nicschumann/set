@@ -9,6 +9,7 @@ import java.util.Set;
 
 import com.workshop.set.model.interfaces.Gensym;
 import com.workshop.set.model.interfaces.Symbol;
+import com.workshop.set.model.ref.MDouble;
 
 /**
  * Created by nicschumann on 4/17/14.

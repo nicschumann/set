@@ -3,7 +3,7 @@ package com.workshop.set.model;
 import com.workshop.set.model.interfaces.Environment;
 import com.workshop.set.model.interfaces.Term;
 import com.workshop.set.model.lang.core.TNameGenerator;
-import com.workshop.set.model.lang.engines.Typechecker;
+import com.workshop.set.model.lang.environments.Evaluation;
 import com.workshop.set.model.lang.exceptions.LexException;
 import com.workshop.set.model.lang.exceptions.ParseException;
 import com.workshop.set.model.lang.exceptions.ProofFailureException;
@@ -28,9 +28,10 @@ public class Interpreter {
     public static void loop() {
        TNameGenerator n = new TNameGenerator();
        BufferedReader r = new BufferedReader( new InputStreamReader( System.in ) );
+
        Lexer l = new Lexer();
        EXPRParser p = new EXPRParser( n );
-       Typechecker tc = new Typechecker( n );
+       Environment<Term> env = new Evaluation( n );
 
        try {
            String line;
@@ -38,9 +39,12 @@ public class Interpreter {
            while ( ( line = r.readLine()) != null ) {
                try {
 
-                   Term parse = p.parse( l.lex( line ) );
-                   Environment<Term> env = tc.type( parse );
-                   outln( env.value().toString() + " : " + env.proves( parse ) );
+                   handle(
+                           line,
+                           env,
+                           l,
+                           p
+                   );
 
                } catch ( LexException e ) {
                    errln( e.getLocalizedMessage() );
@@ -60,6 +64,65 @@ public class Interpreter {
            errln( System.lineSeparator() );
            loop();
        }
+    }
+
+
+
+    public static Environment<Term> handle(
+                String line,
+                Environment<Term> env,
+                Lexer l,
+                EXPRParser p
+            ) throws LexException,
+               ParseException,
+               ProofFailureException,
+               TypecheckingException,
+               IOException {
+
+        if ( !line.isEmpty() ) {
+            switch ( line.charAt( 0 ) ) {
+                case ':' :
+                    if ( line.contains( " " ) ) {
+                        String command = line.substring(0, line.indexOf( " " ));
+                        String term = line.substring( line.indexOf(" ")+1 );
+                        return runCommand(
+                                command, term,
+                                env, l, p
+                        );
+                    } else {
+                        return runCommand( line, "", env, l, p );
+                    }
+                default:
+                    Term parse = p.parse( l.lex( line ) );
+                    parse.type( env );
+                    outln(env.value() + " : " + env.proves(parse).toString());
+                    return env;
+            }
+        } else return env;
+    }
+
+
+    public static Environment<Term> runCommand( String command, String arg, Environment<Term> env, Lexer l, EXPRParser p ) 
+       throws ParseException, LexException, IOException, ProofFailureException, TypecheckingException {
+        switch ( command ) {
+            case ":context":
+                if ( arg.isEmpty() ) {
+                    outln( env.toString() );
+                    return env;
+                } break;
+            case ":name":
+                    String symb = arg.substring(0, arg.indexOf( " " ));
+                    String term = arg.substring( arg.indexOf(" ")+1 );
+                    env.name( env.basename( symb ), p.parse( l.lex( term ) ) );
+                    outln(env.toString());
+                    return env;
+
+            default:
+                errln( "Unrecognized command, \""+command+"\"");
+                return env;
+        }
+        errln( "Unrecognized command, \""+command+"\"");
+        return env;
     }
 
     public static boolean prompt() {
