@@ -20,4 +20,6 @@ public class FutureResponse<T> implements Response<T> {
             return null;
         }
     }
+
+    public T value() { return call(); }
 }

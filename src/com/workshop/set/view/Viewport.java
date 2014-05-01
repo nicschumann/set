@@ -4,6 +4,11 @@ import static com.workshop.set.SetMain.GENSYM;
 import static com.workshop.set.SetMain.VEC_SPACE_3D;
 import static org.lwjgl.opengl.GL11.glColor3f;
 import static org.lwjgl.opengl.GL11.glLoadIdentity;
+<<<<<<< HEAD
+=======
+
+import com.workshop.set.model.MDouble;
+>>>>>>> SEXP-Parser
 import glfrontend.ScreenFrameAdapter;
 import glfrontend.components.Camera;
 import glfrontend.components.Vector4;
@@ -18,7 +23,10 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Vector2f;
 
+<<<<<<< HEAD
 import com.workshop.set.model.DoubleReference;
+=======
+>>>>>>> SEXP-Parser
 import com.workshop.set.model.VectorSpace.GeometricFailure;
 import com.workshop.set.model.VectorSpace.Point;
 import com.workshop.set.model.interfaces.Model;
@@ -151,8 +159,13 @@ public class Viewport extends ScreenFrameAdapter {
 
 		Point point = null;
 		try {
+<<<<<<< HEAD
 			point = VEC_SPACE_3D.point(GENSYM.generate(), new DoubleReference((double) proj.x), new DoubleReference(
 					(double) proj.y), new DoubleReference((double) proj.z));
+=======
+			point = VEC_SPACE_3D.point(GENSYM.generate(), new MDouble((double) proj.x), new MDouble(
+					(double) proj.y), new MDouble((double) proj.z));
+>>>>>>> SEXP-Parser
 		} catch (GeometricFailure e) {
 			e.printStackTrace();
 		}
