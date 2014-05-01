@@ -246,7 +246,7 @@ public class Viewport extends ScreenFrameAdapter {
 			_mode = "selection";
 		if (keyCode == Keyboard.KEY_C && _mode.equalsIgnoreCase("selection"))
 			_mode = "creation";
-		if (keyCode == Keyboard.KEY_DELETE) // delete
+		if (keyCode == Keyboard.KEY_BACK || keyCode == Keyboard.KEY_DELETE)
 			_model.deleteSelections();
 	}
 
