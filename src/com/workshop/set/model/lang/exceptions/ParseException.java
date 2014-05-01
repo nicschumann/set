@@ -18,6 +18,8 @@ public class ParseException extends Exception {
         this.msg += "parser position: " + parsed + " $ " + remaining + System.lineSeparator();
     }
 
+    private static final long serialVersionUID = 4566322L;
+
     private String msg;
 
     @Override

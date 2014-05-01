@@ -19,7 +19,7 @@ public class Lexer {
         return _lex( new BufferedReader( new FileReader( input ) ) );
     }
 
-    private String reservedSymbols = "-=[]{}()/*+:.^,";
+    private String reservedSymbols = "-=[]{}()/*+:^,";
 
     private int braceCount      = 0;
     private int bracketCount    = 0;
@@ -37,7 +37,6 @@ public class Lexer {
         int position = 0;
 
         while ( (current = (char)inputstream.read()) != (char)-1 ) {
-            System.out.println( position );
             position++;
             if ( Character.isWhitespace(current) ) {
                if ( termBuffer.length() <= 0 ) continue;

@@ -12,6 +12,9 @@ public class RecursiveDescentParseException extends Exception {
         msg = "ParseException: on terminal " + failure + ", " + remaining + " remaining";
     }
 
+
+    private static final long serialVersionUID = 753221L;
+
     private String msg;
 
     @Override

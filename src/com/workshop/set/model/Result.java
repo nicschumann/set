@@ -16,6 +16,8 @@ public class Result {
             this.literate = msg;
         }
 
+        private static final long serialVersionUID = 2343524L;
+
         private Map<Symbol,Symbol> contradiction;
         private String literate;
 

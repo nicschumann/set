@@ -34,6 +34,13 @@
 	    </java>
 	</target>
 
+	<target name="interp" depends="jar">
+	    <java fork="true" classpath="${derived.classes}" classpathref="class.path" classname="com.workshop.set.model.Interpreter" maxmemory="2048m">
+	    	<jvmarg value="-Djava.library.path=lib/natives" />
+	    </java>
+	</target>
+
+
 	<target name="javadoc">
 		<javadoc sourcepath="src" destdir="${derived.javadoc}">
 			<classpath refid="class.path" />

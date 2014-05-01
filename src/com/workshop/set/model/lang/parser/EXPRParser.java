@@ -1,11 +1,13 @@
 package com.workshop.set.model.lang.parser;
 
+import java.io.IOException;
 import java.util.*;
 
 import com.workshop.set.model.interfaces.Gensym;
 import com.workshop.set.model.interfaces.Pattern;
 import com.workshop.set.model.interfaces.Term;
 import com.workshop.set.model.lang.core.*;
+import com.workshop.set.model.lang.exceptions.LexException;
 import com.workshop.set.model.lang.exceptions.ParseException;
 import com.workshop.set.model.lang.parser.Grammar.*;
 
@@ -50,11 +52,8 @@ public class EXPRParser {
 
     public EXPRParser( Gensym generator ) {
 
-        this.right = new Stack<>();
-        this.left = new Stack<>();
         this.position = 0;
         this.markOffset = 0;
-        this.errors = new LinkedList<>();
         this.generator = generator;
 
     }
@@ -63,14 +62,16 @@ public class EXPRParser {
     private Stack<TERMINAL> left;
     private int position;
     private int markOffset;
-    private List<String> errors;
     private Gensym generator;
-
-    private Set<TERMINAL> judgements = new HashSet<>( Arrays.asList( (TERMINAL)(new EQUALS( 0 )) ) );
-    private Set<TERMINAL> operators = new HashSet<>( Arrays.asList( new PLUS( 0 ), new MINUS(0), new TIMES( 0 ), new DIV( 0 ) ) );
 
     public Term parse( ArrayList<TERMINAL> input )
         throws ParseException {
+
+        left = new Stack<>();
+        right = new Stack<>();
+        position = 0;
+        markOffset = 0;
+
         for ( int i = input.size() - 1; i >= 0; i-- ) right.push( input.get( i ) );
         return parseTerm();
     }
@@ -82,6 +83,7 @@ public class EXPRParser {
             consume();
 
             TERMINAL base = consult();
+            System.err.println( "base = " + base.toString() );
             if (  base instanceof LAMBDA
                || base instanceof FORALL
                || base instanceof SUM ) {
@@ -110,20 +112,19 @@ public class EXPRParser {
                 if ( consume() instanceof RPAREN ) {
                     return new TJudgement( t1, t2 );
                 } else throw new ParseException( "Mismatched Parentheses in Term", left, right );
+            } else if ( isOperator( base ) ) {
+                System.out.println( "In Operator Case" );
+                unshift();
+                System.out.println( "Current Token Stream: " + right.toString() );
+                return parsePattern();
             } else {
-                //either an application or a pattern
-                mark(); // FIGURE OUT SEQUENCING
-                try {
-                    Term t1 = parseTerm();
-                    Term t2 = parseTerm();
-                    if ( consume() instanceof  RPAREN ) {
-                        return new TApplication( t1, t2 );
-                    }
-                } catch ( ParseException _ ) {
-                    backtrack();
-                    return parsePattern();
+                Term t1 = parseTerm();
+                Term t2 = parseTerm();
+                if ( consume() instanceof  RPAREN ) {
+                    return new TApplication( t1, t2 );
                 }
             }
+            throw new ParseException( "Unexpected Open Parenthesis", left, right );
         } else if ( top instanceof FIELD ) {
             consume();
             return new TField();
@@ -131,15 +132,16 @@ public class EXPRParser {
             consume();
             return new TUniverse( 0L );
         } else {
+            System.err.println( "in Bottom parsePattern case : TERM ");
             return parsePattern();
         }
-
-        throw new ParseException( "Fell Through Cases...", left, right );
     }
 
 
     private Pattern parsePattern() throws ParseException {
+        System.out.println( "in PARSE_PATTERN" );
         TERMINAL top = consume();
+        System.out.println( top.toString() );
 
         if ( top instanceof LBRACKET ) {
 
@@ -180,7 +182,6 @@ public class EXPRParser {
                 if ( (top = consume()) instanceof COMMA ) {
                     Pattern p2 = parsePattern();
                 }
-
             }
         } else if ( top instanceof ID ) {
             return generator.bypass( ((ID) top).value );
@@ -214,18 +215,18 @@ public class EXPRParser {
         } else throw new ParseException( "NUM Expected, found " + top, left, right );
     }
 
+    private static boolean isJudgement( TERMINAL t ) { return t instanceof EQUALS; }
+    private static boolean isOperator( TERMINAL t ) {
+        return t instanceof TIMES || t instanceof PLUS
+            || t instanceof DIV   || t instanceof MINUS;
 
-    private void backtrack() {
-        while ( markOffset > position ) {
-            right.push( left.pop() );
-            markOffset -= 1;
-        }
     }
 
-
-
-    private boolean isJudgement( TERMINAL t ) { return judgements.contains( t ); }
-    private boolean isOperator( TERMINAL t ) { return operators.contains( t ); }
+    private TERMINAL unshift() {
+        right.push( left.pop() );
+        markOffset -= 1;
+        return right.peek();
+    }
 
     private TERMINAL consume() throws ParseException {
         if ( right.isEmpty() ) throw new ParseException( "Unexpected End of Input.", left, right );
@@ -233,14 +234,25 @@ public class EXPRParser {
         markOffset += 1;
         return left.peek();
     }
+
     private TERMINAL consult() throws ParseException {
         if ( right.isEmpty() ) throw new ParseException( "Unexpected End of Input.", left, right );
         return right.peek();
     }
 
-    private void mark() {
-        position += markOffset;
-        markOffset = 0;
+    public static void main( String[] args ) {
+
+        Lexer l = new Lexer();
+        EXPRParser p = new EXPRParser( new TNameGenerator() );
+        try {
+            System.out.println( p.parse( l.lex("(+ 1 y)" ) ) );
+        } catch ( LexException e ) {
+            System.err.println( e.getLocalizedMessage() );
+        } catch ( ParseException e ) {
+            System.err.println( e.getLocalizedMessage() );
+        } catch ( IOException e ) {
+            e.printStackTrace();
+        }
     }
 
 }

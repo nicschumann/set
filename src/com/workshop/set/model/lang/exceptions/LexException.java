@@ -10,6 +10,8 @@ public class LexException extends Exception {
         this.braces = braces;
     }
 
+    private static final long serialVersionUID = 2334L;
+
     private final int brackets;
     private final int parens;
     private final int braces;
