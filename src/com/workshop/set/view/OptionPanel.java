@@ -40,6 +40,7 @@ public class OptionPanel extends GLPanel {
 		_label.setSize(getSize());
 		_label.setBackground(new Color(255, 255, 255, 0));
 		_label.setForeground(Color.WHITE);
+		_label.setAlignment(TextAlignment.LEFT);
 		this.add(_label);
 	}
 

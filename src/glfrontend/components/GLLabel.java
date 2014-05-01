@@ -1,6 +1,7 @@
 package glfrontend.components;
 
 import static com.workshop.set.view.SetScreen.newRatio;
+import static glfrontend.components.GLComponent.TextAlignment.CENTER;
 import static glfrontend.components.GLComponent.TextAlignment.LEFT;
 import static glfrontend.components.GLComponent.TextAlignment.RIGHT;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
@@ -38,7 +39,7 @@ public class GLLabel extends GLComponent {
 	public void init() {
 		text = "";
 		_foreground = Color.BLACK;
-		_textAlign = LEFT;
+		_textAlign = CENTER;
 		
 		setFont(new java.awt.Font("Sans Serif", java.awt.Font.BOLD, 13));
 		TextureImpl.bindNone();

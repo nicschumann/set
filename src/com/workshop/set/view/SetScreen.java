@@ -15,10 +15,14 @@ import com.workshop.set.model.VectorSpace.Geometry;
 import com.workshop.set.model.interfaces.Model;
 
 public class SetScreen implements ScreenFrame {
+	
+	public static float[] ORANGE = {1f, 0.5f, 0f};
+	public static float[] CYAN = {0f, 1f, 1f};
 
 	private Vector2f ul, lr;
 	private Viewport _viewport;
 	// private OptionPanel _options;
+	private TestPanel _test;
 
 	private List<ScreenFrame> frames;
 	private Map<ScreenFrame, Boolean> contained;
@@ -28,7 +32,9 @@ public class SetScreen implements ScreenFrame {
 		setSize(new Vector2f(w, h));
 		_viewport = new Viewport(model, w, h);
 		// _options = new OptionPanel(300, 30);
+		_test = new TestPanel(300, 30);
 		// this.add(_options);
+		this.add(_test);
 	}
 
 	private void init() {
@@ -241,12 +247,13 @@ public class SetScreen implements ScreenFrame {
 		}
 
 		_viewport.keyPressed(e);
-
+		_test.keyPressed(e);
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
 		_viewport.keyReleased(e);
+		_test.keyReleased(e);
 	}
 
 	@Override
