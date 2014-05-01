@@ -73,7 +73,7 @@ public class ConstraintGraph {
 
         for ( ConstraintSet set : sets ) {
             for ( ConstraintSet.Pivot tuple : set.getRelation() ) {
-                Mutable<Double> pVal =
+                MDouble pVal =
                         ( set.getValuation().get( tuple.pivot ) != null )
                                 ? new MDouble( set.getValuation().get( tuple.pivot ).get() )
                                 : new MDouble( ADDITIVE_IDENTITY );
@@ -86,7 +86,7 @@ public class ConstraintGraph {
     }
 
     private Table<Symbol,Symbol,Edge> adjacencies;
-    private Map<Symbol,Mutable<Double>> values;
+    private Map<Symbol,MDouble> values;
 
     private Edge construct( ArrayList<Symbol> orbits, Map<Symbol,MDouble> values ) {
         if ( orbits.isEmpty() ) return null;

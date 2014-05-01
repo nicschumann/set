@@ -181,7 +181,7 @@ public class TypeTester {
     public static void main( String[] args ) {
         TNameGenerator g = new TNameGenerator();
 
-        Typechecker t = new Typechecker();
+        Typechecker t = new Typechecker( g );
         TypeUnitTest u = new TypeUnitTest( t );
         EvalUnitTest eval = new EvalUnitTest( t );
 
