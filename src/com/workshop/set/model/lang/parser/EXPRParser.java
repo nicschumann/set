@@ -43,6 +43,7 @@ import com.workshop.set.model.lang.parser.Grammar.*;
  *
  *
  */
+
 public class EXPRParser {
     private class VTPair {
         public VTPair( Pattern V, Term T ) { term = V; type = T; }
@@ -83,7 +84,6 @@ public class EXPRParser {
             consume();
 
             TERMINAL base = consult();
-            System.err.println( "base = " + base.toString() );
             if (  base instanceof LAMBDA
                || base instanceof FORALL
                || base instanceof SUM ) {
@@ -113,9 +113,7 @@ public class EXPRParser {
                     return new TJudgement( t1, t2 );
                 } else throw new ParseException( "Mismatched Parentheses in Term", left, right );
             } else if ( isOperator( base ) ) {
-                System.out.println( "In Operator Case" );
                 unshift();
-                System.out.println( "Current Token Stream: " + right.toString() );
                 return parsePattern();
             } else {
                 Term t1 = parseTerm();
@@ -132,16 +130,13 @@ public class EXPRParser {
             consume();
             return new TUniverse( 0L );
         } else {
-            System.err.println( "in Bottom parsePattern case : TERM ");
             return parsePattern();
         }
     }
 
 
     private Pattern parsePattern() throws ParseException {
-        System.out.println( "in PARSE_PATTERN" );
         TERMINAL top = consume();
-        System.out.println( top.toString() );
 
         if ( top instanceof LBRACKET ) {
 
