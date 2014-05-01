@@ -9,12 +9,14 @@ import org.lwjgl.util.glu.GLU;
 
 public class Camera {
 
-	private Vector4 _eye, _look, _up;
+	private Vector4 _eye, _look, _up, _focus;
 	private String _type; 
+	private float _theta, _phi;	//correspond to rotation in xy and yz planes
 	
 	public Camera(){}
 	
 	//ctor for a custom camera (all vectors and type/name)
+	public Camera(Vector4 position, Vector4 orientation, String name){}
 	
 	public Camera(String type){	//default cameras
 		if(type.equalsIgnoreCase("orthographic")){	//more descriptive
@@ -22,9 +24,14 @@ public class Camera {
 		    _look = new Vector4(-_eye.x, -_eye.y, -_eye.z, 0).getNormalized();
 		    _up = new Vector4(0, 1, 0, 0);
 		    _type = "orthographic";
+		    //theta and phi not applicible for orthographic (no rotation)
 		}
 		else if(type.equalsIgnoreCase("perspective")){
-			_eye = new Vector4(5, -5, 5, 1);
+		    _theta = (float)(7*Math.PI)/4; 	//start at the fourth quadrant 
+		    _phi = 0; 
+		    _focus = new Vector4(0,0,0,0);
+			
+		    _eye = new Vector4((float)(5*Math.sqrt(2)*Math.cos(_theta)), (float)(5*Math.sqrt(2)*Math.sin(_theta)), 5, 1);
 		    _look = new Vector4(-_eye.x, -_eye.y, -_eye.z, 0).getNormalized();
 		    _up = new Vector4(0, 0, 1, 0);	    
 		    _type = "perspective";
@@ -41,8 +48,6 @@ public class Camera {
     	return _up; }
 
     public Vector4 getU(){ 
-//    	Vector4 lookCopy = new Vector4(_look.x, _look.y, _look.z, _look.w);
-//    	Vector4 upCopy = new Vector4(_up.x, _up.y, _up.z, _up.w);
     	return _look.getCrossProd(_up).getNormalized();
     }
     public Vector4 getV(){ 
@@ -89,13 +94,21 @@ public class Camera {
 		_eye = _eye.add(toAdd);
 	}
 
+	/**
+	 *given change in x and y
+	 */
 	public void lookVectorRotate(double deltaX, double deltaY)
 	{
-	    Vector4 w = this.getW();
-	    float angleX = (float)(Math.asin(-w.y) - deltaY * 0.0025);
-	    float angleY = (float)(Math.atan2(-w.z, -w.x) + deltaX * 0.0025);
-	    angleX = (float)(Math.max(-Math.PI / 2 + 0.001, Math.min(Math.PI / 2 - 0.001, (double)angleX)));
-	    _look = _look.updateVals((float)(Math.cos(angleY) * Math.cos(angleX)), (float)(Math.sin(angleX)), (float)(Math.sin(angleY) * Math.cos(angleX)), 0);
+		//camera's position rotated around the origin
+		if(!_type.equalsIgnoreCase("orthographic")){
+			//first update with respect to theta
+			_theta += (deltaX/2)*Math.PI/180.0;
+			float r1 = (float)(_eye.getHorizontalDistance(_eye, _focus));		
+			_eye.updateVals((float)(r1*Math.cos(_theta)), (float)(r1*Math.sin(_theta)), _eye.z, 0);
+			_look.updateVals(-_eye.x, -_eye.y, -_eye.z, 0);
+			_look = _look.getNormalized();
+			//then update with respect to phi
+		}	
 	}
 
 	public void lookVectorTranslate(float delta){
