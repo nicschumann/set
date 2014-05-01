@@ -4,9 +4,6 @@ import static com.workshop.set.SetMain.GENSYM;
 import static com.workshop.set.SetMain.VEC_SPACE_3D;
 import static org.lwjgl.opengl.GL11.glColor3f;
 import static org.lwjgl.opengl.GL11.glLoadIdentity;
-
-import com.workshop.set.model.ref.MDouble;
-
 import glfrontend.ScreenFrameAdapter;
 import glfrontend.components.Camera;
 import glfrontend.components.Vector4;
@@ -24,6 +21,7 @@ import org.lwjgl.util.vector.Vector2f;
 import com.workshop.set.model.VectorSpace.GeometricFailure;
 import com.workshop.set.model.VectorSpace.Point;
 import com.workshop.set.model.interfaces.Model;
+import com.workshop.set.model.ref.MDouble;
 
 public class Viewport extends ScreenFrameAdapter {
 
@@ -236,24 +234,25 @@ public class Viewport extends ScreenFrameAdapter {
 	}
 
 	@Override
-	public void keyPressed(int key) {
-		if (key == Keyboard.KEY_SPACE) { // flip through list of cameras
+	public void keyPressed(KeyEvent e) {
+		int keyCode = e.keyCode;
+		if (keyCode == Keyboard.KEY_SPACE) { // flip through list of cameras
 			_currCamera = _cameras.get(_camIndex % _cameras.size());
 			_camIndex += 1;
 		}
-		if (key == 42)
+		if (keyCode == Keyboard.KEY_LSHIFT || keyCode == Keyboard.KEY_RSHIFT)
 			_shiftDown = true;
-		if (key == 31 && _mode.equalsIgnoreCase("creation"))
+		if (keyCode == Keyboard.KEY_S && _mode.equalsIgnoreCase("creation"))
 			_mode = "selection";
-		if (key == 46 && _mode.equalsIgnoreCase("selection"))
+		if (keyCode == Keyboard.KEY_C && _mode.equalsIgnoreCase("selection"))
 			_mode = "creation";
-		if (key == 14) // delete
+		if (keyCode == Keyboard.KEY_DELETE) // delete
 			_model.deleteSelections();
 	}
 
 	@Override
-	public void keyReleased(int key) {
-		if (key == 42) { // shift
+	public void keyReleased(KeyEvent e) {
+		if (e.keyCode == Keyboard.KEY_LSHIFT || e.keyCode == Keyboard.KEY_RSHIFT) {
 			_shiftDown = false;
 			_linePoints[0] = null;
 			_linePoints[1] = null;

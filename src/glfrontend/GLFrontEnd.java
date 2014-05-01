@@ -30,6 +30,7 @@ import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.glPushAttrib;
 import static org.lwjgl.opengl.GL11.glPushMatrix;
 import static org.lwjgl.opengl.GL11.glViewport;
+import glfrontend.ScreenFrame.KeyEvent;
 import glfrontend.ScreenFrame.MouseEvent;
 import glfrontend.components.GLPanel;
 
@@ -248,9 +249,9 @@ public class GLFrontEnd implements FrontEnd {
 
 		while (Keyboard.next()) {
 			if (Keyboard.getEventKeyState()) {
-				_frame.keyPressed(Keyboard.getEventKey());
+				_frame.keyPressed(new KeyEvent(Keyboard.getEventKey(), Keyboard.getEventCharacter()));
 			} else {
-				_frame.keyReleased(Keyboard.getEventKey());
+				_frame.keyReleased(new KeyEvent(Keyboard.getEventKey(), Keyboard.getEventCharacter()));
 			}
 		}
 		prevMouse = mouseLoc;
