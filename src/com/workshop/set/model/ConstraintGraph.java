@@ -9,6 +9,8 @@ import com.google.common.collect.HashBasedTable;
 import com.workshop.set.model.interfaces.Symbol;
 import com.workshop.set.model.lang.core.TNameGenerator;
 import com.workshop.set.model.VectorSpace.*;
+import com.workshop.set.model.ref.MDouble;
+import com.workshop.set.model.ref.Mutable;
 
 
 public class ConstraintGraph {

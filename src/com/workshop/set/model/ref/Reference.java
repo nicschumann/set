@@ -1,4 +1,4 @@
-package com.workshop.set.model;
+package com.workshop.set.model.ref;
 
 import com.workshop.set.model.interfaces.Symbol;
 

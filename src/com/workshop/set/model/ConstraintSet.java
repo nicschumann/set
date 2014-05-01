@@ -1,6 +1,7 @@
 package com.workshop.set.model;
 
 import com.workshop.set.model.interfaces.Symbol;
+import com.workshop.set.model.ref.MDouble;
 
 import java.util.*;
 
