@@ -30,7 +30,6 @@ public class TestPanel extends GLPanel {
 		_tbox.setLocation(0, 0);
 		_tbox.setSize(getSize());
 		_tbox.setBackground(new Color(0, 0, 0, 0));
-		_tbox.setForeground(Color.WHITE);
 		this.add(_tbox);
 	}
 

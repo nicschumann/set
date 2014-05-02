@@ -2,6 +2,7 @@ package glfrontend.components;
 
 import static com.workshop.set.view.SetScreen.ORANGE;
 import static com.workshop.set.view.SetScreen.newRatio;
+import static glfrontend.GLFrontEnd.DEFAULT_FONT;
 import static glfrontend.components.GLComponent.TextAlignment.LEFT;
 import static glfrontend.components.GLComponent.TextAlignment.RIGHT;
 import static org.lwjgl.input.Keyboard.KEY_BACK;
@@ -22,24 +23,16 @@ import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glLineWidth;
 import static org.lwjgl.opengl.GL11.glVertex2f;
 
-import java.awt.Color;
-import java.awt.Font;
-
 import org.lwjgl.util.vector.Vector2f;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.UnicodeFont;
-import org.newdawn.slick.font.effects.ColorEffect;
 import org.newdawn.slick.opengl.TextureImpl;
 
 public class GLTextBox extends GLComponent {
 
-	int edgeBuffer = 5;
+	int edgeBuffer = 3;
 
 	// private String _text;
-	private Font _awtFont;
-	private UnicodeFont _font;
 	private Vector2f _textLoc;
-	private Color _foreground;
+	// private Color _foreground;
 	private TextAlignment _textAlign;
 
 	private boolean _ctrlDown;
@@ -63,10 +56,9 @@ public class GLTextBox extends GLComponent {
 	}
 
 	public void init() {
-		_foreground = Color.BLACK;
 		_textAlign = LEFT;
 
-		setFont(new java.awt.Font("Sans Serif", java.awt.Font.BOLD, 13));
+		setTextLoc();
 		_spaceWidth = 4.2f;
 		TextureImpl.bindNone();
 
@@ -78,11 +70,6 @@ public class GLTextBox extends GLComponent {
 
 		_sb = new StringBuilder();
 		_endSpaces = 0;
-	}
-
-	public void setForeground(Color color) {
-		_foreground = color;
-		setFont(_awtFont);
 	}
 
 	public void setText(String text) {
@@ -128,33 +115,16 @@ public class GLTextBox extends GLComponent {
 		return _ctrlDown;
 	}
 
-	@SuppressWarnings("unchecked")
-	public void setFont(Font awtFont) {
-		this._awtFont = awtFont;
-		_font = new UnicodeFont(awtFont);
-		_font.getEffects().add(new ColorEffect(_foreground));
-		_font.addAsciiGlyphs();
-		try {
-			_font.loadGlyphs();
-		} catch (SlickException e) {
-			e.printStackTrace();
-		}
-		setTextLoc();
-	}
-
 	private void setTextLoc() {
-		if (_font == null)
-			return;
-
 		float x;
-		int textHeight = _font.getAscent() + _font.getDescent();
+		int textHeight = DEFAULT_FONT.getAscent() + DEFAULT_FONT.getDescent();
 		Vector2f mid = new Vector2f();
 		Vector2f.sub(lr, ul, mid);
 
 		if (_textAlign == LEFT) {
 			x = edgeBuffer;
 		} else {
-			int textWidth = _font.getWidth(getText());
+			int textWidth = DEFAULT_FONT.getWidth(getText());
 			if (_textAlign == RIGHT) {
 				x = lr.x - textWidth - edgeBuffer;
 			} else { // CENTER
@@ -191,11 +161,11 @@ public class GLTextBox extends GLComponent {
 		glEnd();
 
 		if (_textLoc != null) {
-			_font.drawString(_textLoc.x + ul.x, _textLoc.y + ul.y, getText());
+			DEFAULT_FONT.drawString(_textLoc.x + ul.x, _textLoc.y + ul.y, getText());
 			glDisable(GL_TEXTURE_2D);
 		}
 
-		int width = _font.getWidth(_sb.substring(0, _cursor)) + Math.round(_spaceWidth * _endSpaces);
+		int width = DEFAULT_FONT.getWidth(_sb.substring(0, _cursor)) + Math.round(_spaceWidth * _endSpaces);
 		Vector2f cursorPos = new Vector2f(edgeBuffer + width, (getSize().y - edgeBuffer));
 
 		glColor4f(ORANGE[0], ORANGE[1], ORANGE[2], _opacity);

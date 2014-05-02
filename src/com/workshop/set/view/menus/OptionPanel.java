@@ -2,7 +2,6 @@ package com.workshop.set.view.menus;
 
 import glfrontend.components.GLPanel;
 
-import java.awt.Button;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,16 +12,16 @@ import com.workshop.set.model.VectorSpace.Geometry;
 
 public class OptionPanel extends GLPanel {
 
-	public static final Vector2f DEFAULT_SIZE = new Vector2f(300, 60);
+	public static final Vector2f DEFAULT_SIZE = new Vector2f(200, 46);
 
-	private int menuHeight = 300;
+//	private int menuHeight = 300;
 
 	private int _panelSpeed;
-	private int _menuSpeed;
+//	private int _menuSpeed;
 	private boolean _moving;
 	private boolean _rollout;
 	private List<GeomPanel> _geoms;
-	private List<Button> _buttons;
+//	private List<Button> _buttons;
 
 	public OptionPanel() {
 		super();
@@ -32,12 +31,12 @@ public class OptionPanel extends GLPanel {
 		this.setResizeType(ResizeType.FIT_LEFT);
 		this.setVisible(false);
 		_panelSpeed = 1000; // pixels/second
-		_menuSpeed = 1000; // pixels/second
+//		_menuSpeed = 1000; // pixels/second
 		_moving = false;
 		_rollout = false;
 
 		_geoms = new ArrayList<>();
-
+//		_buttons = new ArrayList<>();
 	}
 
 	public void addGeomPanel(Geometry geom) {
@@ -50,9 +49,12 @@ public class OptionPanel extends GLPanel {
 			toggle();
 	}
 
-	public void removeGeomPanels() {
+	public void removeGeomPanels(boolean toggle) {
+		for (GeomPanel panel : _geoms) {
+			this.remove(panel);
+		}
 		_geoms.clear();
-		if (!isMoving() && isVisible())
+		if (toggle && !isMoving() && isVisible())
 			toggle();
 	}
 

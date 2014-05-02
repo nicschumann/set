@@ -9,6 +9,7 @@ import java.awt.Color;
 
 import com.workshop.set.model.VectorSpace.Geometry;
 import com.workshop.set.model.VectorSpace.Point;
+import com.workshop.set.model.VectorSpace.Relation;
 
 public class GeomPanel extends GLPanel {
 
@@ -16,6 +17,7 @@ public class GeomPanel extends GLPanel {
 	private boolean _point;
 	private GLLabel _typeLabel;
 	private GLTextBox _nameBox;
+	private GLPanel _bottomPanel;
 
 	public GeomPanel(Geometry geom) {
 		super();
@@ -26,6 +28,10 @@ public class GeomPanel extends GLPanel {
 		this._point = (geom instanceof Point);
 
 		initNameLabel();
+		if (_point)
+			_bottomPanel = new PointPanel((Point) geom);
+		else
+			_bottomPanel = new RelationPanel((Relation) geom);
 	}
 
 	private void initNameLabel() {
@@ -36,16 +42,16 @@ public class GeomPanel extends GLPanel {
 			_typeLabel = new GLLabel("Relation");
 
 		_typeLabel.setLocation(0, 0);
-		_typeLabel.setSize(DEFAULT_SIZE.x / 3f, DEFAULT_SIZE.y / 2);
+		_typeLabel.setSize(DEFAULT_SIZE.x / 2f, DEFAULT_SIZE.y / 2);
 		_typeLabel.setBackground(new Color(128, 128, 128, 0));
-		_typeLabel.setForeground(Color.WHITE);
+//		_typeLabel.setForeground(Color.WHITE);
 		
 		_nameBox = new GLTextBox();
-		_nameBox.setLocation(DEFAULT_SIZE.x / 3f, 5);
-		_nameBox.setSize(DEFAULT_SIZE.x * 2f / 3f, DEFAULT_SIZE.y / 2f - 10);
+		_nameBox.setLocation(DEFAULT_SIZE.x / 2f, 3);
+		_nameBox.setSize(DEFAULT_SIZE.x / 2f, DEFAULT_SIZE.y / 2f - 3);
 		_nameBox.setText(_geom.name().toString());
 		_nameBox.setBackground(new Color(0, 0, 0, 0));
-		_nameBox.setForeground(Color.WHITE);
+//		_nameBox.setForeground(Color.WHITE);
 
 		this.add(_typeLabel);
 		this.add(_nameBox);

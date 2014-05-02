@@ -152,6 +152,7 @@ public class TempEnvironment implements Model {
 			if (intersected) {
 				if (!shift) {// if no shift, must first empty previous selections
 					this.deselectAll();
+					_screen.removeSelection(false);
 				}
 				element.setHighlight(true);
 				_currentSelections.add(element);
@@ -163,7 +164,7 @@ public class TempEnvironment implements Model {
 		// if no object was selected deselect all items
 		if (!selected) {
 			this.deselectAll();
-			_screen.removeSelection();
+			_screen.removeSelection(true);
 		}
 	}
 

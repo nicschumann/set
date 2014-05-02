@@ -14,7 +14,6 @@ import org.lwjgl.util.vector.Vector2f;
 import com.workshop.set.model.VectorSpace.Geometry;
 import com.workshop.set.model.interfaces.Model;
 import com.workshop.set.view.menus.OptionPanel;
-import com.workshop.set.view.menus.TestPanel;
 import com.workshop.set.view.viewport.Stage;
 import com.workshop.set.view.viewport.Viewport;
 
@@ -26,7 +25,7 @@ public class SetScreen implements ScreenFrame {
 	private Vector2f ul, lr;
 	private Viewport _viewport;
 	private OptionPanel _options;
-	private TestPanel _test;
+//	private TestPanel _test;
 
 	private List<ScreenFrame> frames;
 	private Map<ScreenFrame, Boolean> contained;
@@ -61,8 +60,8 @@ public class SetScreen implements ScreenFrame {
 		_options.addGeomPanel(selected);
 	}
 
-	public void removeSelection() {
-		_options.removeGeomPanels();
+	public void removeSelection(boolean toggle) {
+		_options.removeGeomPanels(toggle);
 	}
 
 	@Override
@@ -248,7 +247,7 @@ public class SetScreen implements ScreenFrame {
 
 		if (e.keyCode == Keyboard.KEY_T) {
 			// _options.toggle();
-			_test.setTextBoxText("The quick brown fox haz dog");
+//			_test.setTextBoxText("The quick brown fox haz dog");
 		}
 
 		for (ScreenFrame frame : frames) {

@@ -32,6 +32,11 @@ public class GLPanel extends GLComponent {
 		comps.add(c);
 		contained.put(c, false);
 	}
+	
+	public void remove(GLComponent c) {
+		comps.remove(c);
+		contained.remove(c);
+	}
 
 	@Override
 	public void draw() {
