@@ -22,6 +22,7 @@ import com.workshop.set.model.lang.core.TVector;
 import com.workshop.set.model.lang.engines.Typechecker;
 import com.workshop.set.model.lang.exceptions.ProofFailureException;
 import com.workshop.set.model.lang.exceptions.TypecheckingException;
+import com.workshop.set.model.ref.MappableList;
 
 /**
  * Created by nicschumann on 3/30/14.
@@ -181,7 +182,7 @@ public class TypeTester {
     public static void main( String[] args ) {
         TNameGenerator g = new TNameGenerator();
 
-        Typechecker t = new Typechecker();
+        Typechecker t = new Typechecker( g );
         TypeUnitTest u = new TypeUnitTest( t );
         EvalUnitTest eval = new EvalUnitTest( t );
 
@@ -212,8 +213,8 @@ public class TypeTester {
         Term dep_app_bot = new TApplication( dep_app, univ0 );
 
 
-        Term pat1 = new TVector( new Vector<Term>(Arrays.asList(field,field,field)));
-        Term pat2 = new TVector( new Vector<Term>(Arrays.asList(univ0,univ0,univ0)));
+        Term pat1 = new TVector( new MappableList<Term>(Arrays.asList(field,field,field)));
+        Term pat2 = new TVector( new MappableList<Term>(Arrays.asList(univ0,univ0,univ0)));
         Term pat3 = new TSet( new Vector<Term>(Arrays.asList(univ0,univ0,univ0)));
         Term pat4 = new TSet( new Vector<Term>(Arrays.asList(field,univ0,field)));
         Term pat5 = new TTuple( new TScalar(1.0), new TScalar(2.0) );
@@ -222,31 +223,31 @@ public class TypeTester {
         Term lam1_app = new TApplication( lam1, new TTuple( scalar, scalar ) );
 
         Term lam2 = new TAbstraction(
-                        new TTuple( new TVector( new Vector<Term>(Arrays.asList( a,b ) ) ),new TVector( new Vector<Term>(Arrays.asList( c,d ) ) ) ),
-                        new TSum( new TVector( new Vector<Term>(Arrays.asList( a,b ) ) ), new TExponential(field,2), new TExponential( field,2 )),
+                        new TTuple( new TVector( new MappableList<Term>(Arrays.asList( a,b ) ) ),new TVector( new MappableList<Term>(Arrays.asList( c,d ) ) ) ),
+                        new TSum( new TVector( new MappableList<Term>(Arrays.asList( a,b ) ) ), new TExponential(field,2), new TExponential( field,2 )),
                         c
                     );
 
         Term lam2_err = new TApplication( lam2, new TTuple( scalar, scalar ) );
 
         Term lam2_err2 = new TAbstraction(
-                new TTuple( new TVector( new Vector<Term>(Arrays.asList( a,b ) ) ),new TVector( new Vector<Term>(Arrays.asList( c,d ) ) ) ),
+                new TTuple( new TVector( new MappableList<Term>(Arrays.asList( a,b ) ) ),new TVector( new MappableList<Term>(Arrays.asList( c,d ) ) ) ),
                 new TSum( a, field, field ),
                 c
         );
 
-        Term lam3 = new TAbstraction( new TVector( new Vector<Term>(Arrays.asList( a,b,c ))),
+        Term lam3 = new TAbstraction( new TVector( new MappableList<Term>(Arrays.asList( a,b,c ))),
                                       new TExponential(field,3),
-                                      new TVector( new Vector<Term>(Arrays.asList( c,b ))));
+                                      new TVector( new MappableList<Term>(Arrays.asList( c,b ))));
 
-        Term lam3_bot = new TAbstraction( new TVector( new Vector<Term>(Arrays.asList( a,b,c ))),
+        Term lam3_bot = new TAbstraction( new TVector( new MappableList<Term>(Arrays.asList( a,b,c ))),
                 new TExponential(field,3),
-                new TVector( new Vector<Term>(Arrays.asList( c,d ))));
+                new TVector( new MappableList<Term>(Arrays.asList( c,d ))));
 
         Term lam4 =
         new TAbstraction( a, univ0,
         new TAbstraction(
-                    new TTuple( new TVector( new Vector<Term>( Arrays.asList( b,c ) ) ), d ),
+                    new TTuple( new TVector( new MappableList<Term>( Arrays.asList( b,c ) ) ), d ),
                     new TSum( e, new TExponential( a,2 ), a ), new TSet( new Vector<Term>( Arrays.asList( b,c,d ) ) )
         ));
 
@@ -259,7 +260,7 @@ public class TypeTester {
         // ASCRIPTION ERRORS
 
         Term app_err = new TAbstraction( new TTuple( a,b ), new TExponential( field, 2 ), a ); // ( a,b ) : F^2 , wrong, should be ( a,b ) : F * F
-        Term app_succ = new TAbstraction( new TVector( new Vector<Term>( Arrays.asList( a, b ) ) ), new TSum( a, field, field ), a ); // ( a b ) : F * F , wrong, should be ( a b ) : F^2
+        Term app_succ = new TAbstraction( new TVector( new MappableList<Term>( Arrays.asList( a, b ) ) ), new TSum( a, field, field ), a ); // ( a b ) : F * F , wrong, should be ( a b ) : F^2
         Term rank2 = new TAbstraction( f, new TAll( a, univ0, new TAll( b, a, a ) ),
                      new TAbstraction( b, univ0, new TAbstraction( c, b, new TApplication( new TApplication( f, b ), c ) )  ));
 

@@ -64,26 +64,26 @@ public class TempEnvironment implements Model {
 	@Override
 	public void renderGeometries() {
 		for (Geometry geom : _currentElements) {
-			drawGeometry(geom);
+			drawGeometry(geom, false);
 		}
 	}
 
-	private int drawGeometry(Geometry geom) {
+	private void drawGeometry(Geometry geom, boolean pivot) {
 		Set<Geometry> geoms = geom.getGeometries();
-		int depth = 0;
 
 		// point
 		if (geoms.isEmpty()) {
-			drawPoint((Point) geom);
-			return depth; // 0
+			drawPoint((Point) geom, pivot);
+			return;
 		}
-		
-		drawRelation((Relation) geom, depth);
-		return depth;
+
+		drawRelation((Relation) geom, pivot);
+		return;
 	}
 
-	private void drawRelation(Relation geoms, int depth) {
+	private void drawRelation(Relation geoms, boolean pivot) {
 		double[] pnts = geoms.getPointArray();
+
 		if (geoms.getHighlight())
 			glColor3f(_colorH[0], _colorH[1], _colorH[2]);
 		else
@@ -100,7 +100,7 @@ public class TempEnvironment implements Model {
 		}
 	}
 
-	private void drawPoint(Point p) {
+	private void drawPoint(Point p, boolean pivot) {
 		try {
 			double x = p.getN_(1).get();
 			double y = p.getN_(2).get();
@@ -151,10 +151,9 @@ public class TempEnvironment implements Model {
 				intersected = this.checkLineIntersection(elmt, pts);
 
 			if (intersected) {
-				if (!shift) // if no shift, must first empty previous selections
+				if (!shift) {// if no shift, must first empty previous selections
 					this.deselectAll();
-				
-				//add a selection
+				}
 				element.setHighlight(true);
 				_currentSelections.add(element);
 				_screen.displaySelected(element);

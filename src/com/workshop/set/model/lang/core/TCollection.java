@@ -23,7 +23,7 @@ public class TCollection implements Term {
 	}
 
 	public final Term contents;
-	private final int cardinality;
+	public final int cardinality;
 
 	@Override
 	public String toString() {

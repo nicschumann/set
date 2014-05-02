@@ -18,7 +18,7 @@ public class SetScreen implements ScreenFrame {
 
 	private Vector2f ul, lr;
 	private Viewport _viewport;
-	private OptionPanel _options;
+	// private OptionPanel _options;
 
 	private List<ScreenFrame> frames;
 	private Map<ScreenFrame, Boolean> contained;
@@ -27,8 +27,8 @@ public class SetScreen implements ScreenFrame {
 		init();
 		setSize(new Vector2f(w, h));
 		_viewport = new Viewport(model, w, h);
-		_options = new OptionPanel(300, 30);
-		this.add(_options);
+		// _options = new OptionPanel(300, 30);
+		// this.add(_options);
 	}
 
 	private void init() {
@@ -48,14 +48,14 @@ public class SetScreen implements ScreenFrame {
 	}
 
 	public void displaySelected(Geometry selected) {
-		_options.setLabelText(selected.displayString());
-		if (!_options.isVisible())
-			_options.toggle();
+		// _options.setLabelText(selected.displayString());
+		// if (!_options.isVisible())
+		// _options.toggle();
 	}
 
 	public void removeSelection() {
-		if (!_options.isMoving() && _options.isVisible())
-			_options.toggle();
+		// if (!_options.isMoving() && _options.isVisible())
+		// _options.toggle();
 	}
 
 	@Override
@@ -234,19 +234,19 @@ public class SetScreen implements ScreenFrame {
 	}
 
 	@Override
-	public void keyPressed(int key) {
+	public void keyPressed(KeyEvent e) {
 
-		if (key == Keyboard.KEY_T) {
-			_options.toggle();
+		if (e.keyCode == Keyboard.KEY_T) {
+			// _options.toggle();
 		}
 
-		_viewport.keyPressed(key);
+		_viewport.keyPressed(e);
 
 	}
 
 	@Override
-	public void keyReleased(int key) {
-		_viewport.keyReleased(key);
+	public void keyReleased(KeyEvent e) {
+		_viewport.keyReleased(e);
 	}
 
 	@Override

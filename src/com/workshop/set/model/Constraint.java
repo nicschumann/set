@@ -1,7 +1,5 @@
 package com.workshop.set.model;
 
-import com.workshop.set.model.Mutable;
-
 import java.util.List;
 import java.util.Map;
 

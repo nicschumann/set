@@ -19,6 +19,12 @@ public class GLComponent extends ScreenFrameAdapter {
 
 	private boolean _visible;
 	private ResizeType resizeType;
+	
+	public enum TextAlignment {
+		LEFT,
+		CENTER,
+		RIGHT;
+	}
 
 	public GLComponent() {
 		init();

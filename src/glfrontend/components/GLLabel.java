@@ -1,7 +1,8 @@
 package glfrontend.components;
 
 import static com.workshop.set.view.SetScreen.newRatio;
-import static glfrontend.components.GLLabel.TextAlignment.*;
+import static glfrontend.components.GLComponent.TextAlignment.LEFT;
+import static glfrontend.components.GLComponent.TextAlignment.RIGHT;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glDisable;
 
@@ -22,12 +23,6 @@ public class GLLabel extends GLComponent {
 	private Vector2f textLoc;
 	private Color _foreground;
 	private TextAlignment _textAlign;
-	
-	public enum TextAlignment {
-		LEFT,
-		CENTER,
-		RIGHT;
-	}
 
 	public GLLabel() {
 		super();

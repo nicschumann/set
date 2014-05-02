@@ -1,5 +1,8 @@
 package glfrontend.components;
 
+import static com.workshop.set.view.SetScreen.newRatio;
+import static glfrontend.components.GLComponent.TextAlignment.LEFT;
+import static glfrontend.components.GLComponent.TextAlignment.RIGHT;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glDisable;
 
@@ -12,17 +15,14 @@ import org.newdawn.slick.UnicodeFont;
 import org.newdawn.slick.font.effects.ColorEffect;
 import org.newdawn.slick.opengl.TextureImpl;
 
-import com.workshop.set.view.SetFrontEnd;
-
 public class GLTextBox extends GLComponent {
 
-	private float[] _brightColor = new float[4];
-	private float[] _midColor = new float[4];
 	private String text;
 	private Font awtFont;
 	private UnicodeFont font;
 	private Vector2f textLoc;
 	private Color _foreground;
+	private TextAlignment _textAlign;
 
 	public GLTextBox() {
 		super();
@@ -38,10 +38,9 @@ public class GLTextBox extends GLComponent {
 	public void init() {
 		text = "";
 		_foreground = Color.BLACK;
-		SetFrontEnd.ORANGE.getColorComponents(_brightColor);
-		SetFrontEnd.ORANGE.darker().darker().getColorComponents(_color);
-		Color.white.getColorComponents(_midColor);
-		setFont(new java.awt.Font("Times New Roman", java.awt.Font.BOLD, 14));
+		_textAlign = LEFT;
+		
+		setFont(new java.awt.Font("Sans Serif", java.awt.Font.BOLD, 13));
 		TextureImpl.bindNone();
 	}
 
@@ -57,6 +56,10 @@ public class GLTextBox extends GLComponent {
 
 	public String getText() {
 		return text;
+	}
+	
+	public void setAlignment(TextAlignment align) {
+		_textAlign = align;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -76,11 +79,26 @@ public class GLTextBox extends GLComponent {
 	private void setTextLoc() {
 		if (font == null)
 			return;
-		int textWidth = font.getWidth(text);
+		
+		float x;
 		int textHeight = font.getAscent() + font.getDescent();
 		Vector2f mid = new Vector2f();
 		Vector2f.sub(lr, ul, mid);
-		textLoc = new Vector2f((mid.x - textWidth) / 2, (mid.y - textHeight) / 2);
+		
+		if (_textAlign == LEFT) {
+			x = 5;
+		} else {
+			int textWidth = font.getWidth(text);
+			if (_textAlign == RIGHT) {
+				x = lr.x - textWidth - 5;
+			} else { // CENTER
+				x = (mid.x - textWidth) / 2;
+			}
+		}
+			
+		
+		
+		textLoc = new Vector2f(x, (mid.y - textHeight) / 2);
 	}
 
 	@Override
@@ -90,16 +108,36 @@ public class GLTextBox extends GLComponent {
 	}
 
 	@Override
-	public void setBackground(Color color) {
-		color.getComponents(_midColor);
-	}
-
-	@Override
 	public void draw() {
 		if (textLoc != null) {
 			font.drawString(textLoc.x + ul.x, textLoc.y + ul.y, text);
 			glDisable(GL_TEXTURE_2D);
 		}
 	}
+
+	@Override
+	public void resize(Vector2f newSize) {
+		switch (getResizeType()) {
+		case FIT_LEFT:
+			break;
+		case FIT_RIGHT:
+			setLocation(new Vector2f(ul.x - (getSize().x - newSize.x), ul.y));
+			break;
+		case FIT_BOTTOM:
+			break;
+		case FIT_TOP:
+			break;
+		default: // RATIO Type
+			setLocation(newRatio(getLocation(), getSize(), newSize));
+
+			Vector2f size = new Vector2f();
+			Vector2f.sub(lr, ul, size);
+
+			Vector2f.add(ul, newSize, lr);
+			setTextLoc();
+			break;
+		}
+	}
+
 
 }

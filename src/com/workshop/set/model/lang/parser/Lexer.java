@@ -9,7 +9,7 @@ import com.workshop.set.model.lang.parser.Grammar.*;
 
 public class Lexer {
 
-
+    // TODO fix the case where the lexer gets stuck in an unbalanced state after an unmatched exception.
 
     public ArrayList<TERMINAL> lex( String input ) throws LexException,IOException {
         return _lex( new BufferedReader( new StringReader( input ) ) );
@@ -62,7 +62,13 @@ public class Lexer {
         if ( bracketCount == 0 && parenCount == 0 && braceCount == 0 ) {
             return tokenstream;
         } else {
-            throw new LexException( Math.abs(bracketCount), Math.abs(parenCount), Math.abs(braceCount) );
+            int brk = Math.abs(bracketCount);
+            int brc = Math.abs(braceCount);
+            int par = Math.abs(parenCount);
+
+            reset();
+
+            throw new LexException( brk, par, brc );
         }
 
     }
@@ -70,8 +76,8 @@ public class Lexer {
 
 
     private TERMINAL tokenize( String token, int position ) {
-        if ( token.equals( "lambda" ) || token.equals( "function" ) ) { return new LAMBDA( position ); }
-        else if ( token.equals( "product" ) || token.equals( "forall" ) ) { return new FORALL( position ); }
+        if ( token.equals( "lambda" ) || token.equals( "function" ) || token.equals( "fn" ) ) { return new LAMBDA( position ); }
+        else if ( token.equals( "product" ) || token.equals( "forall" ) || token.equals( "all" ) ) { return new FORALL( position ); }
         else if ( token.equals( "sum" ) || token.equals( "exists" ) ) { return new SUM( position ); }
 
         else if ( token.equals( "R" ) || token.equals( "field" ) ) { return new FIELD( position ); }

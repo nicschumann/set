@@ -10,6 +10,7 @@ import com.workshop.set.model.lang.core.*;
 import com.workshop.set.model.lang.exceptions.LexException;
 import com.workshop.set.model.lang.exceptions.ParseException;
 import com.workshop.set.model.lang.parser.Grammar.*;
+import com.workshop.set.model.ref.MappableList;
 
 /** The following represents a refactored grammar based on S-EXPRESSIONS, for ease of parsing / evaluation.
  *
@@ -43,6 +44,7 @@ import com.workshop.set.model.lang.parser.Grammar.*;
  *
  *
  */
+
 public class EXPRParser {
     private class VTPair {
         public VTPair( Pattern V, Term T ) { term = V; type = T; }
@@ -83,7 +85,6 @@ public class EXPRParser {
             consume();
 
             TERMINAL base = consult();
-            System.err.println( "base = " + base.toString() );
             if (  base instanceof LAMBDA
                || base instanceof FORALL
                || base instanceof SUM ) {
@@ -113,9 +114,7 @@ public class EXPRParser {
                     return new TJudgement( t1, t2 );
                 } else throw new ParseException( "Mismatched Parentheses in Term", left, right );
             } else if ( isOperator( base ) ) {
-                System.out.println( "In Operator Case" );
                 unshift();
-                System.out.println( "Current Token Stream: " + right.toString() );
                 return parsePattern();
             } else {
                 Term t1 = parseTerm();
@@ -127,25 +126,27 @@ public class EXPRParser {
             throw new ParseException( "Unexpected Open Parenthesis", left, right );
         } else if ( top instanceof FIELD ) {
             consume();
-            return new TField();
+            if ( consult() instanceof CARROT ) {
+                consume();
+                if ( (top = consume()) instanceof NUM ) {
+                    return new TExponential( new TField(), new Double( ((NUM)top).value ).intValue() );
+                } throw new ParseException( "Unexpected Raised Value : " + top, left, right );
+            } else return new TField();
         } else if ( top instanceof UNIV ) {
             consume();
             return new TUniverse( 0L );
         } else {
-            System.err.println( "in Bottom parsePattern case : TERM ");
             return parsePattern();
         }
     }
 
 
     private Pattern parsePattern() throws ParseException {
-        System.out.println( "in PARSE_PATTERN" );
         TERMINAL top = consume();
-        System.out.println( top.toString() );
 
         if ( top instanceof LBRACKET ) {
 
-            Vector<Term> internal = new Vector<>();
+            MappableList<Term> internal = new MappableList<>();
             do {
                 internal.add( parsePattern() );
             } while ( !((top = consult()) instanceof RBRACKET) );
@@ -154,12 +155,11 @@ public class EXPRParser {
 
         } else if ( top instanceof LBRACE ) {
 
-            Vector<Term> internal = new Vector<>();
+            MappableList<Term> internal = new MappableList<>();
             do {
                 internal.add( parsePattern() );
-                if ( !((top = consume()) instanceof COMMA )) throw new ParseException( "Expected Comma Delimiter in Set", left, right );
-            } while ( !((top = consult()) instanceof RBRACKET) );
-            consume();
+                if ( !(((top = consume()) instanceof COMMA) || (top instanceof RBRACE)) ) throw new ParseException( "Expected Comma Delimiter in Set", left, right );
+            } while ( !((top = consult()) instanceof RBRACE) );
             return new TSet( internal );
 
         } else if ( top instanceof LPAREN ) {
@@ -178,9 +178,13 @@ public class EXPRParser {
                     } else throw new ParseException( "Unsupported Operation: " + op, left, right );
                 } else throw new ParseException( "Mismatched Parenthesis in Pattern", left, right );
             } else {
+                System.out.println("Pattern Case");
                 Pattern p1 = parsePattern();
                 if ( (top = consume()) instanceof COMMA ) {
                     Pattern p2 = parsePattern();
+                    if ( (top = consume()) instanceof RPAREN ) {
+                        return new TTuple( p1, p2 );
+                    }
                 }
             }
         } else if ( top instanceof ID ) {

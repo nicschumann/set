@@ -115,7 +115,7 @@ public interface ScreenFrame {
 	 * 
 	 * @param key
 	 */
-	public void keyPressed(int key);
+	public void keyPressed(KeyEvent e);
 
 	/**
 	 * Triggered when a key is released
@@ -128,7 +128,7 @@ public interface ScreenFrame {
 	 * @param key
 	 *            - the int representing the key value
 	 */
-	public void keyReleased(int key);
+	public void keyReleased(KeyEvent e);
 
 	/**
 	 * Triggered when the mouse is moved and no buttons are pressed
@@ -197,6 +197,17 @@ public interface ScreenFrame {
 			this.button = button;
 		}
 
+	}
+	
+	public static class KeyEvent {
+		
+		public final int keyCode;
+		public final char keyChar;
+		
+		public KeyEvent(int code, char key) {
+			this.keyCode = code;
+			this.keyChar = key;
+		}
 	}
 
 }

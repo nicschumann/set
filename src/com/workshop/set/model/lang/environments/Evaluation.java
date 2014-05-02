@@ -1,17 +1,16 @@
 package com.workshop.set.model.lang.environments;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import com.workshop.set.model.interfaces.Context;
-import com.workshop.set.model.interfaces.Environment;
-import com.workshop.set.model.interfaces.Gensym;
-import com.workshop.set.model.interfaces.Judgement;
-import com.workshop.set.model.interfaces.Symbol;
-import com.workshop.set.model.interfaces.Term;
+import com.workshop.set.model.interfaces.*;
+import com.workshop.set.model.lang.core.*;
+
 import com.workshop.set.model.lang.exceptions.EvaluationException;
+import com.workshop.set.model.lang.exceptions.PatternMatchException;
 import com.workshop.set.model.lang.exceptions.ProofFailureException;
+import com.workshop.set.model.lang.exceptions.TypecheckingException;
+import com.workshop.set.model.lang.judgements.HasValue;
+import com.workshop.set.model.ref.MappableList;
 
 /**
  * Created by nicschumann on 4/1/14.
@@ -22,6 +21,9 @@ public class Evaluation implements Environment<Term> {
 
         typings = new ArrayList<Derivation<Term>>();
         evaluations = new ArrayList<Derivation<Term>>();
+
+        valueContext = new HashMap<>();
+        typeContext = new HashMap<>();
 
         typings.add( 0, new Derivation<Term>( g ) );
         evaluations.add( 0, new Derivation<Term>( g ) );
@@ -42,7 +44,155 @@ public class Evaluation implements Environment<Term> {
     private List<Derivation<Term>> typings;
     private List<Derivation<Term>> evaluations;
 
+    private Map<Symbol,Term> valueContext;
+    private Map<Symbol,Term> typeContext;
+
     private Term value;
+
+    // LANG_EXTERNAL Methods
+    public Term getValue( Symbol s ) throws ProofFailureException {
+        if ( valueContext.containsKey(s) ) {
+            return valueContext.get( s );
+        } else throw new ProofFailureException( "Unbound Identifier : " + s.toString() );
+    }
+
+    public Term getType( Symbol s ) throws ProofFailureException {
+        if ( valueContext.containsKey( s ) ) {
+            return typeContext.get( s );
+        } else throw new ProofFailureException( "Unbound Identifier : " + s.toString() );
+    }
+
+    public Environment<Term> name( Symbol s, Term t )
+        throws ProofFailureException,
+            TypecheckingException {
+
+        t.type( this );
+        typeContext.put( s, proves( t ) );
+        valueContext.put( s, evaluate( t ) );
+        page();
+
+        for ( Map.Entry<Symbol,Term> VTPair : typeContext.entrySet() ) {
+            extend( VTPair.getKey(), VTPair.getValue() );
+        }
+
+        return this;
+    }
+
+    public Term eval( Term t )
+        throws ProofFailureException,
+               TypecheckingException {
+        t.type(this);
+        return evaluate( t );
+    }
+
+    // LANG_INTERNAL methods:
+    // Evaluation methods:
+
+    /**
+     * This function implements the reduction relation on terms.
+     * @param t a well-typed term to reduce.
+     * @return the normal form of t
+     */
+    public Term evaluate( Term t )
+        throws ProofFailureException {
+        if ( t instanceof TAbstraction ) {
+            return new TAbstraction(
+                    ((TAbstraction) t).binder,
+                    evaluate( ((TAbstraction) t).type ),
+                    evaluate( ((TAbstraction) t).body )
+            );
+        } else if ( t instanceof TAdditive ) {
+            return new TAdditive(
+                    ((TAdditive) t).scalar,
+                    evaluate( ((TAdditive) t).addand )
+            );
+        } else if ( t instanceof TAll) {
+            return new TAll(
+                    ((TAll) t).binder,
+                    evaluate( ((TAll) t).type ),
+                    evaluate( ((TAll) t).body )
+            );
+        } else if ( t instanceof TApplication ) {
+            Term t1 = evaluate( ((TApplication) t).implication );
+            Term t2 = evaluate( ((TApplication) t).argument );
+            try {
+                TAbstraction abs = (TAbstraction) t1;
+
+                try {
+                    Set<HasValue> valuation = abs.binder.bind( t2 );
+                    for ( HasValue pair : valuation ) {
+                        abs.body = abs.body.substitute(pair.term, pair.name);
+                    }
+                    return abs.body;
+                } catch ( PatternMatchException e ) {
+                    throw new ProofFailureException( "Unreported PatternMatch error - Mistyped Decomposition" );
+                }
+            } catch ( ClassCastException _ ) {
+                return new TApplication( t1, t2 );
+            }
+        } else if ( t instanceof TCollection ) {
+            return new TCollection(
+                    evaluate(((TCollection) t).contents ),
+                    ((TCollection) t).cardinality
+            );
+        } else if ( t instanceof TExponential ) {
+            return new TExponential(
+                    evaluate( ((TExponential) t).base ),
+                    ((TExponential) t).exp
+            );
+        } else if ( t instanceof TField ) {
+            return new TField();
+        } else if ( t instanceof TJudgement ) {
+            return new TJudgement(
+                evaluate( ((TJudgement) t).left ),
+                evaluate( ((TJudgement) t).right )
+            );
+        } else if ( t instanceof TMultiplicative ) {
+            return new TMultiplicative(
+                    ((TMultiplicative) t).scalar,
+                    evaluate( ((TMultiplicative) t).multiplicand )
+            );
+        } else if ( t instanceof TNameGenerator.TName ) {
+            if ( valueContext.containsKey( t ) ) {
+                return evaluate( valueContext.get( t ) );
+            } else return t;
+        } else if ( t instanceof TScalar ) {
+            return new TScalar( ((TScalar) t).index );
+        } else if ( t instanceof TSet ) {
+
+            MappableList<Term> m = new MappableList<>();
+            for ( Term t_i : ((TSet) t).elements() ) m.add( evaluate( t_i ) );
+            return new TSet( m );
+
+        } else if ( t instanceof TSum ) {
+            return new TAbstraction(
+                    ((TSum) t).binder,
+                    evaluate( ((TSum) t).type ),
+                    evaluate( ((TSum) t).body )
+            );
+        } else if ( t instanceof TTuple ) {
+            return new TTuple(
+                evaluate( ((TTuple) t).domain ),
+                evaluate( ((TTuple) t).range )
+            );
+        } else if ( t instanceof TUniverse ) {
+            return new TUniverse( ((TUniverse) t).level );
+        } else if ( t instanceof TVector ) {
+
+            MappableList<Term> m = new MappableList<>();
+            for ( Term t_i : ((TVector) t).components() ) m.add( evaluate( t_i ) );
+            return new TVector( m );
+
+        } else {
+
+            throw new ProofFailureException( "INTERNAL: Unrecognized Term Form" );
+
+        }
+    }
+
+
+
+
 
     // Context<Term> Methods
 
@@ -59,8 +209,7 @@ public class Evaluation implements Environment<Term> {
         throws ProofFailureException {
         try {
             Derivation<Term> current = typings.get( deriving );
-            Term T = current.proves( t );
-            return T;
+            return current.proves( t );
         } catch ( ArrayIndexOutOfBoundsException _ ) {
             throw new ProofFailureException( "No Recorded Derivation on this page"  );
         }
@@ -71,8 +220,7 @@ public class Evaluation implements Environment<Term> {
         throws ProofFailureException {
         try {
             Derivation<Term> current = typings.get( deriving );
-            Term T = current.provesAt( i, t );
-            return T;
+            return current.provesAt( i, t );
         } catch ( ArrayIndexOutOfBoundsException _ ) {
             throw new ProofFailureException( "No Recorded Derivation on this page"  );
         }
@@ -85,8 +233,8 @@ public class Evaluation implements Environment<Term> {
             current = new Derivation<Term>( gensym );
         } else {
             current = typings.get( deriving );
-
         }
+
         current.extend( x, t );
         typings.set(deriving, current);
         return this;
@@ -128,6 +276,9 @@ public class Evaluation implements Environment<Term> {
 
     @Override
     public Symbol freshname( String s ) { return gensym.generate( s ); }
+
+    @Override
+    public Symbol basename( String s ) { return gensym.bypass( s ); }
 
     @Override
     public Environment<Term> step() {
@@ -191,13 +342,22 @@ public class Evaluation implements Environment<Term> {
         deriving += 1;
         typings.add( deriving, new Derivation<Term>( gensym ) );
         evaluations.add( deriving, new Derivation<Term>( gensym ) );
+        value = null;
         return this;
     }
 
     @Override
     public String toString() {
-        Derivation<Term> t = evaluations.get( deriving );
-        return t.toString();
+        StringBuilder s = new StringBuilder();
+        for ( Map.Entry<Symbol,Term> VTPair : typeContext.entrySet() ) {
+            s.append( VTPair.getKey() )
+             .append( " : " )
+             .append( VTPair.getValue() )
+             .append( "\t=>\t" )
+             .append( valueContext.get( VTPair.getKey() ).toString() )
+             .append( System.lineSeparator() );
+        }
+        return s.toString();
     }
 
 

@@ -17,17 +17,18 @@ import com.workshop.set.model.lang.exceptions.PatternMatchException;
 import com.workshop.set.model.lang.exceptions.ProofFailureException;
 import com.workshop.set.model.lang.exceptions.TypecheckingException;
 import com.workshop.set.model.lang.judgements.HasValue;
+import com.workshop.set.model.ref.MappableList;
 
 
 public class TSet implements Pattern {
     public TSet( Collection<Term> elements ) {
-        this.elements = new ArrayList<Term>( elements );
+        this.elements = new MappableList<Term>( elements );
     }
 
-    private ArrayList<Term> elements;
+    private MappableList<Term> elements;
 
-    public ArrayList<Term> elements() {
-        return new ArrayList<Term>( elements );
+    public MappableList<Term> elements() {
+        return new MappableList<Term>( elements );
     }
 
     @Override
@@ -80,7 +81,7 @@ public class TSet implements Pattern {
     }
 
     public Term reduce() throws EvaluationException {
-        Collection<Term> ts = new ArrayList<Term>();
+        Collection<Term> ts = new MappableList<Term>();
         for ( Term e : elements ) {
             ts.add( e.reduce() );
         }
@@ -89,7 +90,7 @@ public class TSet implements Pattern {
 
     @Override
     public Pattern substitute( Term x, Symbol y ) {
-        Collection<Term> es = new ArrayList<Term>();
+        Collection<Term> es = new MappableList<Term>();
         for ( Term e : elements ) {
             es.add( e.substitute( x,y ) );
         }

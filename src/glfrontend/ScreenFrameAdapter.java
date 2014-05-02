@@ -49,10 +49,10 @@ public class ScreenFrameAdapter implements ScreenFrame {
 	public void mouseWheelScrolled(Vector2f p, int amount) {}
 
 	@Override
-	public void keyPressed(int key) {}
+	public void keyPressed(KeyEvent e) {}
 
 	@Override
-	public void keyReleased(int key) {}
+	public void keyReleased(KeyEvent e) {}
 
 	@Override
 	public void mouseMoved(Vector2f p) {}
