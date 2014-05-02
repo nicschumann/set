@@ -20,7 +20,6 @@ import com.workshop.set.SetMain;
 import com.workshop.set.model.VectorSpace.Geometry;
 import com.workshop.set.model.VectorSpace.Point;
 import com.workshop.set.model.VectorSpace.Relation;
-import com.workshop.set.view.SetFrontEnd;
 
 public class GeomPanel extends GLPanel {
 
@@ -43,11 +42,11 @@ public class GeomPanel extends GLPanel {
 			_bottomPanel = new PointPanel((Point) geom);
 		else
 			_bottomPanel = new RelationPanel((Relation) geom);
-		
+
 		_bottomPanel.setSize(DEFAULT_SIZE.x, DEFAULT_SIZE.y);
 		_bottomPanel.setLocation(0, 0);
 		_bottomPanel.setBackground(new Color(0, 0, 0, 0));
-		
+
 		this.add(_bottomPanel);
 	}
 
@@ -61,7 +60,7 @@ public class GeomPanel extends GLPanel {
 		_typeLabel.setLocation(0, 0);
 		_typeLabel.setSize(DEFAULT_SIZE.x / 2f, DEFAULT_SIZE.y / 2);
 		_typeLabel.setBackground(new Color(128, 128, 128, 0));
-		
+
 		_nameBox = new GLTextBox();
 		_nameBox.setLocation(DEFAULT_SIZE.x / 2f, 3);
 		_nameBox.setSize(DEFAULT_SIZE.x / 2f, DEFAULT_SIZE.y / 2f - 3);
@@ -73,10 +72,10 @@ public class GeomPanel extends GLPanel {
 			public void trigger(TriggerEvent e) {
 				String newName = _nameBox.getText();
 				// TODO: Error checking for similar names?
-//				_geom.setName(SetMain.GENSYM.generate(newName));
+				_geom.setName(SetMain.GENSYM.generate(newName));
 				setFocus(false);
 			}
-			
+
 		});
 
 		this.add(_typeLabel);
@@ -109,7 +108,7 @@ public class GeomPanel extends GLPanel {
 
 		draw();
 	}
-	
+
 	@Override
 	public void animate(long millisSincePrev) {
 		_nameBox.animate(millisSincePrev);

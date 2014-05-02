@@ -3,10 +3,8 @@ package glfrontend;
 import static glfrontend.ScreenFrame.MouseButton.LEFT;
 import static glfrontend.ScreenFrame.MouseButton.RIGHT;
 import static glfrontend.ScreenFrame.MouseButton.WHEEL;
-import static org.lwjgl.opengl.GL11.GL_BACK;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
@@ -18,7 +16,6 @@ import static org.lwjgl.opengl.GL11.GL_TRANSFORM_BIT;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glCullFace;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glGetFloat;
 import static org.lwjgl.opengl.GL11.glLoadIdentity;
@@ -308,8 +305,8 @@ public class GLFrontEnd implements FrontEnd {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		// Only shows the image on the front of the surface.
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
+//		glEnable(GL_CULL_FACE);
+//		glCullFace(GL_BACK);
 	}
 
 	/**

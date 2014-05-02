@@ -108,6 +108,16 @@ public class Viewport extends ScreenFrameAdapter {
 		_stage.render3D();
 		glColor3f(1, 0, 0);
 		_model.renderGeometries();
+
+		// plane drawing test
+		// glColor3f(0f, 1f, 0f);
+		//
+		// glBegin(GL_QUADS);
+		// glVertex3f(0.5f, 1.5f, 1f);
+		// glVertex3f(1f, 1f, 0f);
+		// glVertex3f(0f, 0f, 0f);
+		// glVertex3f(0.5f, -0.5f, 1f);
+		// glEnd();
 	}
 
 	@Override
@@ -151,8 +161,8 @@ public class Viewport extends ScreenFrameAdapter {
 
 		Point point = null;
 		try {
-			point = VEC_SPACE_3D.point(GENSYM.generate(), new MDouble((double) proj.x), new MDouble(
-					(double) proj.y), new MDouble((double) proj.z));
+			point = VEC_SPACE_3D.point(GENSYM.generate(), new MDouble((double) proj.x), new MDouble((double) proj.y),
+					new MDouble((double) proj.z));
 		} catch (GeometricFailure e) {
 			e.printStackTrace();
 		}

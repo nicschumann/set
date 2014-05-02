@@ -44,6 +44,8 @@ public class VectorSpace {
          * @return a Symbol object representing this Geometry's name.
          */
         public abstract Symbol name();
+        
+        public abstract void setName(Symbol name);
 
         /**
          * this method returns the atomic names that are bound to values in this geometry.
@@ -171,6 +173,11 @@ public class VectorSpace {
             return components[ i - 1 ];
         }
 
+        public void setN_( int i, MDouble d ) throws GeometricFailure {
+        	if ( i <= 0 || i > dimension ) throw new GeometricFailure( i );
+        	components[ i - 1 ] = d;
+        }
+
         /**
          * getX_( i...n ) is defined.
          *
@@ -189,6 +196,11 @@ public class VectorSpace {
          */
         @Override
         public Symbol name() { return name; }
+        
+        @Override
+        public void setName(Symbol name) {
+        	this.name = name;
+        }
 
         /**
          * @return the ( component, value ) pairs contained in this point.
@@ -312,6 +324,11 @@ public class VectorSpace {
 		public Symbol name() {
 			return name;
 		}
+        
+        @Override
+        public void setName(Symbol name) {
+        	this.name = name;
+        }
 
 		public Geometry domain() {
 			return A;

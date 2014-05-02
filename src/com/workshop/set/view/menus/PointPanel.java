@@ -16,7 +16,9 @@ import java.util.Set;
 
 import org.lwjgl.util.vector.Vector2f;
 
+import com.workshop.set.model.VectorSpace.GeometricFailure;
 import com.workshop.set.model.VectorSpace.Point;
+import com.workshop.set.model.ref.MDouble;
 
 public class PointPanel extends GLPanel {
 
@@ -83,16 +85,14 @@ public class PointPanel extends GLPanel {
 
 		@Override
 		public void trigger(TriggerEvent e) {
-			System.out.println("triggered");
 			GLTextBox tb = (GLTextBox) e.getSource();
 			try {
-				Double newPoint = Double.parseDouble(tb.getText());
-			} catch (NumberFormatException nfe) {
-				return;
+				// TODO: Error checking for boundaries?
+				double newPoint = Double.parseDouble(tb.getText());
+				_p.setN_(_index, new MDouble(newPoint));
+				setFocus(false);
+			} catch (NumberFormatException | GeometricFailure nfe) {
 			}
-			// TODO: Error checking for boundaries?
-			// _p.setN_(_index, newPoint);
-			setFocus(false);
 		}
 
 	}
