@@ -16,19 +16,20 @@ import com.workshop.set.model.lang.exceptions.PatternMatchException;
 import com.workshop.set.model.lang.exceptions.ProofFailureException;
 import com.workshop.set.model.lang.exceptions.TypecheckingException;
 import com.workshop.set.model.lang.judgements.HasValue;
+import com.workshop.set.model.ref.MappableList;
 
 /**
  * Created by nicschumann on 3/29/14.
  */
 public class TVector implements Pattern {
-    public TVector( Vector<Term> entries ) {
+    public TVector( MappableList<Term> entries ) {
         this.entries = entries;
     }
 
-    private final Vector<Term> entries;
+    private final MappableList<Term> entries;
 
-    public Vector<Term> components() {
-        return new Vector<Term>( entries );
+    public MappableList<Term> components() {
+        return new MappableList<>( entries );
     }
 
     @Override
@@ -82,7 +83,7 @@ public class TVector implements Pattern {
 
     @Override
     public Pattern substitute( Term x, Symbol y ) {
-        Vector<Term> t = new Vector<Term>();
+        MappableList<Term> t = new MappableList<Term>();
         for (Term e : entries ) {
             t.add( e.substitute( x,y ) );
         }
@@ -93,7 +94,7 @@ public class TVector implements Pattern {
     public Set<HasValue> bind( Term value )
         throws PatternMatchException {
         try {
-            Vector<Term> v = ((TVector)value).components();
+            MappableList<Term> v = ((TVector)value).components();
             Set<HasValue> s = new HashSet<HasValue>();
 
             for ( Term entry : entries ) { // duplicates?

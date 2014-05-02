@@ -63,10 +63,8 @@ public class TAbstraction implements Term,Value {
         throws ProofFailureException, TypecheckingException {
 
             try {
-                    //System.out.println( "Typing an Abstraction" );
 
                                                     gamma.step();                           // step the current environment
-
 
                 gamma                               = type.type( gamma );                   // type the type of the formal parameter in the current environment -
                                                                                             // at this point the environment should prove that the type of type is Univ{n}
@@ -82,8 +80,6 @@ public class TAbstraction implements Term,Value {
                 gamma                               = gamma.extend( bound );                // extend gamma with those types.
 
                 Term T2                             = (body.type( gamma )).proves( body );  //
-
-                //System.out.println( this + " : ===> " + gamma.value() );
 
                 TUniverse U2                        = (TUniverse)(T2.type( gamma )).proves( T2 );
 

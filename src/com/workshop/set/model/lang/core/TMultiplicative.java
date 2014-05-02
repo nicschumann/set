@@ -40,7 +40,7 @@ public class TMultiplicative implements Pattern {
 
     @Override
     public String toString() {
-        return scalar.toString() + " * " + multiplicand.toString();
+        return scalar.toString() + "(" + multiplicand.toString() + ")";
     }
 
     @Override
@@ -53,12 +53,12 @@ public class TMultiplicative implements Pattern {
 
     @Override
     public Term reduce() throws EvaluationException {
-        return new TAdditive( scalar, multiplicand.reduce() );
+        return new TMultiplicative( scalar, multiplicand.reduce() );
     }
 
     @Override
     public Pattern substitute( Term x, Symbol y ) {
-        return new TAdditive( scalar, multiplicand.substitute( x,y ) );
+        return new TMultiplicative( scalar, multiplicand.substitute( x,y ) );
     }
 
     @Override
