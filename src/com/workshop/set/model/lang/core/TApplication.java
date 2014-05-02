@@ -111,7 +111,6 @@ public class TApplication implements Term,Value {
 
     @Override
     public Term reduce() throws EvaluationException {
-        System.out.println( this );
 
         TApplication t = new TApplication( implication.reduce(), argument.reduce() );
 
@@ -123,7 +122,6 @@ public class TApplication implements Term,Value {
                 for (HasValue j : f.binder.bind( t.argument ) ) {
                     t1 = t1.substitute( j.environment(), j.inhabitant() );
                 }
-                System.out.println( t1 );
                 return t1;
             } catch ( PatternMatchException _ ) {
                 throw new EvaluationException();

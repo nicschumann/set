@@ -137,7 +137,7 @@ public class Decide {
         return alpha_equivalence( t1.contents, t2.contents, g1, g2);
     }
     public static boolean alpha_equivalence( TExponential t1, TExponential t2, Set<Symbol> g1, Set<Symbol> g2 ) {
-        return t1.exp == t2.exp && alpha_equivalence( t1.base, t2.base, g1, g2 );
+        return t1.exp.equals( t2.exp ) && alpha_equivalence( t1.base, t2.base, g1, g2 );
 
     }
 
@@ -152,7 +152,7 @@ public class Decide {
     // a-equivalence on collections
     public static boolean alpha_equivalence( TSet t1, TSet t2, Set<Symbol> g1, Set<Symbol> g2 ) {
         boolean fold = true;
-        if ( t1.elements().size() != t2.elements().size() ) return !fold;
+        if ( t1.elements().size() != t2.elements().size() ) return false;
         else {
             for ( int i = 0; i < t1.elements().size(); i ++ ) {
                 fold &= alpha_equivalence( t1.elements().get( i ), t2.elements().get( i ), g1, g2 );
@@ -162,7 +162,7 @@ public class Decide {
     }
     public static boolean alpha_equivalence( TVector t1, TVector t2, Set<Symbol> g1, Set<Symbol> g2 ) {
         boolean fold = true;
-        if ( t1.components().size() != t2.components().size() ) return !fold;
+        if ( t1.components().size() != t2.components().size() ) return false;
         else {
             for ( int i = 0; i < t1.components().size(); i ++ ) {
                 fold &= alpha_equivalence( t1.components().get( i ), t2.components().get( i ), g1, g2 );

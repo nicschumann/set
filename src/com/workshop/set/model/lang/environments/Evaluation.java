@@ -3,9 +3,14 @@ package com.workshop.set.model.lang.environments;
 import java.util.*;
 
 import com.workshop.set.model.interfaces.*;
+import com.workshop.set.model.lang.core.*;
+
 import com.workshop.set.model.lang.exceptions.EvaluationException;
+import com.workshop.set.model.lang.exceptions.PatternMatchException;
 import com.workshop.set.model.lang.exceptions.ProofFailureException;
 import com.workshop.set.model.lang.exceptions.TypecheckingException;
+import com.workshop.set.model.lang.judgements.HasValue;
+import com.workshop.set.model.ref.MappableList;
 
 /**
  * Created by nicschumann on 4/1/14.
@@ -63,7 +68,7 @@ public class Evaluation implements Environment<Term> {
 
         t.type( this );
         typeContext.put( s, proves( t ) );
-        valueContext.put( s, value() );
+        valueContext.put( s, evaluate( t ) );
         page();
 
         for ( Map.Entry<Symbol,Term> VTPair : typeContext.entrySet() ) {
@@ -73,7 +78,122 @@ public class Evaluation implements Environment<Term> {
         return this;
     }
 
+    public Term eval( Term t )
+        throws ProofFailureException,
+               TypecheckingException {
+        t.type(this);
+        return evaluate( t );
+    }
+
     // LANG_INTERNAL methods:
+    // Evaluation methods:
+
+    /**
+     * This function implements the reduction relation on terms.
+     * @param t a well-typed term to reduce.
+     * @return the normal form of t
+     */
+    public Term evaluate( Term t )
+        throws ProofFailureException {
+        if ( t instanceof TAbstraction ) {
+            return new TAbstraction(
+                    ((TAbstraction) t).binder,
+                    evaluate( ((TAbstraction) t).type ),
+                    evaluate( ((TAbstraction) t).body )
+            );
+        } else if ( t instanceof TAdditive ) {
+            return new TAdditive(
+                    ((TAdditive) t).scalar,
+                    evaluate( ((TAdditive) t).addand )
+            );
+        } else if ( t instanceof TAll) {
+            return new TAll(
+                    ((TAll) t).binder,
+                    evaluate( ((TAll) t).type ),
+                    evaluate( ((TAll) t).body )
+            );
+        } else if ( t instanceof TApplication ) {
+            Term t1 = evaluate( ((TApplication) t).implication );
+            Term t2 = evaluate( ((TApplication) t).argument );
+            try {
+                TAbstraction abs = (TAbstraction) t1;
+
+                try {
+                    Set<HasValue> valuation = abs.binder.bind( t2 );
+                    for ( HasValue pair : valuation ) {
+                        abs.body = abs.body.substitute(pair.term, pair.name);
+                    }
+                    return abs.body;
+                } catch ( PatternMatchException e ) {
+                    throw new ProofFailureException( "Unreported PatternMatch error - Mistyped Decomposition" );
+                }
+            } catch ( ClassCastException _ ) {
+                return new TApplication( t1, t2 );
+            }
+        } else if ( t instanceof TCollection ) {
+            return new TCollection(
+                    evaluate(((TCollection) t).contents ),
+                    ((TCollection) t).cardinality
+            );
+        } else if ( t instanceof TExponential ) {
+            return new TExponential(
+                    evaluate( ((TExponential) t).base ),
+                    ((TExponential) t).exp
+            );
+        } else if ( t instanceof TField ) {
+            return new TField();
+        } else if ( t instanceof TJudgement ) {
+            return new TJudgement(
+                evaluate( ((TJudgement) t).left ),
+                evaluate( ((TJudgement) t).right )
+            );
+        } else if ( t instanceof TMultiplicative ) {
+            return new TMultiplicative(
+                    ((TMultiplicative) t).scalar,
+                    evaluate( ((TMultiplicative) t).multiplicand )
+            );
+        } else if ( t instanceof TNameGenerator.TName ) {
+            if ( valueContext.containsKey( t ) ) {
+                return evaluate( valueContext.get( t ) );
+            } else return t;
+        } else if ( t instanceof TScalar ) {
+            return new TScalar( ((TScalar) t).index );
+        } else if ( t instanceof TSet ) {
+
+            MappableList<Term> m = new MappableList<>();
+            for ( Term t_i : ((TSet) t).elements() ) m.add( evaluate( t_i ) );
+            return new TSet( m );
+
+        } else if ( t instanceof TSum ) {
+            return new TAbstraction(
+                    ((TSum) t).binder,
+                    evaluate( ((TSum) t).type ),
+                    evaluate( ((TSum) t).body )
+            );
+        } else if ( t instanceof TTuple ) {
+            return new TTuple(
+                evaluate( ((TTuple) t).domain ),
+                evaluate( ((TTuple) t).range )
+            );
+        } else if ( t instanceof TUniverse ) {
+            return new TUniverse( ((TUniverse) t).level );
+        } else if ( t instanceof TVector ) {
+
+            MappableList<Term> m = new MappableList<>();
+            for ( Term t_i : ((TVector) t).components() ) m.add( evaluate( t_i ) );
+            return new TVector( m );
+
+        } else {
+
+            throw new ProofFailureException( "INTERNAL: Unrecognized Term Form" );
+
+        }
+    }
+
+
+
+
+
     // Context<Term> Methods
 
     /**
