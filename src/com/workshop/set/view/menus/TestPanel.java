@@ -1,4 +1,4 @@
-package com.workshop.set.view;
+package com.workshop.set.view.menus;
 
 import glfrontend.components.GLPanel;
 import glfrontend.components.GLTextBox;
@@ -22,9 +22,10 @@ public class TestPanel extends GLPanel {
 	}
 
 	private void initTextBox() {
-//		Set<Character> chars = new HashSet<>();
-//		chars.addAll(Arrays.asList(new Character[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '.' }));
-//		_tbox = new GLLimitedTextBox(chars, 25);
+		// Set<Character> chars = new HashSet<>();
+		// chars.addAll(Arrays.asList(new Character[] { '0', '1', '2', '3', '4', '5', '6', '7', '8',
+		// '9', '-', '.' }));
+		// _tbox = new GLLimitedTextBox(chars, 25);
 		_tbox = new GLTextBox();
 		_tbox.setLocation(0, 0);
 		_tbox.setSize(getSize());
@@ -33,18 +34,8 @@ public class TestPanel extends GLPanel {
 		this.add(_tbox);
 	}
 
-	public void setLabelText(String text) {
+	public void setTextBoxText(String text) {
 		_tbox.setText(text);
-	}
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-		_tbox.keyPressed(e);
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		_tbox.keyReleased(e);
 	}
 
 	@Override

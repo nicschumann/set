@@ -83,6 +83,9 @@ public class GLFrontEnd implements FrontEnd {
 		setUpDisplay();
 		setUpStates();
 		setUpMatrices();
+		
+		Keyboard.enableRepeatEvents(true);
+		
 		_frame = new GLPanel();
 		_frame.setLocation(new Vector2f(0, 0));
 		_frame.setSize(new Vector2f(WINDOW_DIMENSIONS.width, WINDOW_DIMENSIONS.height));

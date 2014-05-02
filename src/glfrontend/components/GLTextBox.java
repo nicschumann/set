@@ -1,15 +1,18 @@
 package glfrontend.components;
 
-import static com.workshop.set.view.SetScreen.CYAN;
 import static com.workshop.set.view.SetScreen.ORANGE;
 import static com.workshop.set.view.SetScreen.newRatio;
 import static glfrontend.components.GLComponent.TextAlignment.LEFT;
 import static glfrontend.components.GLComponent.TextAlignment.RIGHT;
 import static org.lwjgl.input.Keyboard.KEY_BACK;
+import static org.lwjgl.input.Keyboard.KEY_LCONTROL;
 import static org.lwjgl.input.Keyboard.KEY_LEFT;
 import static org.lwjgl.input.Keyboard.KEY_LSHIFT;
+import static org.lwjgl.input.Keyboard.KEY_RCONTROL;
+import static org.lwjgl.input.Keyboard.KEY_RETURN;
 import static org.lwjgl.input.Keyboard.KEY_RIGHT;
 import static org.lwjgl.input.Keyboard.KEY_RSHIFT;
+import static org.lwjgl.input.Keyboard.KEY_TAB;
 import static org.lwjgl.opengl.GL11.GL_LINES;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glBegin;
@@ -39,14 +42,14 @@ public class GLTextBox extends GLComponent {
 	private Color _foreground;
 	private TextAlignment _textAlign;
 
-	private boolean _shiftDown;
+	private boolean _ctrlDown;
 
 	private int _cursor;
 	private long _cursorTimer;
 	private float _opacity;
 	private StringBuilder _sb;
-
-	// private List<MyChar> _chars;
+	private int _endSpaces;
+	private float _spaceWidth;
 
 	public GLTextBox() {
 		super();
@@ -60,19 +63,21 @@ public class GLTextBox extends GLComponent {
 	}
 
 	public void init() {
-		_sb = new StringBuilder();
 		_foreground = Color.BLACK;
 		_textAlign = LEFT;
 
 		setFont(new java.awt.Font("Sans Serif", java.awt.Font.BOLD, 13));
+		_spaceWidth = 4.2f;
 		TextureImpl.bindNone();
 
-		_shiftDown = false;
+		_ctrlDown = false;
 
 		_cursor = 0;
 		_cursorTimer = 500;
 		_opacity = 0.8f;
-		// _chars = new ArrayList<>();
+
+		_sb = new StringBuilder();
+		_endSpaces = 0;
 	}
 
 	public void setForeground(Color color) {
@@ -81,7 +86,12 @@ public class GLTextBox extends GLComponent {
 	}
 
 	public void setText(String text) {
-		// this._text = text;
+		_sb = new StringBuilder(text);
+		_cursor = _sb.length();
+		_endSpaces = 0;
+		for (int i = _cursor - 1; i >= 0 && _sb.charAt(i) == ' '; i--) {
+			_endSpaces++;
+		}
 		setTextLoc();
 	}
 
@@ -91,6 +101,23 @@ public class GLTextBox extends GLComponent {
 
 	public void addCharacter(char c) {
 		_sb.insert(_cursor++, c);
+		if (_sb.length() == _cursor && c == ' ')
+			_endSpaces++;
+		else
+			_endSpaces = 0;
+	}
+
+	public void removeCharacter() {
+		_sb.deleteCharAt(--_cursor);
+		if (_sb.length() == _cursor) {
+			if (_endSpaces != 0)
+				_endSpaces--;
+			else {
+				for (int i = _cursor - 1; i >= 0 && _sb.charAt(i) == ' '; i--) {
+					_endSpaces++;
+				}
+			}
+		}
 	}
 
 	public void setAlignment(TextAlignment align) {
@@ -98,7 +125,7 @@ public class GLTextBox extends GLComponent {
 	}
 
 	public boolean isShiftDown() {
-		return _shiftDown;
+		return _ctrlDown;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -168,15 +195,15 @@ public class GLTextBox extends GLComponent {
 			glDisable(GL_TEXTURE_2D);
 		}
 
-		Vector2f cursorPos = new Vector2f(edgeBuffer + _font.getWidth(_sb.substring(0, _cursor)), getSize().y
-				- edgeBuffer);
+		int width = _font.getWidth(_sb.substring(0, _cursor)) + Math.round(_spaceWidth * _endSpaces);
+		Vector2f cursorPos = new Vector2f(edgeBuffer + width, (getSize().y - edgeBuffer));
 
 		glColor4f(ORANGE[0], ORANGE[1], ORANGE[2], _opacity);
 
 		glLineWidth(3f);
 		glBegin(GL_LINES);
-		glVertex2f(cursorPos.x, edgeBuffer);
-		glVertex2f(cursorPos.x, cursorPos.y);
+		glVertex2f(ul.x + cursorPos.x, ul.y + edgeBuffer);
+		glVertex2f(ul.x + cursorPos.x, ul.y + cursorPos.y);
 		glEnd();
 	}
 
@@ -195,11 +222,17 @@ public class GLTextBox extends GLComponent {
 			break;
 		case KEY_BACK:
 			if (_sb.length() > 0 && _cursor > 0)
-				_sb.deleteCharAt(--_cursor);
+				removeCharacter();
 			break;
+		case KEY_LCONTROL:
+		case KEY_RCONTROL:
+			_ctrlDown = true;
+			break;
+		case KEY_TAB:
+		case KEY_RETURN:
 		case KEY_LSHIFT:
 		case KEY_RSHIFT:
-			_shiftDown = true;
+			// do nothing
 			break;
 		default:
 			addCharacter(e.keyChar);
@@ -209,8 +242,8 @@ public class GLTextBox extends GLComponent {
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		if (e.keyCode == KEY_LSHIFT || e.keyCode == KEY_RSHIFT)
-			_shiftDown = false;
+		if (e.keyCode == KEY_LCONTROL || e.keyCode == KEY_RCONTROL)
+			_ctrlDown = false;
 	}
 
 	@Override
@@ -239,13 +272,18 @@ public class GLTextBox extends GLComponent {
 
 	@Override
 	public void animate(long millisSincePrev) {
-		_cursorTimer -= millisSincePrev;
-		if (_cursorTimer < 0) {
-			_cursorTimer = 500;
-			if (_opacity == 0.8f)
-				_opacity = 0.2f;
-			else
-				_opacity = 0.8f;
+		if (isInFocus()) {
+			_cursorTimer -= millisSincePrev;
+			if (_cursorTimer < 0) {
+				_cursorTimer = 500;
+				if (_opacity == 0.8f)
+					_opacity = 0.2f;
+				else
+					_opacity = 0.8f;
+			}
+		} else {
+			_opacity = 0.0f;
+			_cursorTimer = 300;
 		}
 	}
 

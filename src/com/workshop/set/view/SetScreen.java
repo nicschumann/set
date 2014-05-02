@@ -13,15 +13,19 @@ import org.lwjgl.util.vector.Vector2f;
 
 import com.workshop.set.model.VectorSpace.Geometry;
 import com.workshop.set.model.interfaces.Model;
+import com.workshop.set.view.menus.OptionPanel;
+import com.workshop.set.view.menus.TestPanel;
+import com.workshop.set.view.viewport.Stage;
+import com.workshop.set.view.viewport.Viewport;
 
 public class SetScreen implements ScreenFrame {
-	
-	public static float[] ORANGE = {1f, 0.5f, 0f};
-	public static float[] CYAN = {0f, 1f, 1f};
+
+	public static float[] ORANGE = { 1f, 0.5f, 0f };
+	public static float[] CYAN = { 0f, 1f, 1f };
 
 	private Vector2f ul, lr;
 	private Viewport _viewport;
-	// private OptionPanel _options;
+	private OptionPanel _options;
 	private TestPanel _test;
 
 	private List<ScreenFrame> frames;
@@ -31,10 +35,10 @@ public class SetScreen implements ScreenFrame {
 		init();
 		setSize(new Vector2f(w, h));
 		_viewport = new Viewport(model, w, h);
-		// _options = new OptionPanel(300, 30);
-		_test = new TestPanel(300, 30);
-		// this.add(_options);
-		this.add(_test);
+		_options = new OptionPanel();
+//		_test = new TestPanel(300, 30);
+		this.add(_options);
+		// this.add(_test);
 	}
 
 	private void init() {
@@ -54,14 +58,11 @@ public class SetScreen implements ScreenFrame {
 	}
 
 	public void displaySelected(Geometry selected) {
-		// _options.setLabelText(selected.displayString());
-		// if (!_options.isVisible())
-		// _options.toggle();
+		_options.addGeomPanel(selected);
 	}
 
 	public void removeSelection() {
-		// if (!_options.isMoving() && _options.isVisible())
-		// _options.toggle();
+		_options.removeGeomPanels();
 	}
 
 	@Override
@@ -128,6 +129,9 @@ public class SetScreen implements ScreenFrame {
 				Vector2f relativePoint = new Vector2f();
 				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
 				frame.mousePressed(new MouseEvent(relativePoint, e.button));
+				frame.setFocus(true);
+			} else {
+				frame.setFocus(false);
 			}
 		}
 		if (onViewport)
@@ -244,16 +248,27 @@ public class SetScreen implements ScreenFrame {
 
 		if (e.keyCode == Keyboard.KEY_T) {
 			// _options.toggle();
+			_test.setTextBoxText("The quick brown fox haz dog");
 		}
 
+		for (ScreenFrame frame : frames) {
+			if (frame.isInFocus()) {
+				frame.keyPressed(e);
+				return;
+			}
+		}
 		_viewport.keyPressed(e);
-		_test.keyPressed(e);
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
+		for (ScreenFrame frame : frames) {
+			if (frame.isInFocus()) {
+				frame.keyReleased(e);
+				return;
+			}
+		}
 		_viewport.keyReleased(e);
-		_test.keyReleased(e);
 	}
 
 	@Override
@@ -316,6 +331,14 @@ public class SetScreen implements ScreenFrame {
 		for (ScreenFrame frame : frames) {
 			frame.animate(millisSincePrev);
 		}
+	}
+
+	@Override
+	public void setFocus(boolean focus) {}
+
+	@Override
+	public boolean isInFocus() {
+		return false;
 	}
 
 }

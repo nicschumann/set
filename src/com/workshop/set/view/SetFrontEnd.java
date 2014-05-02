@@ -10,6 +10,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector2f;
 
 import com.workshop.set.model.interfaces.Model;
+import com.workshop.set.view.viewport.Stage;
 
 public class SetFrontEnd extends GLFrontEnd {
 

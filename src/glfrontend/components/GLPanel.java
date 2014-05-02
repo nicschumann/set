@@ -51,6 +51,9 @@ public class GLPanel extends GLComponent {
 				Vector2f relativePoint = new Vector2f();
 				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
 				frame.mousePressed(new MouseEvent(relativePoint, e.button));
+				frame.setFocus(true);
+			} else {
+				frame.setFocus(false);
 			}
 		}
 	}
@@ -114,6 +117,26 @@ public class GLPanel extends GLComponent {
 	public void mouseExited(Vector2f p) {
 		for (ScreenFrame comp : comps) {
 			comp.mouseExited(p);
+		}
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		for (ScreenFrame frame : comps) {
+			if (frame.isInFocus()) {
+				frame.keyPressed(e);
+				return;
+			}
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		for (ScreenFrame frame : comps) {
+			if (frame.isInFocus()) {
+				frame.keyReleased(e);
+				return;
+			}
 		}
 	}
 
