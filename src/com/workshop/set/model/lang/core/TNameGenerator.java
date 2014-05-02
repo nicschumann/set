@@ -60,7 +60,8 @@ public class TNameGenerator
         public boolean equals( Object o ) {
             try {
                 return ((TName)o).matches( index )
-                    && ((TName)o).matches( factory );
+                    && ((TName)o).matches( factory )
+                    && ((TName)o).readable.equals( readable );
             } catch ( ClassCastException _ ) {
                 return false;
             }

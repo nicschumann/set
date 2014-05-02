@@ -19,24 +19,29 @@ import java.io.InputStreamReader;
 public class Interpreter {
     public static final String prompt = "set> ";
 
+    public Interpreter() {  running = true; }
+
+    private boolean running;
+
     public static void main( String[] args ) {
         System.out.println( "Loading Set..." );
-        prompt();
-        loop();
+        Interpreter i = new Interpreter();
+        i.loop();
     }
 
-    public static void loop() {
+    public void loop() {
        TNameGenerator n = new TNameGenerator();
        BufferedReader r = new BufferedReader( new InputStreamReader( System.in ) );
 
        Lexer l = new Lexer();
        EXPRParser p = new EXPRParser( n );
-       Environment<Term> env = new Evaluation( n );
+       Evaluation env = new Evaluation( n );
 
        try {
            String line;
 
-           while ( ( line = r.readLine()) != null ) {
+           prompt();
+           while ( running && ( line = r.readLine()) != null ) {
                try {
 
                    handle(
@@ -55,7 +60,8 @@ public class Interpreter {
                } catch ( TypecheckingException e ) {
                    errln( e.getLocalizedMessage() );
                } finally {
-                   prompt();
+                   if (running) prompt();
+                   else outln( "done." );
                }
            }
        } catch ( IOException exn ) {
@@ -68,9 +74,9 @@ public class Interpreter {
 
 
 
-    public static Environment<Term> handle(
+    public Environment<Term> handle(
                 String line,
-                Environment<Term> env,
+                Evaluation env,
                 Lexer l,
                 EXPRParser p
             ) throws LexException,
@@ -94,15 +100,14 @@ public class Interpreter {
                     }
                 default:
                     Term parse = p.parse( l.lex( line ) );
-                    parse.type( env );
-                    outln(env.value() + " : " + env.proves(parse).toString());
+                    outln( env.eval( parse ).toString() );
                     return env;
             }
         } else return env;
     }
 
 
-    public static Environment<Term> runCommand( String command, String arg, Environment<Term> env, Lexer l, EXPRParser p ) 
+    public Environment<Term> runCommand( String command, String arg, Evaluation env, Lexer l, EXPRParser p )
        throws ParseException, LexException, IOException, ProofFailureException, TypecheckingException {
         switch ( command ) {
             case ":context":
@@ -110,13 +115,20 @@ public class Interpreter {
                     outln( env.toString() );
                     return env;
                 } break;
-            case ":name":
+            case ":let":
                     String symb = arg.substring(0, arg.indexOf( " " ));
                     String term = arg.substring( arg.indexOf(" ")+1 );
                     env.name( env.basename( symb ), p.parse( l.lex( term ) ) );
                     outln(env.toString());
                     return env;
-
+            case ":type":
+                    Term t = p.parse( l.lex( arg ) );
+                    t.type( env );
+                    outln( env.proves( t ).toString() );
+                    return env;
+            case ":exit":
+                    running = false;
+                    return env;
             default:
                 errln( "Unrecognized command, \""+command+"\"");
                 return env;
@@ -131,7 +143,7 @@ public class Interpreter {
     }
 
     public static void errln( String msg ) {
-        System.err.println(msg);
+        System.err.println( "\u001B[31m" + msg + "\u001B[0m" );
     }
     public static void outln( String msg ) {
         System.out.println( msg );
