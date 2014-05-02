@@ -35,7 +35,7 @@ public class Viewport extends ScreenFrameAdapter {
 	private Model _model;
 
 	private Vector2f _currPos;
-	private boolean _shiftDown;
+	private boolean _shiftDown, _pivot;
 	private Point[] _linePoints = new Point[2];
 	private int _toUpdate;
 
@@ -58,6 +58,7 @@ public class Viewport extends ScreenFrameAdapter {
 		ul = new Vector2f(0f, 0f);
 		lr = new Vector2f(50f, 50f);
 		_shiftDown = false;
+		_pivot = false; 
 		_toUpdate = 0;
 
 		_mode = "creation";
@@ -166,8 +167,7 @@ public class Viewport extends ScreenFrameAdapter {
 	 */
 
 	public void checkIntersections(Point p) {
-		// may do initial bounds checking here...
-		_model.checkIntersections(p, _shiftDown);
+		_model.checkIntersections(p, _shiftDown, _pivot);
 	}
 
 	@Override
@@ -180,8 +180,7 @@ public class Viewport extends ScreenFrameAdapter {
 
 			_model.addGeometry(p);
 			// if shift key down, take care of adding this point to the lines renderable queue and
-			// creating a
-			// new line as well
+			// creating a new line as well
 			if (_shiftDown) {
 				_linePoints[_toUpdate] = p;
 
@@ -249,6 +248,9 @@ public class Viewport extends ScreenFrameAdapter {
 			_mode = "creation";
 		if (key == 14) // delete
 			_model.deleteSelections();
+		if (key == 25)
+			_pivot = true; 
+		//System.out.println("key: " + key);
 	}
 
 	@Override
@@ -259,6 +261,8 @@ public class Viewport extends ScreenFrameAdapter {
 			_linePoints[1] = null;
 			_toUpdate = 0;
 		}
+		if (key == 25)
+			_pivot = false; 
 	}
 
 	@Override

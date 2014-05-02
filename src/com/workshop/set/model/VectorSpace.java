@@ -89,6 +89,10 @@ public class VectorSpace {
         public abstract void setHighlight(boolean b);
         
         public abstract boolean getHighlight();
+        
+        public abstract void setPivot(boolean p);
+        
+        public abstract boolean getPivot();
 
         public abstract String displayString();
 
@@ -154,7 +158,7 @@ public class VectorSpace {
         private Symbol[] names = new Symbol[ dimension ];
         private MDouble[] components = new MDouble[ dimension ];
         private Map<Symbol,MDouble> namedComponents = new LinkedHashMap<>();
-        private boolean highlighted; 
+        private boolean highlighted, pivot; 
 
         /**
          * getN_( i...n ) is defined.
@@ -283,6 +287,12 @@ public class VectorSpace {
 			String result = String.format("Point \"%s\": (%.2f, %.2f, %.2f)", name, pnts[0], pnts[1], pnts[2]);
 			return result;
 		}
+
+		@Override
+		public void setPivot(boolean p) {pivot=p;}
+
+		@Override
+		public boolean getPivot() {return pivot;}
 	}
 
 	public class Relation extends Geometry {
@@ -306,7 +316,7 @@ public class VectorSpace {
 		private Symbol name;
 		private Geometry A;
 		private Geometry B;
-		private boolean highlighted;
+		private boolean highlighted, pivot;
 
 		public Symbol name() {
 			return name;
@@ -375,10 +385,7 @@ public class VectorSpace {
 			System.arraycopy(b, 0, array, a.length, b.length);
 			return array;
 		}
-
-		/**
-		 * @return A string representation of this point.
-		 */
+		
 		@Override
         public void setHighlight(boolean b) {
             highlighted = b;
@@ -388,6 +395,12 @@ public class VectorSpace {
         public boolean getHighlight() {
             return highlighted;
         }
+        
+		@Override
+		public void setPivot(boolean p) {pivot=p;}
+
+		@Override
+		public boolean getPivot() {return pivot;}
 
         @Override
         public String toString() {

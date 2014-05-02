@@ -123,6 +123,7 @@ public class TempEnvironment implements Model {
 	public void deselectAll() {
 		for (Geometry elt : _currentSelections) {
 			elt.setHighlight(false);
+			elt.setPivot(false);	//can only stop being a pivot if deselected without being used
 		}
 		_currentSelections.clear();
 	}
@@ -134,9 +135,9 @@ public class TempEnvironment implements Model {
 		}
 		_currentSelections.clear();
 	}
-
+	
 	@Override
-	public void checkIntersections(Point elmt, boolean shift) {
+	public void checkIntersections(Point elmt, boolean shift, boolean pivot) {
 
 		boolean intersected = false;
 		boolean selected = false;
@@ -152,10 +153,15 @@ public class TempEnvironment implements Model {
 			if (intersected) {
 				if (!shift) // if no shift, must first empty previous selections
 					this.deselectAll();
+				
+				//add a selection
 				element.setHighlight(true);
 				_currentSelections.add(element);
 				_screen.displaySelected(element);
 				selected = true;
+				if(pivot)
+					element.setPivot(true);	//becomes a pivot if selected with pivot down
+				//update the possible functions to apply display
 			}
 		}
 
