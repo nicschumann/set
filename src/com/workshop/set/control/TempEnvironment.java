@@ -133,6 +133,7 @@ public class TempEnvironment implements Model {
 			_currentElements.remove(elt);
 		}
 		_currentSelections.clear();
+		_screen.removeSelection(true);
 	}
 
 	@Override

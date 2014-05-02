@@ -22,6 +22,11 @@ import static org.lwjgl.opengl.GL11.glDisable;
 import static org.lwjgl.opengl.GL11.glEnd;
 import static org.lwjgl.opengl.GL11.glLineWidth;
 import static org.lwjgl.opengl.GL11.glVertex2f;
+import glfrontend.Triggerable;
+import glfrontend.Triggerable.TriggerEvent;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.opengl.TextureImpl;
@@ -43,6 +48,8 @@ public class GLTextBox extends GLComponent {
 	private StringBuilder _sb;
 	private int _endSpaces;
 	private float _spaceWidth;
+	
+	private List<Triggerable> triggers;
 
 	public GLTextBox() {
 		super();
@@ -70,6 +77,17 @@ public class GLTextBox extends GLComponent {
 
 		_sb = new StringBuilder();
 		_endSpaces = 0;
+		
+		triggers = new ArrayList<>();
+	}
+	
+	/**
+	 * Triggered when 'ENTER' or 'RETURN' is pressed
+	 * 
+	 * @param trigger - the (@link Triggerable} event
+	 */
+	public void addTriggerable(Triggerable trigger) {
+		triggers.add(trigger);
 	}
 
 	public void setText(String text) {
@@ -198,8 +216,10 @@ public class GLTextBox extends GLComponent {
 		case KEY_RCONTROL:
 			_ctrlDown = true;
 			break;
-		case KEY_TAB:
 		case KEY_RETURN:
+			enterPressed();
+			break;
+		case KEY_TAB:
 		case KEY_LSHIFT:
 		case KEY_RSHIFT:
 			// do nothing
@@ -207,6 +227,11 @@ public class GLTextBox extends GLComponent {
 		default:
 			addCharacter(e.keyChar);
 			break;
+		}
+	}
+	public void enterPressed() {
+		for (Triggerable trigger : triggers) {
+			trigger.trigger(new TriggerEvent(this));
 		}
 	}
 
@@ -256,24 +281,5 @@ public class GLTextBox extends GLComponent {
 			_cursorTimer = 300;
 		}
 	}
-
-	// private static class MyChar {
-	//
-	// public final char dist;
-	// public final int index;
-	//
-	// public MyChar(char dist, int index) {
-	// this.dist = dist;
-	// this.index = index;
-	// }
-	//
-	// // public int getDistFromStart() {
-	// // return distFromStart;
-	// // }
-	// //
-	// // public void setDistFromStart(int distFromStart) {
-	// // this.distFromStart = distFromStart;
-	// // }
-	// }
 
 }

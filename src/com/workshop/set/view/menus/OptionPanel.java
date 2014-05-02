@@ -14,29 +14,33 @@ public class OptionPanel extends GLPanel {
 
 	public static final Vector2f DEFAULT_SIZE = new Vector2f(200, 46);
 
-//	private int menuHeight = 300;
+	// private int menuHeight = 300;
 
 	private int _panelSpeed;
-//	private int _menuSpeed;
+	// private int _menuSpeed;
 	private boolean _moving;
 	private boolean _rollout;
 	private List<GeomPanel> _geoms;
-//	private List<Button> _buttons;
+//	private GLTextBox _focusBox;
+
+	// private List<Button> _buttons;
 
 	public OptionPanel() {
 		super();
 		this.setLocation(-DEFAULT_SIZE.x, 0);
 		this.setSize(DEFAULT_SIZE);
-		this.setBackground(new Color(255, 255, 255, 100));
+		this.setBackground(new Color(255, 255, 255, 30));
 		this.setResizeType(ResizeType.FIT_LEFT);
 		this.setVisible(false);
 		_panelSpeed = 1000; // pixels/second
-//		_menuSpeed = 1000; // pixels/second
+		// _menuSpeed = 1000; // pixels/second
 		_moving = false;
 		_rollout = false;
 
 		_geoms = new ArrayList<>();
-//		_buttons = new ArrayList<>();
+		// _buttons = new ArrayList<>();
+		
+//		_focusBox = null;
 	}
 
 	public void addGeomPanel(Geometry geom) {
@@ -44,6 +48,8 @@ public class OptionPanel extends GLPanel {
 		panel.setLocation(0, DEFAULT_SIZE.y * _geoms.size());
 		_geoms.add(panel);
 		this.add(panel);
+		
+		this.setSize(getSize().x, _geoms.size() * DEFAULT_SIZE.y);
 
 		if (!isVisible())
 			toggle();
@@ -54,6 +60,7 @@ public class OptionPanel extends GLPanel {
 			this.remove(panel);
 		}
 		_geoms.clear();
+		this.setSize(DEFAULT_SIZE);
 		if (toggle && !isMoving() && isVisible())
 			toggle();
 	}

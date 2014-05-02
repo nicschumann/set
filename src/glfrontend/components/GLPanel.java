@@ -32,7 +32,7 @@ public class GLPanel extends GLComponent {
 		comps.add(c);
 		contained.put(c, false);
 	}
-	
+
 	public void remove(GLComponent c) {
 		comps.remove(c);
 		contained.remove(c);
@@ -146,6 +146,16 @@ public class GLPanel extends GLComponent {
 	}
 
 	@Override
+	public void setFocus(boolean focus) {
+		this._focus = focus;
+		if (!focus) {
+			for (ScreenFrame frame : comps) {
+				frame.setFocus(focus);
+			}
+		}
+	}
+
+	@Override
 	public void resize(Vector2f newSize) {
 		setLocation(newRatio(getLocation(), getSize(), newSize));
 		switch (getResizeType()) {
@@ -173,6 +183,13 @@ public class GLPanel extends GLComponent {
 
 			Vector2f.add(ul, newSize, lr);
 			break;
+		}
+	}
+
+	@Override
+	public void animate(long millisSincePrev) {
+		for (ScreenFrame comp : comps) {
+			comp.animate(millisSincePrev);
 		}
 	}
 

@@ -16,11 +16,11 @@ public class GLComponent extends ScreenFrameAdapter {
 	protected float[] _color;
 	protected Vector2f ul;
 	protected Vector2f lr;
+	protected boolean _focus;
 
 	private boolean _visible;
 	private ResizeType resizeType;
 	
-	private boolean _focus;
 	
 	public static enum TextAlignment {
 		LEFT,
