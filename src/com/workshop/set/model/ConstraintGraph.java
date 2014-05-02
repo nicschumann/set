@@ -87,9 +87,6 @@ public class ConstraintGraph {
         }
     }
 
-    // Sparse representation of the ConstraintGraph as an Adjacency Matrix
-
-
     private Table<Symbol,Symbol,Edge> adjacencies;
     private Map<Symbol,MDouble> values;
 
