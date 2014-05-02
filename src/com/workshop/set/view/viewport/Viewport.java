@@ -1,4 +1,4 @@
-package com.workshop.set.view;
+package com.workshop.set.view.viewport;
 
 import static com.workshop.set.SetMain.GENSYM;
 import static com.workshop.set.SetMain.VEC_SPACE_3D;
