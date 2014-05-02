@@ -33,7 +33,7 @@ public class Viewport extends ScreenFrameAdapter {
 	private Model _model;
 
 	private Vector2f _currPos;
-	private boolean _shiftDown;
+	private boolean _shiftDown, _pivot;
 	private Point[] _linePoints = new Point[2];
 	private int _toUpdate;
 
@@ -56,6 +56,7 @@ public class Viewport extends ScreenFrameAdapter {
 		ul = new Vector2f(0f, 0f);
 		lr = new Vector2f(50f, 50f);
 		_shiftDown = false;
+		_pivot = false; 
 		_toUpdate = 0;
 
 		_mode = "creation";
@@ -174,8 +175,7 @@ public class Viewport extends ScreenFrameAdapter {
 	 */
 
 	public void checkIntersections(Point p) {
-		// may do initial bounds checking here...
-		_model.checkIntersections(p, _shiftDown);
+		_model.checkIntersections(p, _shiftDown, _pivot);
 	}
 
 	@Override
@@ -188,8 +188,7 @@ public class Viewport extends ScreenFrameAdapter {
 
 			_model.addGeometry(p);
 			// if shift key down, take care of adding this point to the lines renderable queue and
-			// creating a
-			// new line as well
+			// creating a new line as well
 			if (_shiftDown) {
 				_linePoints[_toUpdate] = p;
 
@@ -258,16 +257,22 @@ public class Viewport extends ScreenFrameAdapter {
 			_mode = "creation";
 		if (keyCode == Keyboard.KEY_BACK || keyCode == Keyboard.KEY_DELETE)
 			_model.deleteSelections();
+		if (keyCode == Keyboard.KEY_P)
+			_pivot = true; 
+		//System.out.println("key: " + key);
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
+		int key = e.keyCode;
 		if (e.keyCode == Keyboard.KEY_LSHIFT || e.keyCode == Keyboard.KEY_RSHIFT) {
 			_shiftDown = false;
 			_linePoints[0] = null;
 			_linePoints[1] = null;
 			_toUpdate = 0;
 		}
+		if (key == Keyboard.KEY_P)
+			_pivot = false; 
 	}
 
 	@Override

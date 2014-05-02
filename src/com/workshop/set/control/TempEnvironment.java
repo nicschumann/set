@@ -123,6 +123,7 @@ public class TempEnvironment implements Model {
 	public void deselectAll() {
 		for (Geometry elt : _currentSelections) {
 			elt.setHighlight(false);
+			elt.setPivot(false);	//can only stop being a pivot if deselected without being used
 		}
 		_currentSelections.clear();
 	}
@@ -135,9 +136,9 @@ public class TempEnvironment implements Model {
 		_currentSelections.clear();
 		_screen.removeSelection(true);
 	}
-
+	
 	@Override
-	public void checkIntersections(Point elmt, boolean shift) {
+	public void checkIntersections(Point elmt, boolean shift, boolean pivot) {
 
 		boolean intersected = false;
 		boolean selected = false;
@@ -159,6 +160,9 @@ public class TempEnvironment implements Model {
 				_currentSelections.add(element);
 				_screen.displaySelected(element);
 				selected = true;
+				if(pivot)
+					element.setPivot(true);	//becomes a pivot if selected with pivot down
+				//update the possible functions to apply display
 			}
 		}
 
@@ -179,27 +183,48 @@ public class TempEnvironment implements Model {
 	/**
 	 * returns whether two values are "close enough" or equal within epsilon
 	 */
-	public boolean equalsWithinEps(double val1, double val2) {
-		return (Math.abs(val1 - val2)) < .15;
+	public boolean equalsWithinEps(double val1, double val2, double eps) {
+		return (Math.abs(val1 - val2)) < eps;
 	}
 
 	public boolean checkLineIntersection(Point check, double[] pts) {
 
 		double[] toCheck = check.getPointArray();
-		// direction of line
+		boolean inBounds = false; 
+		
+		// line's direction vector
 		Vector4 d = new Vector4((float) (pts[0] - pts[3]), (float) (pts[1] - pts[4]), (float) (pts[2] - pts[5]), 0f)
 				.getNormalized();
+		
+		double waneX = .08;	//radius of spheres rendering 
+		double waneY = .08;
+		
+		if(d.x < .12)
+			waneX = -.03;	//give selection leeway to vertical/horizontal lines
+		if(d.y < .12)
+			waneY = -.03; 
+		
+		double maxX = Math.max(pts[0], pts[3]) - waneX;
+		double minX = Math.min(pts[0], pts[3]) + waneX;
+		double maxY = Math.max(pts[1], pts[4]) - waneY;
+		double minY = Math.min(pts[1], pts[4]) + waneY;
+		
+		if(toCheck[0] <= maxX && toCheck[0] >= minX && toCheck[1] <= maxY && toCheck[1] >= minY)
+			inBounds=true;
 
-		// solve linear system for the results toCheck.x,toCheck.y (toCheck.z always 0)
-		double t1 = (toCheck[0] - pts[0]) / d.x;
-		double t2 = (toCheck[1] - pts[1]) / d.y;
+		if(equalsWithinEps(d.x, 0, .02))	//vertical line
+			return (equalsWithinEps(toCheck[0], pts[0], .1) && inBounds);
+		
+		else if(equalsWithinEps(d.y, 0, .02))	//horizontal line
+			return (equalsWithinEps(toCheck[1], pts[1], .1) && inBounds);
+		
+		else{
+			// solve linear system for the results toCheck.x,toCheck.y (toCheck.z always 0)
+			double t1 = (toCheck[0] - pts[0]) / d.x;
+			double t2 = (toCheck[1] - pts[1]) / d.y;
 
-		double maxX = Math.max(pts[0], pts[3]) - .08;
-		double minX = Math.min(pts[0], pts[3]) + .08;
-		double maxY = Math.max(pts[1], pts[4]) - .08;
-		double minY = Math.min(pts[1], pts[4]) + .08;
-
-		// if t values are "close enough, and between clipping bounds then point is on the line
-		return (equalsWithinEps(t1, t2) && toCheck[0] <= maxX && toCheck[0] >= minX && toCheck[1] <= maxY && toCheck[1] >= minY);
+			return (equalsWithinEps(t1, t2, .1) && inBounds);
+		}
+		
 	}
 }
