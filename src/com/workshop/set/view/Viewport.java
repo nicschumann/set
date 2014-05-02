@@ -247,20 +247,21 @@ public class Viewport extends ScreenFrameAdapter {
 			_mode = "creation";
 		if (keyCode == Keyboard.KEY_BACK || keyCode == Keyboard.KEY_DELETE)
 			_model.deleteSelections();
-		if (key == 25)
+		if (keyCode == Keyboard.KEY_P)
 			_pivot = true; 
 		//System.out.println("key: " + key);
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
+		int key = e.keyCode;
 		if (e.keyCode == Keyboard.KEY_LSHIFT || e.keyCode == Keyboard.KEY_RSHIFT) {
 			_shiftDown = false;
 			_linePoints[0] = null;
 			_linePoints[1] = null;
 			_toUpdate = 0;
 		}
-		if (key == 25)
+		if (key == Keyboard.KEY_P)
 			_pivot = false; 
 	}
 
