@@ -42,9 +42,15 @@ public class OptionPanel extends GLPanel {
 		
 //		_focusBox = null;
 	}
+	
+	public void updateGeomPanels() {
+		for (GeomPanel panel : _geoms) {
+			panel.update();
+		}
+	}
 
 	public void addGeomPanel(Geometry geom) {
-		GeomPanel panel = new GeomPanel(geom);
+		GeomPanel panel = new GeomPanel(geom, this);
 		panel.setLocation(0, DEFAULT_SIZE.y * _geoms.size());
 		_geoms.add(panel);
 		this.add(panel);

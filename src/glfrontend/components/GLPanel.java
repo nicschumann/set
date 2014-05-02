@@ -193,4 +193,6 @@ public class GLPanel extends GLComponent {
 		}
 	}
 
+	public void update() {}
+
 }

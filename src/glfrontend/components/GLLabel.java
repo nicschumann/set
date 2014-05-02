@@ -1,7 +1,7 @@
 package glfrontend.components;
 
 import static com.workshop.set.view.SetScreen.newRatio;
-import static glfrontend.GLFrontEnd.DEFAULT_FONT;
+import static glfrontend.GLFrontEnd.LABEL_FONT;
 import static glfrontend.components.GLComponent.TextAlignment.CENTER;
 import static glfrontend.components.GLComponent.TextAlignment.LEFT;
 import static glfrontend.components.GLComponent.TextAlignment.RIGHT;
@@ -51,14 +51,14 @@ public class GLLabel extends GLComponent {
 
 	private void setTextLoc() {
 		float x;
-		int textHeight = DEFAULT_FONT.getAscent() + DEFAULT_FONT.getDescent();
+		int textHeight = LABEL_FONT.getAscent() + LABEL_FONT.getDescent();
 		Vector2f mid = new Vector2f();
 		Vector2f.sub(lr, ul, mid);
 
 		if (_textAlign == LEFT) {
 			x = 5;
 		} else {
-			int textWidth = DEFAULT_FONT.getWidth(text);
+			int textWidth = LABEL_FONT.getWidth(text);
 			if (_textAlign == RIGHT) {
 				x = lr.x - textWidth - 5;
 			} else { // CENTER
@@ -78,7 +78,7 @@ public class GLLabel extends GLComponent {
 	@Override
 	public void draw() {
 		if (textLoc != null) {
-			DEFAULT_FONT.drawString(textLoc.x + ul.x, textLoc.y + ul.y, text);
+			LABEL_FONT.drawString(textLoc.x + ul.x, textLoc.y + ul.y, text);
 			glDisable(GL_TEXTURE_2D);
 		}
 	}

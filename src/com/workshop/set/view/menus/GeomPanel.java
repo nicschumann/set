@@ -24,28 +24,27 @@ import com.workshop.set.model.VectorSpace.Relation;
 public class GeomPanel extends GLPanel {
 
 	private final Geometry _geom;
+	private OptionPanel options;
 	private boolean _point;
 	private GLLabel _typeLabel;
 	private GLTextBox _nameBox;
 	private GLPanel _bottomPanel;
 
-	public GeomPanel(Geometry geom) {
+	public GeomPanel(Geometry geom, OptionPanel options) {
 		super();
 		this.setSize(DEFAULT_SIZE);
 		this.setBackground(new Color(0, 0, 0, 0));
 		this.setResizeType(ResizeType.FIT_LEFT);
 		this._geom = geom;
 		this._point = (geom instanceof Point);
+		
+		this.options = options;
 
 		initNameLabel();
 		if (_point)
-			_bottomPanel = new PointPanel((Point) geom);
+			_bottomPanel = new PointPanel((Point) geom, options);
 		else
-			_bottomPanel = new RelationPanel((Relation) geom);
-
-		_bottomPanel.setSize(DEFAULT_SIZE.x, DEFAULT_SIZE.y);
-		_bottomPanel.setLocation(0, 0);
-		_bottomPanel.setBackground(new Color(0, 0, 0, 0));
+			_bottomPanel = new RelationPanel((Relation) geom, options);
 
 		this.add(_bottomPanel);
 	}
@@ -74,6 +73,7 @@ public class GeomPanel extends GLPanel {
 				// TODO: Error checking for similar names?
 				_geom.setName(SetMain.GENSYM.generate(newName));
 				setFocus(false);
+				options.updateGeomPanels();
 			}
 
 		});
@@ -113,6 +113,11 @@ public class GeomPanel extends GLPanel {
 	public void animate(long millisSincePrev) {
 		_nameBox.animate(millisSincePrev);
 		_bottomPanel.animate(millisSincePrev);
+	}
+
+	public void update() {
+		_nameBox.setText(_geom.name().toString());
+		_bottomPanel.update();
 	}
 
 }

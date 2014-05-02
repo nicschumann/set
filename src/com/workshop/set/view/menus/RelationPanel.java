@@ -19,13 +19,18 @@ public class RelationPanel extends GLPanel {
 
 	public static final Vector2f SIZE = new Vector2f(DEFAULT_SIZE.x / 12, DEFAULT_SIZE.y / 2);
 
+	private OptionPanel options;
 	private Relation _r;
 	private List<GLTextBox> _tboxes;
 
-	public RelationPanel(Relation r) {
+	public RelationPanel(Relation r, OptionPanel options) {
 		super();
+		this.setSize(DEFAULT_SIZE.x, DEFAULT_SIZE.y);
+		this.setLocation(0, 0);
+		this.setBackground(new Color(0, 0, 0, 0));
 
 		this._r = r;
+		this.options = options;
 		_tboxes = new ArrayList<>(2);
 
 		initLabelAndPoint(0, DEFAULT_SIZE.y / 2f, "A:", _r.domain().name().toString());
@@ -54,9 +59,14 @@ public class RelationPanel extends GLPanel {
 	}
 
 	private void setTriggers() {
-
 		_tboxes.get(0).addTriggerable(new TriggerHandler(true));
 		_tboxes.get(1).addTriggerable(new TriggerHandler(false));
+	}
+	
+	@Override
+	public void update() {
+		_tboxes.get(0).setText(_r.domain().name().toString());
+		_tboxes.get(1).setText(_r.codomain().name().toString());
 	}
 
 	private class TriggerHandler implements Triggerable {
@@ -77,6 +87,7 @@ public class RelationPanel extends GLPanel {
 				_r.codomain().setName(SetMain.GENSYM.generate(newName));
 			}
 			setFocus(false);
+			options.updateGeomPanels();
 		}
 
 	}

@@ -25,14 +25,19 @@ public class PointPanel extends GLPanel {
 	public static final Vector2f SIZE = new Vector2f(DEFAULT_SIZE.x / 12, DEFAULT_SIZE.y / 2);
 	public final Set<Character> allowedChars;
 
+	private OptionPanel options;
 	private Point _p;
 	private double[] _pnts;
 	private List<GLLimitedTextBox> _tboxes;
 
-	public PointPanel(Point p) {
+	public PointPanel(Point p, OptionPanel options) {
 		super();
+		this.setSize(DEFAULT_SIZE.x, DEFAULT_SIZE.y);
+		this.setLocation(0, 0);
+		this.setBackground(new Color(0, 0, 0, 0));
 		
 		this._p = p;
+		this.options = options;
 		_pnts = _p.getPointArray();
 		_tboxes = new ArrayList<>(3);
 
@@ -74,6 +79,13 @@ public class PointPanel extends GLPanel {
 			tbox.addTriggerable(new TriggerHandler(i + 1));
 		}
 	}
+	
+	@Override
+	public void update() {
+		_tboxes.get(0).setText(String.format("%.2f", _pnts[0]));
+		_tboxes.get(1).setText(String.format("%.2f", _pnts[1]));
+		_tboxes.get(2).setText(String.format("%.2f", _pnts[2]));
+	}
 
 	private class TriggerHandler implements Triggerable {
 
@@ -91,6 +103,7 @@ public class PointPanel extends GLPanel {
 				double newPoint = Double.parseDouble(tb.getText());
 				_p.setN_(_index, new MDouble(newPoint));
 				setFocus(false);
+				options.updateGeomPanels();
 			} catch (NumberFormatException | GeometricFailure nfe) {
 			}
 		}

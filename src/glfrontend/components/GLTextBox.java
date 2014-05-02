@@ -2,7 +2,7 @@ package glfrontend.components;
 
 import static com.workshop.set.view.SetScreen.ORANGE;
 import static com.workshop.set.view.SetScreen.newRatio;
-import static glfrontend.GLFrontEnd.DEFAULT_FONT;
+import static glfrontend.GLFrontEnd.LABEL_FONT;
 import static glfrontend.components.GLComponent.TextAlignment.LEFT;
 import static glfrontend.components.GLComponent.TextAlignment.RIGHT;
 import static org.lwjgl.input.Keyboard.KEY_BACK;
@@ -135,14 +135,14 @@ public class GLTextBox extends GLComponent {
 
 	private void setTextLoc() {
 		float x;
-		int textHeight = DEFAULT_FONT.getAscent() + DEFAULT_FONT.getDescent();
+		int textHeight = LABEL_FONT.getAscent() + LABEL_FONT.getDescent();
 		Vector2f mid = new Vector2f();
 		Vector2f.sub(lr, ul, mid);
 
 		if (_textAlign == LEFT) {
 			x = edgeBuffer;
 		} else {
-			int textWidth = DEFAULT_FONT.getWidth(getText());
+			int textWidth = LABEL_FONT.getWidth(getText());
 			if (_textAlign == RIGHT) {
 				x = lr.x - textWidth - edgeBuffer;
 			} else { // CENTER
@@ -179,11 +179,11 @@ public class GLTextBox extends GLComponent {
 		glEnd();
 
 		if (_textLoc != null) {
-			DEFAULT_FONT.drawString(_textLoc.x + ul.x, _textLoc.y + ul.y, getText());
+			LABEL_FONT.drawString(_textLoc.x + ul.x, _textLoc.y + ul.y, getText());
 			glDisable(GL_TEXTURE_2D);
 		}
 
-		int width = DEFAULT_FONT.getWidth(_sb.substring(0, _cursor)) + Math.round(_spaceWidth * _endSpaces);
+		int width = LABEL_FONT.getWidth(_sb.substring(0, _cursor)) + Math.round(_spaceWidth * _endSpaces);
 		Vector2f cursorPos = new Vector2f(edgeBuffer + width, (getSize().y - edgeBuffer));
 
 		glColor4f(ORANGE[0], ORANGE[1], ORANGE[2], _opacity);
@@ -217,7 +217,7 @@ public class GLTextBox extends GLComponent {
 			_ctrlDown = true;
 			break;
 		case KEY_RETURN:
-			enterPressed();
+			triggerTriggers();
 			break;
 		case KEY_TAB:
 		case KEY_LSHIFT:
@@ -229,7 +229,8 @@ public class GLTextBox extends GLComponent {
 			break;
 		}
 	}
-	public void enterPressed() {
+	
+	public void triggerTriggers() {
 		for (Triggerable trigger : triggers) {
 			trigger.trigger(new TriggerEvent(this));
 		}

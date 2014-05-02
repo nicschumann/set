@@ -54,8 +54,8 @@ public class GLFrontEnd implements FrontEnd {
 	public static Vector2f SCALE = new Vector2f(1, 1);
 	public static String TITLE = "";
 
-	public static Font AWT_FONT = new Font("Sans Serif", Font.BOLD, 13);
-	public static UnicodeFont DEFAULT_FONT;
+	public static UnicodeFont LABEL_FONT;
+	public static UnicodeFont BUTTON_FONT;
 
 	private static final FloatBuffer perspectiveProjectionMatrix = BufferUtils.createFloatBuffer(16);
 	private static final FloatBuffer orthographicProjectionMatrix = BufferUtils.createFloatBuffer(16);
@@ -88,7 +88,7 @@ public class GLFrontEnd implements FrontEnd {
 		setUpDisplay();
 		setUpStates();
 		setUpMatrices();
-		setFont(Color.WHITE);
+		setFonts();
 
 		Keyboard.enableRepeatEvents(true);
 
@@ -305,8 +305,8 @@ public class GLFrontEnd implements FrontEnd {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		// Only shows the image on the front of the surface.
-//		glEnable(GL_CULL_FACE);
-//		glCullFace(GL_BACK);
+		// glEnable(GL_CULL_FACE);
+		// glCullFace(GL_BACK);
 	}
 
 	/**
@@ -360,12 +360,17 @@ public class GLFrontEnd implements FrontEnd {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void setFont(Color color) {
-		DEFAULT_FONT = new UnicodeFont(AWT_FONT);
-		DEFAULT_FONT.getEffects().add(new ColorEffect(color));
-		DEFAULT_FONT.addAsciiGlyphs();
+	public static void setFonts() {
+		LABEL_FONT = new UnicodeFont(new Font("Sans Serif", Font.BOLD, 14));
+		LABEL_FONT.getEffects().add(new ColorEffect(Color.WHITE));
+		LABEL_FONT.addAsciiGlyphs();
+
+		BUTTON_FONT = new UnicodeFont(new Font("Times New Roman", Font.BOLD, 14));
+		BUTTON_FONT.getEffects().add(new ColorEffect(Color.BLACK));
+		BUTTON_FONT.addAsciiGlyphs();
 		try {
-			DEFAULT_FONT.loadGlyphs();
+			LABEL_FONT.loadGlyphs();
+			BUTTON_FONT.loadGlyphs();
 		} catch (SlickException e) {
 			e.printStackTrace();
 		}
