@@ -34,7 +34,9 @@ import glfrontend.ScreenFrame.KeyEvent;
 import glfrontend.ScreenFrame.MouseEvent;
 import glfrontend.components.GLPanel;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
@@ -45,12 +47,18 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Vector2f;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.UnicodeFont;
+import org.newdawn.slick.font.effects.ColorEffect;
 
 public class GLFrontEnd implements FrontEnd {
 
 	public static Dimension WINDOW_DIMENSIONS = new Dimension(500, 500);
 	public static Vector2f SCALE = new Vector2f(1, 1);
 	public static String TITLE = "";
+
+	public static Font AWT_FONT = new Font("Sans Serif", Font.BOLD, 13);
+	public static UnicodeFont DEFAULT_FONT;
 
 	private static final FloatBuffer perspectiveProjectionMatrix = BufferUtils.createFloatBuffer(16);
 	private static final FloatBuffer orthographicProjectionMatrix = BufferUtils.createFloatBuffer(16);
@@ -59,7 +67,7 @@ public class GLFrontEnd implements FrontEnd {
 	private boolean clickLeft, clickRight, clickWheel;
 	private Vector2f prevMouse;
 	private boolean contained;
-	
+
 	private long animationTime;
 
 	private ScreenFrame _frame;
@@ -83,6 +91,10 @@ public class GLFrontEnd implements FrontEnd {
 		setUpDisplay();
 		setUpStates();
 		setUpMatrices();
+		setFont(Color.WHITE);
+
+		Keyboard.enableRepeatEvents(true);
+
 		_frame = new GLPanel();
 		_frame.setLocation(new Vector2f(0, 0));
 		_frame.setSize(new Vector2f(WINDOW_DIMENSIONS.width, WINDOW_DIMENSIONS.height));
@@ -348,6 +360,18 @@ public class GLFrontEnd implements FrontEnd {
 
 	public static float mouseY() {
 		return Display.getHeight() - Mouse.getY() - 1;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static void setFont(Color color) {
+		DEFAULT_FONT = new UnicodeFont(AWT_FONT);
+		DEFAULT_FONT.getEffects().add(new ColorEffect(color));
+		DEFAULT_FONT.addAsciiGlyphs();
+		try {
+			DEFAULT_FONT.loadGlyphs();
+		} catch (SlickException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

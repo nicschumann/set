@@ -1,28 +1,55 @@
 package glfrontend.components;
 
+import static com.workshop.set.view.SetScreen.ORANGE;
 import static com.workshop.set.view.SetScreen.newRatio;
+import static glfrontend.GLFrontEnd.DEFAULT_FONT;
 import static glfrontend.components.GLComponent.TextAlignment.LEFT;
 import static glfrontend.components.GLComponent.TextAlignment.RIGHT;
+import static org.lwjgl.input.Keyboard.KEY_BACK;
+import static org.lwjgl.input.Keyboard.KEY_LCONTROL;
+import static org.lwjgl.input.Keyboard.KEY_LEFT;
+import static org.lwjgl.input.Keyboard.KEY_LSHIFT;
+import static org.lwjgl.input.Keyboard.KEY_RCONTROL;
+import static org.lwjgl.input.Keyboard.KEY_RETURN;
+import static org.lwjgl.input.Keyboard.KEY_RIGHT;
+import static org.lwjgl.input.Keyboard.KEY_RSHIFT;
+import static org.lwjgl.input.Keyboard.KEY_TAB;
+import static org.lwjgl.opengl.GL11.GL_LINES;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glBegin;
+import static org.lwjgl.opengl.GL11.glColor4f;
 import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glLineWidth;
+import static org.lwjgl.opengl.GL11.glVertex2f;
+import glfrontend.Triggerable;
+import glfrontend.Triggerable.TriggerEvent;
 
-import java.awt.Color;
-import java.awt.Font;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.lwjgl.util.vector.Vector2f;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.UnicodeFont;
-import org.newdawn.slick.font.effects.ColorEffect;
 import org.newdawn.slick.opengl.TextureImpl;
 
 public class GLTextBox extends GLComponent {
 
-	private String text;
-	private Font awtFont;
-	private UnicodeFont font;
-	private Vector2f textLoc;
-	private Color _foreground;
+	int edgeBuffer = 3;
+
+	// private String _text;
+	private Vector2f _textLoc;
+	// private Color _foreground;
 	private TextAlignment _textAlign;
+
+	private boolean _ctrlDown;
+
+	private int _cursor;
+	private long _cursorTimer;
+	private float _opacity;
+	private StringBuilder _sb;
+	private int _endSpaces;
+	private float _spaceWidth;
+	
+	private List<Triggerable> triggers;
 
 	public GLTextBox() {
 		super();
@@ -36,69 +63,94 @@ public class GLTextBox extends GLComponent {
 	}
 
 	public void init() {
-		text = "";
-		_foreground = Color.BLACK;
 		_textAlign = LEFT;
-		
-		setFont(new java.awt.Font("Sans Serif", java.awt.Font.BOLD, 13));
-		TextureImpl.bindNone();
-	}
 
-	public void setForeground(Color color) {
-		_foreground = color;
-		setFont(awtFont);
+		setTextLoc();
+		_spaceWidth = 4.2f;
+		TextureImpl.bindNone();
+
+		_ctrlDown = false;
+
+		_cursor = 0;
+		_cursorTimer = 500;
+		_opacity = 0.8f;
+
+		_sb = new StringBuilder();
+		_endSpaces = 0;
+		
+		triggers = new ArrayList<>();
+	}
+	
+	/**
+	 * Triggered when 'ENTER' or 'RETURN' is pressed
+	 * 
+	 * @param trigger - the (@link Triggerable} event
+	 */
+	public void addTriggerable(Triggerable trigger) {
+		triggers.add(trigger);
 	}
 
 	public void setText(String text) {
-		this.text = text;
+		_sb = new StringBuilder(text);
+		_cursor = _sb.length();
+		_endSpaces = 0;
+		for (int i = _cursor - 1; i >= 0 && _sb.charAt(i) == ' '; i--) {
+			_endSpaces++;
+		}
 		setTextLoc();
 	}
 
 	public String getText() {
-		return text;
+		return _sb.toString();
 	}
-	
+
+	public void addCharacter(char c) {
+		_sb.insert(_cursor++, c);
+		if (_sb.length() == _cursor && c == ' ')
+			_endSpaces++;
+		else
+			_endSpaces = 0;
+	}
+
+	public void removeCharacter() {
+		_sb.deleteCharAt(--_cursor);
+		if (_sb.length() == _cursor) {
+			if (_endSpaces != 0)
+				_endSpaces--;
+			else {
+				for (int i = _cursor - 1; i >= 0 && _sb.charAt(i) == ' '; i--) {
+					_endSpaces++;
+				}
+			}
+		}
+	}
+
 	public void setAlignment(TextAlignment align) {
 		_textAlign = align;
 	}
 
-	@SuppressWarnings("unchecked")
-	public void setFont(Font awtFont) {
-		this.awtFont = awtFont;
-		font = new UnicodeFont(awtFont);
-		font.getEffects().add(new ColorEffect(_foreground));
-		font.addAsciiGlyphs();
-		try {
-			font.loadGlyphs();
-		} catch (SlickException e) {
-			e.printStackTrace();
-		}
-		setTextLoc();
+	public boolean isShiftDown() {
+		return _ctrlDown;
 	}
 
 	private void setTextLoc() {
-		if (font == null)
-			return;
-		
 		float x;
-		int textHeight = font.getAscent() + font.getDescent();
+		int textHeight = DEFAULT_FONT.getAscent() + DEFAULT_FONT.getDescent();
 		Vector2f mid = new Vector2f();
 		Vector2f.sub(lr, ul, mid);
-		
+
 		if (_textAlign == LEFT) {
-			x = 5;
+			x = edgeBuffer;
 		} else {
-			int textWidth = font.getWidth(text);
+			int textWidth = DEFAULT_FONT.getWidth(getText());
 			if (_textAlign == RIGHT) {
-				x = lr.x - textWidth - 5;
+				x = lr.x - textWidth - edgeBuffer;
 			} else { // CENTER
 				x = (mid.x - textWidth) / 2;
 			}
 		}
-			
-		
-		
-		textLoc = new Vector2f(x, (mid.y - textHeight) / 2);
+
+		_textLoc = new Vector2f(x, (mid.y - textHeight) / 2);
 	}
 
 	@Override
@@ -109,10 +161,84 @@ public class GLTextBox extends GLComponent {
 
 	@Override
 	public void draw() {
-		if (textLoc != null) {
-			font.drawString(textLoc.x + ul.x, textLoc.y + ul.y, text);
+
+		glColor4f(ORANGE[0], ORANGE[1], ORANGE[2], 0.2f);
+		glLineWidth(1f);
+		glBegin(GL_LINES);
+		glVertex2f(ul.x, ul.y);
+		glVertex2f(ul.x, lr.y);
+
+		glVertex2f(ul.x, lr.y);
+		glVertex2f(lr.x, lr.y);
+
+		glVertex2f(lr.x, lr.y);
+		glVertex2f(lr.x, ul.y);
+
+		glVertex2f(lr.x, ul.y);
+		glVertex2f(ul.x, ul.y);
+		glEnd();
+
+		if (_textLoc != null) {
+			DEFAULT_FONT.drawString(_textLoc.x + ul.x, _textLoc.y + ul.y, getText());
 			glDisable(GL_TEXTURE_2D);
 		}
+
+		int width = DEFAULT_FONT.getWidth(_sb.substring(0, _cursor)) + Math.round(_spaceWidth * _endSpaces);
+		Vector2f cursorPos = new Vector2f(edgeBuffer + width, (getSize().y - edgeBuffer));
+
+		glColor4f(ORANGE[0], ORANGE[1], ORANGE[2], _opacity);
+
+		glLineWidth(3f);
+		glBegin(GL_LINES);
+		glVertex2f(ul.x + cursorPos.x, ul.y + edgeBuffer);
+		glVertex2f(ul.x + cursorPos.x, ul.y + cursorPos.y);
+		glEnd();
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		switch (e.keyCode) {
+		case KEY_LEFT:
+			_cursor--;
+			if (_cursor < 0)
+				_cursor = 0;
+			break;
+		case KEY_RIGHT:
+			_cursor++;
+			if (_cursor >= _sb.length())
+				_cursor = _sb.length();
+			break;
+		case KEY_BACK:
+			if (_sb.length() > 0 && _cursor > 0)
+				removeCharacter();
+			break;
+		case KEY_LCONTROL:
+		case KEY_RCONTROL:
+			_ctrlDown = true;
+			break;
+		case KEY_RETURN:
+			enterPressed();
+			break;
+		case KEY_TAB:
+		case KEY_LSHIFT:
+		case KEY_RSHIFT:
+			// do nothing
+			break;
+		default:
+			addCharacter(e.keyChar);
+			break;
+		}
+	}
+	public void enterPressed() {
+		for (Triggerable trigger : triggers) {
+			trigger.trigger(new TriggerEvent(this));
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		if (e.keyCode == KEY_LCONTROL || e.keyCode == KEY_RCONTROL)
+			_ctrlDown = false;
 	}
 
 	@Override
@@ -139,5 +265,21 @@ public class GLTextBox extends GLComponent {
 		}
 	}
 
+	@Override
+	public void animate(long millisSincePrev) {
+		if (isInFocus()) {
+			_cursorTimer -= millisSincePrev;
+			if (_cursorTimer < 0) {
+				_cursorTimer = 500;
+				if (_opacity == 0.8f)
+					_opacity = 0.2f;
+				else
+					_opacity = 0.8f;
+			}
+		} else {
+			_opacity = 0.0f;
+			_cursorTimer = 300;
+		}
+	}
 
 }
