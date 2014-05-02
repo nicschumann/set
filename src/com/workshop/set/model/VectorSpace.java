@@ -180,6 +180,7 @@ public class VectorSpace {
         public void setN_( int i, MDouble d ) throws GeometricFailure {
         	if ( i <= 0 || i > dimension ) throw new GeometricFailure( i );
         	components[ i - 1 ] = d;
+        	namedComponents.put( names[ i - 1 ], d );
         }
 
         /**

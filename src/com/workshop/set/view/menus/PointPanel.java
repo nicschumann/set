@@ -82,6 +82,7 @@ public class PointPanel extends GLPanel {
 	
 	@Override
 	public void update() {
+		_pnts = _p.getPointArray();
 		_tboxes.get(0).setText(String.format("%.2f", _pnts[0]));
 		_tboxes.get(1).setText(String.format("%.2f", _pnts[1]));
 		_tboxes.get(2).setText(String.format("%.2f", _pnts[2]));

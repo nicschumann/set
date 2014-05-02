@@ -1,5 +1,6 @@
 package com.workshop.set.view.menus;
 
+import glfrontend.components.GLButton;
 import glfrontend.components.GLPanel;
 
 import java.awt.Color;
@@ -9,6 +10,7 @@ import java.util.List;
 import org.lwjgl.util.vector.Vector2f;
 
 import com.workshop.set.model.VectorSpace.Geometry;
+import com.workshop.set.view.options.Option;
 
 public class OptionPanel extends GLPanel {
 
@@ -21,9 +23,9 @@ public class OptionPanel extends GLPanel {
 	private boolean _moving;
 	private boolean _rollout;
 	private List<GeomPanel> _geoms;
+	private List<GLButton> _buttons;
 //	private GLTextBox _focusBox;
 
-	// private List<Button> _buttons;
 
 	public OptionPanel() {
 		super();
@@ -38,7 +40,7 @@ public class OptionPanel extends GLPanel {
 		_rollout = false;
 
 		_geoms = new ArrayList<>();
-		// _buttons = new ArrayList<>();
+		 _buttons = new ArrayList<>();
 		
 //		_focusBox = null;
 	}
@@ -69,6 +71,10 @@ public class OptionPanel extends GLPanel {
 		this.setSize(DEFAULT_SIZE);
 		if (toggle && !isMoving() && isVisible())
 			toggle();
+	}
+	
+	public void setOptions(List<Option> options) {
+		
 	}
 
 	public boolean isMoving() {
