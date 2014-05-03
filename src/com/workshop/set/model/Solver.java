@@ -6,24 +6,34 @@ import com.workshop.set.model.lang.environments.Evaluation;
 import com.workshop.set.model.VectorSpace.*;
 
 
-public class Solver implements Model {
-    public Solver( Gensym generator ) {
+public class Solver implements Model /*, com.workshop.set.model.interfaces.Model */  {
+    public Solver( VectorSpace v, Gensym generator ) {
 
-
-        this.generator      = generator;
-        this.environment    = new Evaluation( generator );
+        this.space              = v;
+        this.generator          = generator;
+        this.environment        = new Evaluation( generator );
 
 
     }
 
+    /* Basis Objects :
+    *  These objects are the foundations of the solution space */
+
+    private VectorSpace         space;
     private Evaluation          environment;
     private Gensym              generator;
+
+    /* Maps :
+     * These objects are the mappings between terms and their vector representations */
+
 
     /*
      * In order for the solver to function properly, we require a mapping from
      * Terms into geometries and geometries into terms. ( or some kind of symmetric map )
      */
-    
+
+
+
 
 
 
@@ -33,7 +43,7 @@ public class Solver implements Model {
      * as well as adds the appropriate terms to the context;
      * @param g a geometry to add to the context for rendering and evaluation
      */
-    /* @Override */
+
     public void addGeometry( Geometry g ) {
 
     }
@@ -48,6 +58,32 @@ public class Solver implements Model {
 
     public void _addTerm( Term t ) {
 
+    }
+
+
+    public void removeGeometry( Geometry g ) {
+
+    }
+
+    
+    public void removeGeometryAll(Geometry g ) {
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private Geometry termMap( Term r ) {
+        return null;
     }
 
 
