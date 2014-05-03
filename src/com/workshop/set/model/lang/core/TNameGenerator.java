@@ -68,7 +68,7 @@ public class TNameGenerator
         }
         @Override
         public String toString() {
-            return ( readable.isEmpty() ) ? "?" + Long.toString( index ) : readable; // + "[" + Long.toString( index ) + "]";
+            return ( readable.isEmpty() ) ? "name" + Long.toString( index ) : readable; // + "[" + Long.toString( index ) + "]";
         }
 
         @Override

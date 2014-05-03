@@ -40,7 +40,10 @@ public class Solver implements Model /*, com.workshop.set.model.interfaces.Model
 
     /**
      * the addGeometry adds a geometry to the set of render-able elements on the stage,
-     * as well as adds the appropriate terms to the context;
+     * as well as adds the appropriate terms to the context.
+     *  Add geometry needs to
+     *      - map the geometry into its term representation.
+     *
      * @param g a geometry to add to the context for rendering and evaluation
      */
 
