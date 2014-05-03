@@ -19,18 +19,10 @@ public class RelationalConstraint implements Constraint {
 			Point pivot = pivots.get(i);
 			Point orbit = orbits.get(i);
 			
-			//System.out.println("Pivot's x : " + pivot.getN_(2).get());
-			
 			for (int index : indices){
-				
-				//System.out.println("Index : " + index);
 				//index of interest to be constrained between pivot and orbit in "relation" way
 				_equations.add(new LinearEquation(pivot, orbit, index, relation));
 			}
-			
-			//add this constraint to the orbit in question	
-			
-			System.out.println("adding this constraint");
 			orbit.addConstraint(this);
 		}
 	}

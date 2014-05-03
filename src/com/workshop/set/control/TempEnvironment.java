@@ -105,11 +105,6 @@ public class TempEnvironment implements Model {
 
 	private void drawPoint(Point p, boolean pivot) {
 		
-		//System.out.println("Pivot? " + p.getPivot());
-		
-		if(p._constraints.size()>0)
-			System.out.println("How many constraints are on this orbit : " + p._constraints.size());
-		
 		p.applyConstraints();
 		
 		try {
@@ -180,9 +175,6 @@ public class TempEnvironment implements Model {
 				}
 			}
 		}
-		
-		System.out.println("pivots size: " + pivots.size());
-		System.out.println("orbits size: " + orbits.size());
 		
 		switch(type){
 			case("YValsEqual"):
