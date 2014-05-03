@@ -96,7 +96,7 @@ public class TMultiplicative implements Pattern {
     public int hashCode() {
 
         int a   = multiplicand.hashCode();
-        int b   = (int)scalar.index;
+        int b   = (int)scalar.getIndex();
 
         return 37 * (37 * ( (a ^ (a >>> 31))) + (b ^ (b >>> 31)));
 

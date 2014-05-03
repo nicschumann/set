@@ -10,20 +10,20 @@ import com.workshop.set.model.lang.exceptions.PatternMatchException;
 import com.workshop.set.model.lang.exceptions.ProofFailureException;
 import com.workshop.set.model.lang.exceptions.TypecheckingException;
 import com.workshop.set.model.lang.judgements.HasValue;
+import com.workshop.set.model.ref.MDouble;
 import com.workshop.set.model.ref.MappableList;
 
-/**
- * Created by nicschumann on 4/1/14.
- */
+
 public class Evaluation implements Environment<Term> {
 
     public Evaluation( Gensym g ) {
 
-        typings = new ArrayList<Derivation<Term>>();
-        evaluations = new ArrayList<Derivation<Term>>();
+        typings = new ArrayList<>();
+        evaluations = new ArrayList<>();
 
         valueContext = new HashMap<>();
         typeContext = new HashMap<>();
+        referenceContext = new HashMap<>();
 
         typings.add( 0, new Derivation<Term>( g ) );
         evaluations.add( 0, new Derivation<Term>( g ) );
@@ -46,6 +46,7 @@ public class Evaluation implements Environment<Term> {
 
     private Map<Symbol,Term> valueContext;
     private Map<Symbol,Term> typeContext;
+    private Map<Symbol,MDouble> referenceContext;
 
     private Term value;
 
@@ -62,20 +63,51 @@ public class Evaluation implements Environment<Term> {
         } else throw new ProofFailureException( "Unbound Identifier : " + s.toString() );
     }
 
-    public Environment<Term> name( Symbol s, Term t )
+    public Evaluation name( Symbol s, Term t )
         throws ProofFailureException,
             TypecheckingException {
+        if ( !referenceContext.containsKey( s ) ) {
+            t.type( this );
+            typeContext.put( s, proves( t ) );
+            valueContext.put( s, evaluate( t ) );
+            page();
 
-        t.type( this );
-        typeContext.put( s, proves( t ) );
-        valueContext.put( s, evaluate( t ) );
-        page();
+            for ( Map.Entry<Symbol,Term> VTPair : typeContext.entrySet() ) {
+                extend( VTPair.getKey(), VTPair.getValue() );
+            }
 
-        for ( Map.Entry<Symbol,Term> VTPair : typeContext.entrySet() ) {
-            extend( VTPair.getKey(), VTPair.getValue() );
-        }
+            for ( Map.Entry<Symbol,MDouble> VVPair : referenceContext.entrySet() ) {
+                extend( VVPair.getKey(), new TField() );
+            }
 
-        return this;
+            return this;
+        } else throw new ProofFailureException( "Mutability Error: Attempted Redefinition of mutable \""+s+"\" as a constant name." );
+
+    }
+
+    public Evaluation set( Symbol s, double v )
+        throws ProofFailureException {
+        if ( !valueContext.containsKey( s ) ) {
+            if ( referenceContext.containsKey( s ) ) {
+                referenceContext.get( s ).set( v );
+            } else {
+                referenceContext.put( s, new MDouble( v ) );
+            }
+            extend( s, new TField() );
+            return this;
+        } else throw new ProofFailureException( "Mutability Error: Attempted Redefinition of constant \""+s+"\" as a mutable name."  );
+    }
+
+    public Evaluation assume( Symbol s, Term type )
+            throws ProofFailureException,
+            TypecheckingException {
+        type.type( this );
+        if ( proves( type ) instanceof TUniverse ) {
+            Term tprim = evaluate( type );
+            typeContext.put( s, tprim );
+            extend( s, tprim );
+            return this;
+        } else throw new ProofFailureException( "Ascription Inconsistency: Tried to assume an inhabitant of a non-set value." );
     }
 
     public Term eval( Term t )
@@ -84,6 +116,10 @@ public class Evaluation implements Environment<Term> {
         t.type(this);
         return evaluate( t );
     }
+//
+//    public Term type( Term t ) {
+//
+//    }
 
     // LANG_INTERNAL methods:
     // Evaluation methods:
@@ -155,6 +191,8 @@ public class Evaluation implements Environment<Term> {
         } else if ( t instanceof TNameGenerator.TName ) {
             if ( valueContext.containsKey( t ) ) {
                 return evaluate( valueContext.get( t ) );
+            } else if ( referenceContext.containsKey( t ) ) {
+                return new TScalar( referenceContext.get( t ) );
             } else return t;
         } else if ( t instanceof TScalar ) {
             return new TScalar( ((TScalar) t).index );
@@ -230,7 +268,7 @@ public class Evaluation implements Environment<Term> {
     public Environment<Term> extend( Term x, Term t ) {
         Derivation<Term> current;
         if ( typings.isEmpty() ) {
-            current = new Derivation<Term>( gensym );
+            current = new Derivation<>( gensym );
         } else {
             current = typings.get( deriving );
         }
@@ -245,7 +283,7 @@ public class Evaluation implements Environment<Term> {
 
         Derivation<Term> current;
         if ( typings.isEmpty() ) {
-            current = new Derivation<Term>( gensym );
+            current = new Derivation<>( gensym );
         } else {
             current = typings.get( deriving );
         }
@@ -353,10 +391,25 @@ public class Evaluation implements Environment<Term> {
             s.append( VTPair.getKey() )
              .append( " : " )
              .append( VTPair.getValue() )
-             .append( "\t=>\t" )
-             .append( valueContext.get( VTPair.getKey() ).toString() )
-             .append( System.lineSeparator() );
+             .append( "\t=>\t" );
+
+             if ( valueContext.containsKey(VTPair.getKey())) {
+                 s.append( valueContext.get( VTPair.getKey() ).toString() );
+             } else { s.append( "assumed" ); }
+
+             s.append( System.lineSeparator() );
         }
+
+        if ( !referenceContext.isEmpty() ) {
+            s.append( "-------------------------------------------------" )
+             .append(System.lineSeparator());
+
+            for ( Map.Entry<Symbol,MDouble> VVPair : referenceContext.entrySet() ) {
+                s.append( VVPair.getKey() ).append( "\t=>\t" ).append( VVPair.getValue().get() );
+                s.append( System.lineSeparator() );
+            }
+        }
+
         return s.toString();
     }
 

@@ -18,6 +18,6 @@ public class ProofFailureException extends Exception {
 
     @Override
     public String getLocalizedMessage() {
-        return "ProofFailureException: " + msg;
+        return msg;
     }
 }

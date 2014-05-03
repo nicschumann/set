@@ -69,6 +69,11 @@ public class ConstraintGraph {
 
     }
 
+    public ConstraintGraph( ) {
+        adjacencies = HashBasedTable.create();
+        values = new HashMap<>();
+    }
+
     public ConstraintGraph( ConstraintSet... sets ) {
         adjacencies = HashBasedTable.create();
         values = new HashMap<>();
@@ -89,6 +94,36 @@ public class ConstraintGraph {
 
     private Table<Symbol,Symbol,Edge> adjacencies;
     private Map<Symbol,MDouble> values;
+
+
+//    public ConstraintGraph add( ConstraintSet... sets ) {
+//        for ( ConstraintSet set : sets ) {
+//            for ( ConstraintSet.Pivot tuple : set.getRelation() ) {
+//
+//            }
+//        }
+//    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private Edge construct( ArrayList<Symbol> orbits, Map<Symbol,MDouble> values ) {
         if ( orbits.isEmpty() ) return null;

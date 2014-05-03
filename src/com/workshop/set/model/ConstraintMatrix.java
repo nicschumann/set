@@ -8,8 +8,8 @@
 //import java.util.*;
 //
 ///**
-// * Created by nicschumann on 4/17/14.
-// */
+//* Created by nicschumann on 4/17/14.
+//*/
 //public class ConstraintMatrix {
 //    private class ConstraintKey {
 //        public ConstraintKey( double UID ) { this.UID = UID; }

@@ -4,10 +4,7 @@ import com.workshop.set.model.interfaces.Environment;
 import com.workshop.set.model.interfaces.Term;
 import com.workshop.set.model.lang.core.TNameGenerator;
 import com.workshop.set.model.lang.environments.Evaluation;
-import com.workshop.set.model.lang.exceptions.LexException;
-import com.workshop.set.model.lang.exceptions.ParseException;
-import com.workshop.set.model.lang.exceptions.ProofFailureException;
-import com.workshop.set.model.lang.exceptions.TypecheckingException;
+import com.workshop.set.model.lang.exceptions.*;
 import com.workshop.set.model.lang.parser.EXPRParser;
 import com.workshop.set.model.lang.parser.Lexer;
 
@@ -17,7 +14,7 @@ import java.io.InputStreamReader;
 
 
 public class Interpreter {
-    public static final String prompt = "set> ";
+    public static final String prompt = "\u001B[32mset>\u001B[0m ";
 
     public Interpreter() {  running = true; }
 
@@ -107,25 +104,70 @@ public class Interpreter {
     }
 
 
-    public Environment<Term> runCommand( String command, String arg, Evaluation env, Lexer l, EXPRParser p )
+    public Evaluation runCommand( String command, String arg, Evaluation env, Lexer l, EXPRParser p )
        throws ParseException, LexException, IOException, ProofFailureException, TypecheckingException {
+        String symb;
+        String term;
         switch ( command ) {
+            case ":c":
             case ":context":
                 if ( arg.isEmpty() ) {
                     outln( env.toString() );
                     return env;
-                } break;
+                }
+                throw new ProofFailureException( "Command \":context\" takes no arguments." );
+
+
+
+            case ":l":
             case ":let":
-                    String symb = arg.substring(0, arg.indexOf( " " ));
-                    String term = arg.substring( arg.indexOf(" ")+1 );
-                    env.name( env.basename( symb ), p.parse( l.lex( term ) ) );
-                    outln(env.toString());
-                    return env;
+                    symb = arg.substring(0, arg.indexOf( " " )).trim();
+                    term = arg.substring( arg.indexOf(" ")+1 ).trim();
+                    if ( symb.matches( "^[a-zA-Z0-9]*$" ) ) {
+                        env.name( env.basename( symb ), p.parse( l.lex( term ) ) );
+                        outln(env.toString());
+                        return env;
+                    }
+                    throw new ProofFailureException( "Illegal Identifier: \"" + symb + "\"" );
+
+            case ":a":
+            case ":assume":
+                    symb = arg.substring(0, arg.indexOf( " " )).trim();
+                    term = arg.substring( arg.indexOf(" ")+1 ).trim();
+                    if ( symb.matches( "^[a-zA-Z0-9]*$" ) ) {
+                        Term t = p.parse( l.lex( term ) );
+                        env.assume(env.basename(symb), t);
+                        outln( env.toString() );
+                        return env;
+                    }
+                    throw new ProofFailureException( "Illegal Identifier: \"" + symb + "\"" );
+            case ":t":
             case ":type":
                     Term t = p.parse( l.lex( arg ) );
                     t.type( env );
                     outln( env.proves( t ).toString() );
                     return env;
+
+            case ":s":
+            case ":set":
+                    symb = arg.substring(0, arg.indexOf( " " )).trim();
+                    term = arg.substring( arg.indexOf(" ")+1 ).trim();
+                    if ( symb.matches( "^[a-zA-Z0-9]*$" ) ) {
+
+                        try {
+                            double val = Double.parseDouble( term );
+                            env.set( env.basename( symb ), val );
+                            outln( env.toString() );
+                            return env;
+                        } catch ( NumberFormatException e ) {
+                            throw new ProofFailureException( "Can't \":set\" a non-numerical component symbol: \"" + term + "\"; perhaps you meant to \":let\"?" );
+                        }
+                    }
+                    throw new ProofFailureException( "Illegal Identifier: \"" + symb + "\"" );
+
+
+            case ":q":
+            case ":quit":
             case ":exit":
                     running = false;
                     return env;
@@ -133,8 +175,6 @@ public class Interpreter {
                 errln( "Unrecognized command, \""+command+"\"");
                 return env;
         }
-        errln( "Unrecognized command, \""+command+"\"");
-        return env;
     }
 
     public static boolean prompt() {

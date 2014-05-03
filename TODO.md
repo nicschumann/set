@@ -7,17 +7,10 @@
   - Update the ConstraintMap to allow constraint
     between single components.
 
+  - Check into binder scoping / equality, especially when binding abstractions, we may have malformed contexts.
+
 
 ##View
 
 ##Controller
 
-in: Collection<g : Geometry>
-  ->  Renderer
-        new Structure<GLShape> l
-      - for each g in Collection:
-          ?type Geometry?
-              - Relation?    -> add appropriate shape to l
-              - Point?       -> add GLPoint to l.
-  <-    return l
-out: Collection<GLShape>
