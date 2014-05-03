@@ -17,7 +17,7 @@ import com.workshop.set.model.VectorSpace.Relation;
 
 public class RelationPanel extends GLPanel {
 
-	public static final Vector2f SIZE = new Vector2f(DEFAULT_SIZE.x / 12, DEFAULT_SIZE.y);
+	public static final Vector2f SIZE = new Vector2f(DEFAULT_SIZE.x * 1.5f / 12, DEFAULT_SIZE.y);
 
 	private OptionPanel options;
 	private Relation _r;
@@ -25,7 +25,7 @@ public class RelationPanel extends GLPanel {
 
 	public RelationPanel(Relation r, OptionPanel options) {
 		super();
-		this.setSize(DEFAULT_SIZE);
+		this.setSize(DEFAULT_SIZE.x * 1.5f, DEFAULT_SIZE.y);
 		this.setLocation(DEFAULT_SIZE.x, 0);
 		this.setBackground(new Color(0, 0, 0, 0));
 
@@ -34,7 +34,7 @@ public class RelationPanel extends GLPanel {
 		_tboxes = new ArrayList<>(2);
 
 		initLabelAndPoint(0, 0, "A:", _r.domain().name().toString());
-		initLabelAndPoint(DEFAULT_SIZE.x / 2f, 0, "B:", _r.codomain().name().toString());
+		initLabelAndPoint(DEFAULT_SIZE.x * 1.5f / 2f, 0, "B:", _r.codomain().name().toString());
 
 		setTriggers();
 	}

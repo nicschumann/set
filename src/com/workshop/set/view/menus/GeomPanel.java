@@ -56,8 +56,8 @@ public class GeomPanel extends GLPanel {
 		// this.setSize(DEFAULT_SIZE.x * 2f, DEFAULT_SIZE.y);
 		// this.add(_bottomPanel);
 		_moving = false;
-		_expansionSpeed = 1000; // 1000 pixels/second
-		_panelSpeed = -_expansionSpeed / 2;
+		_expansionSpeed = 1500; // 1000 pixels/second
+		_panelSpeed = -_expansionSpeed / 3;
 	}
 
 	private void initNameLabel() {
@@ -132,8 +132,8 @@ public class GeomPanel extends GLPanel {
 	}
 
 	@Override
-	public void mouseReleased(MouseEvent e) {
-		super.mouseReleased(e);
+	public void mousePressed(MouseEvent e) {
+		super.mousePressed(e);
 		if (e.location.x < DEFAULT_SIZE.x / 2f + 20) {
 			if (_moving) {
 				_expansionSpeed = -_expansionSpeed;
@@ -177,8 +177,8 @@ public class GeomPanel extends GLPanel {
 				_moving = false;
 				_expansionSpeed = -_expansionSpeed;
 				_panelSpeed = -_panelSpeed;
-			} else if (w >= DEFAULT_SIZE.x * 2) {
-				w = DEFAULT_SIZE.x * 2;
+			} else if (w >= DEFAULT_SIZE.x * 2.5f) {
+				w = DEFAULT_SIZE.x * 2.5f;
 				x = -DEFAULT_SIZE.x / 2;
 				_moving = false;
 				_typeLabel.setVisible(true);

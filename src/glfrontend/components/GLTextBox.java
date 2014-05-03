@@ -25,10 +25,12 @@ import static org.lwjgl.opengl.GL11.glVertex2f;
 import glfrontend.Triggerable;
 import glfrontend.Triggerable.TriggerEvent;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.util.vector.Vector2f;
+import org.newdawn.slick.font.effects.ColorEffect;
 import org.newdawn.slick.opengl.TextureImpl;
 
 public class GLTextBox extends GLComponent {
@@ -37,7 +39,7 @@ public class GLTextBox extends GLComponent {
 
 	// private String _text;
 	private Vector2f _textLoc;
-	// private Color _foreground;
+	 private Color _foreground;
 	private TextAlignment _textAlign;
 
 	private boolean _ctrlDown;
@@ -79,6 +81,10 @@ public class GLTextBox extends GLComponent {
 		_endSpaces = 0;
 		
 		triggers = new ArrayList<>();
+	}
+	
+	public void setForeground(Color color) {
+		_foreground = color;
 	}
 	
 	/**
@@ -159,6 +165,7 @@ public class GLTextBox extends GLComponent {
 		setTextLoc();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void draw() {
 
@@ -179,6 +186,8 @@ public class GLTextBox extends GLComponent {
 		glEnd();
 
 		if (_textLoc != null) {
+			TYPE_FONT.getEffects().clear();
+			TYPE_FONT.getEffects().add(new ColorEffect(_foreground));
 			TYPE_FONT.drawString(_textLoc.x + ul.x, _textLoc.y + ul.y, getText());
 			glDisable(GL_TEXTURE_2D);
 		}
