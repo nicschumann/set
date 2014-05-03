@@ -370,16 +370,17 @@ public class GLFrontEnd implements FrontEnd {
 		TYPE_FONT.getEffects().add(new ColorEffect(Color.WHITE));
 		TYPE_FONT.addAsciiGlyphs();
 
-		BUTTON_FONT = new UnicodeFont(new Font("Times New Roman", Font.BOLD, 14));
-		BUTTON_FONT.getEffects().add(new ColorEffect(Color.BLACK));
-		BUTTON_FONT.addAsciiGlyphs();
+//		BUTTON_FONT = new UnicodeFont(new Font("Times New Roman", Font.BOLD, 14));
+//		BUTTON_FONT.getEffects().add(new ColorEffect(Color.BLACK));
+//		BUTTON_FONT.addAsciiGlyphs();
 		try {
 			LABEL_FONT.loadGlyphs();
 			TYPE_FONT.loadGlyphs();
-			BUTTON_FONT.loadGlyphs();
+//			BUTTON_FONT.loadGlyphs();
 		} catch (SlickException e) {
 			e.printStackTrace();
 		}
+		BUTTON_FONT = TYPE_FONT;
 	}
 
 }

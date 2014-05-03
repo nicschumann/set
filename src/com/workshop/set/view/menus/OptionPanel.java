@@ -15,14 +15,15 @@ public class OptionPanel extends GLPanel {
 
 	public static final Vector2f DEFAULT_SIZE = new Vector2f(200, 46);
 
-	// private int menuHeight = 300;
+	private int menuHeight = 0;
 
 	private int _panelSpeed;
-	// private int _menuSpeed;
+	private int _menuSpeed;
 	private boolean _moving;
 	private boolean _rollout;
 	private List<GeomPanel> _geoms;
 	private List<GLButton> _buttons;
+	private GLPanel _buttonPanel;
 
 	// private GLTextBox _focusBox;
 
@@ -34,12 +35,21 @@ public class OptionPanel extends GLPanel {
 		this.setResizeType(ResizeType.FIT_LEFT);
 		this.setVisible(false);
 		_panelSpeed = 1000; // pixels/second
-		// _menuSpeed = 1000; // pixels/second
+		_menuSpeed = 1000; // pixels/second
 		_moving = false;
 		_rollout = false;
 
 		_geoms = new ArrayList<>();
 		_buttons = new ArrayList<>();
+		
+		_buttonPanel = new GLPanel();
+		_buttonPanel.setLocation(DEFAULT_SIZE);
+		_buttonPanel.setSize(DEFAULT_SIZE.x, 0);
+		_buttonPanel.setBackground(new Color(0, 0, 0, 30));
+		_buttonPanel.setResizeType(ResizeType.FIT_LEFT);
+		_buttonPanel.setVisible(false);
+		
+		this.add(_buttonPanel);
 
 		// _focusBox = null;
 	}
@@ -56,10 +66,15 @@ public class OptionPanel extends GLPanel {
 		_geoms.add(panel);
 		this.add(panel);
 
-		this.setSize(getSize().x, _geoms.size() * DEFAULT_SIZE.y);
+		float height = _geoms.size() * DEFAULT_SIZE.y;
+		this.setSize(getSize().x, height);
+		
+//		System.out.println(height);
+		_buttonPanel.setLocation(0, height);
 
 		if (!isVisible())
 			toggle();
+		
 	}
 
 	public void removeGeomPanels(boolean toggle) {
@@ -80,11 +95,36 @@ public class OptionPanel extends GLPanel {
 		}
 		_geoms.clear();
 		this.setSize(DEFAULT_SIZE);
+		
+		for (GLButton button : _buttons) {
+			_buttonPanel.remove(button);
+		}
+		_buttons.clear();
+		_buttonPanel.setSize(DEFAULT_SIZE.x, 0);
+		_buttonPanel.setVisible(false);
+	}
+	
+	public void setButtons() {
+		addButton();
+		addButton();
+		addButton();
+		addButton();
 	}
 
 	public void addButton() {
-		// GLButton button = new GLButton("Do Things");
+		GLButton button = new GLButton("Do Things");
+		button.setSize(DEFAULT_SIZE.x, DEFAULT_SIZE.y / 2f);
+		button.setLocation(0, _buttons.size() * DEFAULT_SIZE.y / 2f);
+		button.setBackground(new Color(255, 128, 0, 0));
+		_buttons.add(button);
+//		this.add(button);
 
+	}
+	
+	public void showButtons() {
+		for (GLButton button : _buttons) {
+			_buttonPanel.add(button);
+		}
 	}
 
 	public boolean isMoving() {
@@ -100,12 +140,15 @@ public class OptionPanel extends GLPanel {
 		}
 	}
 
-	// private void showMenu() {
-	// if (!_menu.isVisible()) {
-	// _menu.setVisible(true);
-	// _rollout = true;
-	// }
-	// }
+	private void showMenu() {
+		if (!_buttonPanel.isVisible()) {
+//			getOptions();
+			setButtons();
+			menuHeight = Math.round(_buttons.size() * DEFAULT_SIZE.y / 2f);
+			_buttonPanel.setVisible(true);
+			_rollout = true;
+		}
+	}
 
 	@Override
 	public void animate(long millisSincePrev) {
@@ -127,22 +170,23 @@ public class OptionPanel extends GLPanel {
 				x = 0;
 				_moving = false;
 				_panelSpeed = -_panelSpeed;
-				// showMenu();
+				showMenu();
 			}
 			setLocation(x, loc.y);
 		}
 		if (_rollout) {
-			// float seconds = millisSincePrev / 1000f;
+			float seconds = millisSincePrev / 1000f;
 
-			// Vector2f size = _menu.getSize();
-			//
-			// float h = size.y + _menuSpeed * seconds;
-			//
-			// if (h >= menuHeight) {
-			// h = menuHeight;
-			// _rollout = false;
-			// }
-			// _menu.setSize(size.x, h);
+			Vector2f size = _buttonPanel.getSize();
+
+			float h = size.y + _menuSpeed * seconds;
+
+			if (h >= menuHeight) {
+				h = menuHeight;
+				_rollout = false;
+				showButtons();
+			}
+			_buttonPanel.setSize(size.x, h);
 		}
 
 		for (GeomPanel panel : _geoms) {
