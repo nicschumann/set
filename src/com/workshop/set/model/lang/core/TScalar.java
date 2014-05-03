@@ -11,6 +11,7 @@ import com.workshop.set.model.interfaces.Symbol;
 import com.workshop.set.model.interfaces.Term;
 import com.workshop.set.model.lang.exceptions.ProofFailureException;
 import com.workshop.set.model.lang.judgements.HasValue;
+import com.workshop.set.model.ref.MDouble;
 
 /**
  * Implements a Scalar value of some Field indexed by the Real Numbers
@@ -18,11 +19,21 @@ import com.workshop.set.model.lang.judgements.HasValue;
  * Created by nicschumann on 3/29/14.
  */
 public class TScalar implements Pattern {
-    public TScalar( double index ) {
+    public TScalar( MDouble index ) {
         this.index = index;
     }
 
-    public final double index;
+    public TScalar( double index ) {
+        this.index = new MDouble( index );
+    }
+
+    public final MDouble index;
+
+
+
+    public double getIndex() {
+        return index.get();
+    }
 
     @Override
     public boolean equals( Object o ) {
@@ -35,7 +46,7 @@ public class TScalar implements Pattern {
 
     @Override
     public String toString() {
-        return Double.toString( index );
+        return Double.toString( index.get() );
     }
 
     @Override
@@ -78,7 +89,7 @@ public class TScalar implements Pattern {
     @Override
     public int hashCode() {
 
-        int a   = (int)index;
+        int a   = (int)getIndex();
 
 
         return 37 * (37 * (a ^ (a >>> 31)));

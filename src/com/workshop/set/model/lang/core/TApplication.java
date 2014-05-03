@@ -81,9 +81,11 @@ public class TApplication implements Term,Value {
             Term f = gamma.value();
 
             Term T1 = (argument.type( gamma )).proves( argument );
-            Term t1 = this;
+            Term t1;
 
-            if ( All.type.equals( T1 ) ) {
+            try {
+            if ( All.type.equals( T1 ) ||
+               ((TUniverse)All.type).level <= ((TUniverse)T1).level ) {
 
                 try{
                     for (HasValue j : All.binder.bind( argument ) ) {
@@ -102,7 +104,10 @@ public class TApplication implements Term,Value {
                 }
                        gamma.extend( this, T2);
                 return gamma.extend( gamma.compute( this, T2 ), T2 );
-            } else throw new TypecheckingException( this, gamma, "\n\tIncompatible types for application: " + All.toString() + " and " + T1.toString() + "\n\t" + T1.toString() + " is not an element of " + All.type.toString() );
+            } else throw new ClassCastException();
+            } catch ( ClassCastException e ) {
+                throw new TypecheckingException( this, gamma, "\n\tIncompatible types for application: " + All.toString() + " and " + T1.toString() + "\n\t" + T1.toString() + " is not an element of " + All.type.toString() );
+            }
 
         } catch ( ClassCastException _ ) {
             throw new TypecheckingException( this, gamma, implication.toString() + " cannot be applied" );
@@ -113,8 +118,6 @@ public class TApplication implements Term,Value {
     public Term reduce() throws EvaluationException {
 
         TApplication t = new TApplication( implication.reduce(), argument.reduce() );
-
-        System.out.println( t );
         try {
             TAbstraction f = ((TAbstraction)t.implication);
             Term t1 = f.body;

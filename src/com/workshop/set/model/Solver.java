@@ -11,14 +11,12 @@ public class Solver implements Model {
     public Solver( Gensym generator ) {
         this.generator      = generator;
         this.environment    = new Evaluation( generator );
-
-
-
     }
 
     private Evaluation          environment;
     private Gensym              generator;
 
+    
 
 
 
