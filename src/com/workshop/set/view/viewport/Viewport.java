@@ -158,8 +158,6 @@ public class Viewport extends ScreenFrameAdapter {
 
 		Vector4 proj = new Vector4(p.x + d.x * t, p.y + d.y * t, p.z + d.z * t, 0);
 
-		// points off by a factor of two
-
 		Point point = null;
 		try {
 			point = VEC_SPACE_3D.point(GENSYM.generate(), new MDouble((double) proj.x), new MDouble((double) proj.y),
@@ -178,6 +176,14 @@ public class Viewport extends ScreenFrameAdapter {
 		_model.checkIntersections(p, _shiftDown, _pivot);
 	}
 
+	/**
+	 * Generally calls temp environment to create a constraint of the given type, if possible
+	 */
+	public void createConstraint(String type){
+		_model.createConstraint(type);
+	}
+	
+	
 	@Override
 	public void mouseClicked(MouseEvent e) {
 
@@ -259,6 +265,9 @@ public class Viewport extends ScreenFrameAdapter {
 			_model.deleteSelections();
 		if (keyCode == Keyboard.KEY_P)
 			_pivot = true; 
+		
+		if (keyCode == Keyboard.KEY_RETURN)
+			this.createConstraint("YValsEqual"); 
 		//System.out.println("key: " + key);
 	}
 

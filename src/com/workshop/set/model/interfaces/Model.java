@@ -19,5 +19,7 @@ public interface Model {
 	public void deleteSelections();
 
 	public void setScreen(SetScreen main);
+	
+	public void createConstraint(String type);
 
 }
