@@ -25,6 +25,7 @@ public class SetScreen implements ScreenFrame {
 	private Vector2f ul, lr;
 	private Viewport _viewport;
 	private OptionPanel _options;
+//	private boolean startOn 
 //	private TestPanel _test;
 
 	private List<ScreenFrame> frames;

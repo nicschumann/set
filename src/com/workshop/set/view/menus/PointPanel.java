@@ -18,7 +18,6 @@ import org.lwjgl.util.vector.Vector2f;
 
 import com.workshop.set.model.VectorSpace.GeometricFailure;
 import com.workshop.set.model.VectorSpace.Point;
-import com.workshop.set.model.ref.MDouble;
 
 public class PointPanel extends GLPanel {
 
@@ -37,16 +36,19 @@ public class PointPanel extends GLPanel {
 
 		this._p = p;
 		this.options = options;
-		double[] pnts = _p.getPointArray();
 		_tboxes = new ArrayList<>(3);
 
 		allowedChars = new HashSet<>();
 		allowedChars.addAll(Arrays
 				.asList(new Character[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '.' }));
 
-		initLabelAndPoint(0, 0, "X:", pnts[0]);
-		initLabelAndPoint(DEFAULT_SIZE.x * 1.5f / 3f, 0, "Y:", pnts[1]);
-		initLabelAndPoint(DEFAULT_SIZE.x * 1.5f * 2f / 3f, 0, "Z:", pnts[2]);
+		try {
+			initLabelAndPoint(0, 0, "X:", _p.getN_(1).get());
+			initLabelAndPoint(DEFAULT_SIZE.x * 1.5f / 3f, 0, "Y:", _p.getN_(2).get());
+			initLabelAndPoint(DEFAULT_SIZE.x * 1.5f * 2f / 3f, 0, "Z:", _p.getN_(3).get());
+		} catch (GeometricFailure e) {
+			e.printStackTrace();
+		}
 
 		setTriggers();
 	}
@@ -81,10 +83,13 @@ public class PointPanel extends GLPanel {
 
 	@Override
 	public void update() {
-		double[] pnts = _p.getPointArray();
-		_tboxes.get(0).setText(String.format("%.2f", pnts[0]));
-		_tboxes.get(1).setText(String.format("%.2f", pnts[1]));
-		_tboxes.get(2).setText(String.format("%.2f", pnts[2]));
+		try {
+			_tboxes.get(0).setText(String.format("%.2f", _p.getN_(1).get()));
+			_tboxes.get(1).setText(String.format("%.2f", _p.getN_(2).get()));
+			_tboxes.get(2).setText(String.format("%.2f", _p.getN_(3).get()));
+		} catch (GeometricFailure e) {
+			e.printStackTrace();
+		}
 	}
 
 	private class TriggerHandler implements Triggerable {
@@ -101,7 +106,7 @@ public class PointPanel extends GLPanel {
 			try {
 				// TODO: Error checking for boundaries?
 				double newPoint = Double.parseDouble(tb.getText());
-				_p.setN_(_index, new MDouble(newPoint));
+				_p.getN_(_index).set(newPoint);
 				setFocus(false);
 				options.updateGeomPanels();
 			} catch (NumberFormatException | GeometricFailure nfe) {}

@@ -81,11 +81,11 @@ public class GeomPanel extends GLPanel {
 		_typeLabel.setSize(20, DEFAULT_SIZE.y);
 		_typeLabel.setBackground(new Color(128, 128, 128, 0));
 		_typeLabel.setVisible(false);
-		this.add(_typeLabel);
+//		this.add(_typeLabel);
 
 		_nameBox = new GLTextBox();
-		_nameBox.setLocation(DEFAULT_SIZE.x / 2f + 20, 3);
-		_nameBox.setSize(DEFAULT_SIZE.x / 2f - 20, DEFAULT_SIZE.y - 3);
+		_nameBox.setLocation(DEFAULT_SIZE.x / 2f, 3);
+		_nameBox.setSize(DEFAULT_SIZE.x / 2f, DEFAULT_SIZE.y - 3);
 		_nameBox.setText(_geom.name().toString());
 		_nameBox.setBackground(new Color(0, 0, 0, 0));
 		_nameBox.addTriggerable(new Triggerable() {
@@ -134,7 +134,7 @@ public class GeomPanel extends GLPanel {
 	@Override
 	public void mousePressed(MouseEvent e) {
 		super.mousePressed(e);
-		if (e.location.x < DEFAULT_SIZE.x / 2f + 20) {
+		if (e.location.x < DEFAULT_SIZE.x / 2f) {
 			if (_moving) {
 				_expansionSpeed = -_expansionSpeed;
 				_panelSpeed = -_panelSpeed;
@@ -166,28 +166,28 @@ public class GeomPanel extends GLPanel {
 			float seconds = millisSincePrev / 1000f;
 
 			Vector2f size = getSize();
-			Vector2f loc = getLocation();
+//			Vector2f loc = getLocation();
 
 			float w = size.x + _expansionSpeed * seconds;
-			float x = loc.x + _panelSpeed * seconds;
+//			float x = loc.x + _panelSpeed * seconds;
 
 			if (w <= DEFAULT_SIZE.x) {
 				w = DEFAULT_SIZE.x;
-				x = 0;
+//				x = 0;
 				_moving = false;
 				_expansionSpeed = -_expansionSpeed;
-				_panelSpeed = -_panelSpeed;
+//				_panelSpeed = -_panelSpeed;
 			} else if (w >= DEFAULT_SIZE.x * 2.5f) {
 				w = DEFAULT_SIZE.x * 2.5f;
-				x = -DEFAULT_SIZE.x / 2;
+//				x = -DEFAULT_SIZE.x / 2;
 				_moving = false;
 				_typeLabel.setVisible(true);
 				_infoPanel.setVisible(true);
 				_expansionSpeed = -_expansionSpeed;
-				_panelSpeed = -_panelSpeed;
+//				_panelSpeed = -_panelSpeed;
 			}
 			setSize(w, size.y);
-			setLocation(x, loc.y);
+//			setLocation(x, loc.y);
 		}
 		_nameBox.animate(millisSincePrev);
 		_infoPanel.animate(millisSincePrev);

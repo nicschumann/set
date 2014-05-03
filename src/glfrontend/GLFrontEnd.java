@@ -362,7 +362,7 @@ public class GLFrontEnd implements FrontEnd {
 
 	@SuppressWarnings("unchecked")
 	public static void setFonts() {
-		LABEL_FONT = new UnicodeFont(new Font("Sans Serif", Font.BOLD, 16));
+		LABEL_FONT = new UnicodeFont(new Font("Sans Serif", Font.BOLD, 14));
 		LABEL_FONT.getEffects().add(new ColorEffect(new Color(255, 128, 0)));
 		LABEL_FONT.addAsciiGlyphs();
 		
