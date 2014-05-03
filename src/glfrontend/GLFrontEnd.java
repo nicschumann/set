@@ -55,6 +55,7 @@ public class GLFrontEnd implements FrontEnd {
 	public static String TITLE = "";
 
 	public static UnicodeFont LABEL_FONT;
+	public static UnicodeFont TYPE_FONT;
 	public static UnicodeFont BUTTON_FONT;
 
 	private static final FloatBuffer perspectiveProjectionMatrix = BufferUtils.createFloatBuffer(16);
@@ -362,14 +363,19 @@ public class GLFrontEnd implements FrontEnd {
 	@SuppressWarnings("unchecked")
 	public static void setFonts() {
 		LABEL_FONT = new UnicodeFont(new Font("Sans Serif", Font.BOLD, 14));
-		LABEL_FONT.getEffects().add(new ColorEffect(Color.WHITE));
+		LABEL_FONT.getEffects().add(new ColorEffect(new Color(255, 128, 0)));
 		LABEL_FONT.addAsciiGlyphs();
+		
+		TYPE_FONT = new UnicodeFont(new Font("Sans Serif", Font.BOLD, 14));
+		TYPE_FONT.getEffects().add(new ColorEffect(Color.WHITE));
+		TYPE_FONT.addAsciiGlyphs();
 
 		BUTTON_FONT = new UnicodeFont(new Font("Times New Roman", Font.BOLD, 14));
 		BUTTON_FONT.getEffects().add(new ColorEffect(Color.BLACK));
 		BUTTON_FONT.addAsciiGlyphs();
 		try {
 			LABEL_FONT.loadGlyphs();
+			TYPE_FONT.loadGlyphs();
 			BUTTON_FONT.loadGlyphs();
 		} catch (SlickException e) {
 			e.printStackTrace();

@@ -2,7 +2,7 @@ package glfrontend.components;
 
 import static com.workshop.set.view.SetScreen.ORANGE;
 import static com.workshop.set.view.SetScreen.newRatio;
-import static glfrontend.GLFrontEnd.LABEL_FONT;
+import static glfrontend.GLFrontEnd.TYPE_FONT;
 import static glfrontend.components.GLComponent.TextAlignment.LEFT;
 import static glfrontend.components.GLComponent.TextAlignment.RIGHT;
 import static org.lwjgl.input.Keyboard.KEY_BACK;
@@ -135,14 +135,14 @@ public class GLTextBox extends GLComponent {
 
 	private void setTextLoc() {
 		float x;
-		int textHeight = LABEL_FONT.getAscent() + LABEL_FONT.getDescent();
+		int textHeight = TYPE_FONT.getAscent() + TYPE_FONT.getDescent();
 		Vector2f mid = new Vector2f();
 		Vector2f.sub(lr, ul, mid);
 
 		if (_textAlign == LEFT) {
 			x = edgeBuffer;
 		} else {
-			int textWidth = LABEL_FONT.getWidth(getText());
+			int textWidth = TYPE_FONT.getWidth(getText());
 			if (_textAlign == RIGHT) {
 				x = lr.x - textWidth - edgeBuffer;
 			} else { // CENTER
@@ -162,7 +162,7 @@ public class GLTextBox extends GLComponent {
 	@Override
 	public void draw() {
 
-		glColor4f(ORANGE[0], ORANGE[1], ORANGE[2], 0.2f);
+		glColor4f(ORANGE[0], ORANGE[1], ORANGE[2], 1f);
 		glLineWidth(1f);
 		glBegin(GL_LINES);
 		glVertex2f(ul.x, ul.y);
@@ -179,16 +179,16 @@ public class GLTextBox extends GLComponent {
 		glEnd();
 
 		if (_textLoc != null) {
-			LABEL_FONT.drawString(_textLoc.x + ul.x, _textLoc.y + ul.y, getText());
+			TYPE_FONT.drawString(_textLoc.x + ul.x, _textLoc.y + ul.y, getText());
 			glDisable(GL_TEXTURE_2D);
 		}
 
-		int width = LABEL_FONT.getWidth(_sb.substring(0, _cursor)) + Math.round(_spaceWidth * _endSpaces);
+		int width = TYPE_FONT.getWidth(_sb.substring(0, _cursor)) + Math.round(_spaceWidth * _endSpaces);
 		Vector2f cursorPos = new Vector2f(edgeBuffer + width, (getSize().y - edgeBuffer));
 
 		glColor4f(ORANGE[0], ORANGE[1], ORANGE[2], _opacity);
 
-		glLineWidth(3f);
+		glLineWidth(2f);
 		glBegin(GL_LINES);
 		glVertex2f(ul.x + cursorPos.x, ul.y + edgeBuffer);
 		glVertex2f(ul.x + cursorPos.x, ul.y + cursorPos.y);

@@ -52,9 +52,9 @@ public class GeomPanel extends GLPanel {
 	private void initNameLabel() {
 
 		if (_point)
-			_typeLabel = new GLLabel("Point");
+			_typeLabel = new GLLabel("POINT");
 		else
-			_typeLabel = new GLLabel("Relation");
+			_typeLabel = new GLLabel("RELATION");
 
 		_typeLabel.setLocation(0, 0);
 		_typeLabel.setSize(DEFAULT_SIZE.x / 2f, DEFAULT_SIZE.y / 2);
@@ -98,7 +98,7 @@ public class GeomPanel extends GLPanel {
 		glVertex2f(lr.x, ul.y);
 		glEnd();
 
-		glColor4f(ORANGE[0], ORANGE[1], ORANGE[2], 0.5f);
+		glColor4f(ORANGE[0], ORANGE[1], ORANGE[2], 1f);
 
 		glLineWidth(5f);
 		glBegin(GL_LINES);

@@ -10,7 +10,6 @@ import java.util.List;
 import org.lwjgl.util.vector.Vector2f;
 
 import com.workshop.set.model.VectorSpace.Geometry;
-import com.workshop.set.view.options.Option;
 
 public class OptionPanel extends GLPanel {
 
@@ -24,8 +23,8 @@ public class OptionPanel extends GLPanel {
 	private boolean _rollout;
 	private List<GeomPanel> _geoms;
 	private List<GLButton> _buttons;
-//	private GLTextBox _focusBox;
 
+	// private GLTextBox _focusBox;
 
 	public OptionPanel() {
 		super();
@@ -40,11 +39,11 @@ public class OptionPanel extends GLPanel {
 		_rollout = false;
 
 		_geoms = new ArrayList<>();
-		 _buttons = new ArrayList<>();
-		
-//		_focusBox = null;
+		_buttons = new ArrayList<>();
+
+		// _focusBox = null;
 	}
-	
+
 	public void updateGeomPanels() {
 		for (GeomPanel panel : _geoms) {
 			panel.update();
@@ -56,7 +55,7 @@ public class OptionPanel extends GLPanel {
 		panel.setLocation(0, DEFAULT_SIZE.y * _geoms.size());
 		_geoms.add(panel);
 		this.add(panel);
-		
+
 		this.setSize(getSize().x, _geoms.size() * DEFAULT_SIZE.y);
 
 		if (!isVisible())
@@ -64,17 +63,28 @@ public class OptionPanel extends GLPanel {
 	}
 
 	public void removeGeomPanels(boolean toggle) {
+		if (!toggle) {
+			for (GeomPanel panel : _geoms) {
+				this.remove(panel);
+			}
+			_geoms.clear();
+			this.setSize(DEFAULT_SIZE);
+		} else if (!isMoving() && isVisible()) {
+			toggle();
+		}
+	}
+
+	private void actuallyRemovePanels() {
 		for (GeomPanel panel : _geoms) {
 			this.remove(panel);
 		}
 		_geoms.clear();
 		this.setSize(DEFAULT_SIZE);
-		if (toggle && !isMoving() && isVisible())
-			toggle();
 	}
-	
-	public void setOptions(List<Option> options) {
-		
+
+	public void addButton() {
+		// GLButton button = new GLButton("Do Things");
+
 	}
 
 	public boolean isMoving() {
@@ -112,8 +122,7 @@ public class OptionPanel extends GLPanel {
 				x = -DEFAULT_SIZE.x;
 				_moving = false;
 				_panelSpeed = -_panelSpeed;
-				// _menu.setSize(_menu.getSize().x, 0);
-				// _menu.setVisible(false);
+				actuallyRemovePanels();
 			} else if (x >= 0) {
 				x = 0;
 				_moving = false;
