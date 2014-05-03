@@ -16,6 +16,8 @@ import glfrontend.components.GLTextBox;
 
 import java.awt.Color;
 
+import org.lwjgl.util.vector.Vector2f;
+
 import com.workshop.set.SetMain;
 import com.workshop.set.model.VectorSpace.Geometry;
 import com.workshop.set.model.VectorSpace.Point;
@@ -28,41 +30,62 @@ public class GeomPanel extends GLPanel {
 	private boolean _point;
 	private GLLabel _typeLabel;
 	private GLTextBox _nameBox;
-	private GLPanel _bottomPanel;
+	private GLPanel _infoPanel;
+
+	private boolean _moving;
+	private int _expansionSpeed, _panelSpeed;
 
 	public GeomPanel(Geometry geom, OptionPanel options) {
 		super();
 		this.setSize(DEFAULT_SIZE);
-		this.setBackground(new Color(0, 0, 0, 0));
+		this.setBackground(new Color(255, 255, 255, 30));
 		this.setResizeType(ResizeType.FIT_LEFT);
 		this._geom = geom;
 		this._point = (geom instanceof Point);
-		
+
 		this.options = options;
 
 		initNameLabel();
 		if (_point)
-			_bottomPanel = new PointPanel((Point) geom, options);
+			_infoPanel = new PointPanel((Point) geom, options);
 		else
-			_bottomPanel = new RelationPanel((Relation) geom, options);
+			_infoPanel = new RelationPanel((Relation) geom, options);
 
-		this.add(_bottomPanel);
+		_infoPanel.setVisible(false);
+		this.add(_infoPanel);
+		// this.setSize(DEFAULT_SIZE.x * 2f, DEFAULT_SIZE.y);
+		// this.add(_bottomPanel);
+		_moving = false;
+		_expansionSpeed = 1000; // 1000 pixels/second
+		_panelSpeed = -_expansionSpeed / 2;
 	}
 
 	private void initNameLabel() {
 
+		GLLabel label;
 		if (_point)
-			_typeLabel = new GLLabel("POINT");
+			label = new GLLabel("POINT");
 		else
-			_typeLabel = new GLLabel("RELATION");
+			label = new GLLabel("RELATION");
 
-		_typeLabel.setLocation(0, 0);
-		_typeLabel.setSize(DEFAULT_SIZE.x / 2f, DEFAULT_SIZE.y / 2);
+		label.setLocation(0, 0);
+		label.setSize(DEFAULT_SIZE.x / 2f, DEFAULT_SIZE.y);
+		label.setBackground(new Color(128, 128, 128, 0));
+		this.add(label);
+
+		if (_point)
+			_typeLabel = new GLLabel("P:");
+		else
+			_typeLabel = new GLLabel("R:");
+		_typeLabel.setLocation(DEFAULT_SIZE.x / 2f, 0);
+		_typeLabel.setSize(20, DEFAULT_SIZE.y);
 		_typeLabel.setBackground(new Color(128, 128, 128, 0));
+		_typeLabel.setVisible(false);
+		this.add(_typeLabel);
 
 		_nameBox = new GLTextBox();
-		_nameBox.setLocation(DEFAULT_SIZE.x / 2f, 3);
-		_nameBox.setSize(DEFAULT_SIZE.x / 2f, DEFAULT_SIZE.y / 2f - 3);
+		_nameBox.setLocation(DEFAULT_SIZE.x / 2f + 20, 3);
+		_nameBox.setSize(DEFAULT_SIZE.x / 2f - 20, DEFAULT_SIZE.y - 3);
 		_nameBox.setText(_geom.name().toString());
 		_nameBox.setBackground(new Color(0, 0, 0, 0));
 		_nameBox.addTriggerable(new Triggerable() {
@@ -78,7 +101,6 @@ public class GeomPanel extends GLPanel {
 
 		});
 
-		this.add(_typeLabel);
 		this.add(_nameBox);
 	}
 
@@ -110,14 +132,70 @@ public class GeomPanel extends GLPanel {
 	}
 
 	@Override
+	public void mouseReleased(MouseEvent e) {
+		super.mouseReleased(e);
+		if (e.location.x < DEFAULT_SIZE.x / 2f + 20) {
+			if (_moving) {
+				_expansionSpeed = -_expansionSpeed;
+				_panelSpeed = -_panelSpeed;
+			} else {
+				if (_infoPanel.isVisible()) {
+					_infoPanel.setVisible(false);
+					_typeLabel.setVisible(false);
+				}
+				_moving = true;
+			}
+		}
+	}
+
+	public void closeInfoPanel() {
+		if (_moving && _expansionSpeed > 0) {
+			_expansionSpeed = -_expansionSpeed;
+			_panelSpeed = -_panelSpeed;
+		} else if (_infoPanel.isVisible()) {
+			_infoPanel.setVisible(false);
+			_typeLabel.setVisible(false);
+			_moving = true;
+		}
+	}
+
+	@Override
 	public void animate(long millisSincePrev) {
+		if (_moving) {
+
+			float seconds = millisSincePrev / 1000f;
+
+			Vector2f size = getSize();
+			Vector2f loc = getLocation();
+
+			float w = size.x + _expansionSpeed * seconds;
+			float x = loc.x + _panelSpeed * seconds;
+
+			if (w <= DEFAULT_SIZE.x) {
+				w = DEFAULT_SIZE.x;
+				x = 0;
+				_moving = false;
+				_expansionSpeed = -_expansionSpeed;
+				_panelSpeed = -_panelSpeed;
+			} else if (w >= DEFAULT_SIZE.x * 2) {
+				w = DEFAULT_SIZE.x * 2;
+				x = -DEFAULT_SIZE.x / 2;
+				_moving = false;
+				_typeLabel.setVisible(true);
+				_infoPanel.setVisible(true);
+				_expansionSpeed = -_expansionSpeed;
+				_panelSpeed = -_panelSpeed;
+			}
+			setSize(w, size.y);
+			setLocation(x, loc.y);
+		}
 		_nameBox.animate(millisSincePrev);
-		_bottomPanel.animate(millisSincePrev);
+		_infoPanel.animate(millisSincePrev);
 	}
 
 	public void update() {
 		_nameBox.setText(_geom.name().toString());
-		_bottomPanel.update();
+		_infoPanel.update();
 	}
 
 }
