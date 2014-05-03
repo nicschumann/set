@@ -87,6 +87,8 @@ public class GLComponent extends ScreenFrameAdapter {
 
 	@Override
 	public boolean contains(Vector2f p) {
+		if (!isVisible())
+			return false;
 		Vector2f temp1 = new Vector2f();
 		Vector2f temp2 = new Vector2f();
 		Vector2f.sub(lr, p, temp1);

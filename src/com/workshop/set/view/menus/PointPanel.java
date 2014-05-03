@@ -22,7 +22,7 @@ import com.workshop.set.model.ref.MDouble;
 
 public class PointPanel extends GLPanel {
 
-	public static final Vector2f SIZE = new Vector2f(DEFAULT_SIZE.x / 12, DEFAULT_SIZE.y / 2);
+	public static final Vector2f SIZE = new Vector2f(DEFAULT_SIZE.x / 12, DEFAULT_SIZE.y);
 	public final Set<Character> allowedChars;
 
 	private OptionPanel options;
@@ -32,8 +32,8 @@ public class PointPanel extends GLPanel {
 
 	public PointPanel(Point p, OptionPanel options) {
 		super();
-		this.setSize(DEFAULT_SIZE.x, DEFAULT_SIZE.y);
-		this.setLocation(0, 0);
+		this.setSize(DEFAULT_SIZE);
+		this.setLocation(DEFAULT_SIZE.x, 0);
 		this.setBackground(new Color(0, 0, 0, 0));
 		
 		this._p = p;
@@ -45,9 +45,9 @@ public class PointPanel extends GLPanel {
 		allowedChars.addAll(Arrays
 				.asList(new Character[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '-', '.' }));
 
-		initLabelAndPoint(0, DEFAULT_SIZE.y / 2f, "X:", _pnts[0]);
-		initLabelAndPoint(DEFAULT_SIZE.x / 3f, DEFAULT_SIZE.y / 2f, "Y:", _pnts[1]);
-		initLabelAndPoint(DEFAULT_SIZE.x * 2f / 3f, DEFAULT_SIZE.y / 2f, "Z:", _pnts[2]);
+		initLabelAndPoint(0, 0, "X:", _pnts[0]);
+		initLabelAndPoint(DEFAULT_SIZE.x / 3f, 0, "Y:", _pnts[1]);
+		initLabelAndPoint(DEFAULT_SIZE.x * 2f / 3f, 0, "Z:", _pnts[2]);
 
 		setTriggers();
 	}

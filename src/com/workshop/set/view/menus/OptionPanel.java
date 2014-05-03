@@ -13,7 +13,7 @@ import com.workshop.set.model.VectorSpace.Geometry;
 
 public class OptionPanel extends GLPanel {
 
-	public static final Vector2f DEFAULT_SIZE = new Vector2f(200, 46);
+	public static final Vector2f DEFAULT_SIZE = new Vector2f(200, 23);
 
 	private int menuHeight = 0;
 
@@ -31,7 +31,7 @@ public class OptionPanel extends GLPanel {
 		super();
 		this.setLocation(-DEFAULT_SIZE.x, 0);
 		this.setSize(DEFAULT_SIZE);
-		this.setBackground(new Color(255, 255, 255, 30));
+		this.setBackground(new Color(0, 255, 0, 0));
 		this.setResizeType(ResizeType.FIT_LEFT);
 		this.setVisible(false);
 		_panelSpeed = 1000; // pixels/second
@@ -52,6 +52,15 @@ public class OptionPanel extends GLPanel {
 		this.add(_buttonPanel);
 
 		// _focusBox = null;
+	}
+	
+	@Override
+	public boolean contains(Vector2f p) {
+		for (GeomPanel gpane : _geoms) {
+			if (gpane.contains(p))
+				return true;
+		}
+		return super.contains(p) || _buttonPanel.contains(p);
 	}
 
 	public void updateGeomPanels() {
@@ -85,6 +94,9 @@ public class OptionPanel extends GLPanel {
 			_geoms.clear();
 			this.setSize(DEFAULT_SIZE);
 		} else if (!isMoving() && isVisible()) {
+			for (GeomPanel panel : _geoms) {
+				panel.closeInfoPanel();
+			}
 			toggle();
 		}
 	}
@@ -113,8 +125,8 @@ public class OptionPanel extends GLPanel {
 
 	public void addButton() {
 		GLButton button = new GLButton("Do Things");
-		button.setSize(DEFAULT_SIZE.x, DEFAULT_SIZE.y / 2f);
-		button.setLocation(0, _buttons.size() * DEFAULT_SIZE.y / 2f);
+		button.setSize(DEFAULT_SIZE);
+		button.setLocation(0, _buttons.size() * DEFAULT_SIZE.y);
 		button.setBackground(new Color(255, 128, 0, 0));
 		_buttons.add(button);
 //		this.add(button);
@@ -144,7 +156,7 @@ public class OptionPanel extends GLPanel {
 		if (!_buttonPanel.isVisible()) {
 //			getOptions();
 			setButtons();
-			menuHeight = Math.round(_buttons.size() * DEFAULT_SIZE.y / 2f);
+			menuHeight = Math.round(_buttons.size() * DEFAULT_SIZE.y);
 			_buttonPanel.setVisible(true);
 			_rollout = true;
 		}
