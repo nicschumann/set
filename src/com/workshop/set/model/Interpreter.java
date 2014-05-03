@@ -8,27 +8,36 @@ import com.workshop.set.model.lang.exceptions.*;
 import com.workshop.set.model.lang.parser.EXPRParser;
 import com.workshop.set.model.lang.parser.Lexer;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 
 
 public class Interpreter {
     public static final String prompt = "\u001B[32mset>\u001B[0m ";
 
-    public Interpreter() {  running = true; }
+    public Interpreter( InputStream in, PrintStream out, PrintStream err ) {
+        dataIn = in;
+        dataOut = out;
+        dataErr = err;
+        running = true;
+    }
+
+    private InputStream dataIn;
+    private PrintStream dataOut;
+    private PrintStream dataErr;
 
     private boolean running;
 
     public static void main( String[] args ) {
+
         System.out.println( "Loading Set..." );
-        Interpreter i = new Interpreter();
+        Interpreter i = new Interpreter( System.in, System.out, System.err );
         i.loop();
+
     }
 
     public void loop() {
        TNameGenerator n = new TNameGenerator();
-       BufferedReader r = new BufferedReader( new InputStreamReader( System.in ) );
+       BufferedReader r = new BufferedReader( new InputStreamReader( dataIn ) );
 
        Lexer l = new Lexer();
        EXPRParser p = new EXPRParser( n );
@@ -177,15 +186,17 @@ public class Interpreter {
         }
     }
 
-    public static boolean prompt() {
-        System.out.print( prompt );
-        return true;
+
+
+
+    public void prompt() {
+        dataOut.print(prompt);
     }
 
-    public static void errln( String msg ) {
-        System.err.println( "\u001B[31m" + msg + "\u001B[0m" );
+    public void errln( String msg ) {
+        dataErr.println("\u001B[31m" + msg + "\u001B[0m");
     }
-    public static void outln( String msg ) {
-        System.out.println( msg );
+    public void outln( String msg ) {
+        dataOut.println( msg );
     }
 }
