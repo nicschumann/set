@@ -3,7 +3,6 @@ package com.workshop.set.controller;
 import com.workshop.set.controller.calls.Call;
 import com.workshop.set.controller.responses.FutureResponse;
 import com.workshop.set.controller.responses.Response;
-import com.workshop.set.model.Model;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;

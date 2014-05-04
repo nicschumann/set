@@ -98,6 +98,19 @@ public class Evaluation implements Environment<Term> {
         } else throw new ProofFailureException( "Mutability Error: Attempted Redefinition of constant \""+s+"\" as a mutable name."  );
     }
 
+    public Evaluation set( Symbol s, MDouble v )
+            throws ProofFailureException {
+        if ( !valueContext.containsKey( s ) ) {
+            if ( referenceContext.containsKey( s ) ) {
+                referenceContext.get( s ).set( v.get() );
+            } else {
+                referenceContext.put( s, v );
+            }
+            extend( s, new TField() );
+            return this;
+        } else throw new ProofFailureException( "Mutability Error: Attempted Redefinition of constant \""+s+"\" as a mutable name."  );
+    }
+
     public Evaluation assume( Symbol s, Term type )
             throws ProofFailureException,
             TypecheckingException {
