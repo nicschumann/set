@@ -75,4 +75,12 @@ public class ScreenFrameAdapter implements ScreenFrame {
 	@Override
 	public void animate(long millisSincePrev) {}
 
+	@Override
+	public void setFocus(boolean focus) {}
+
+	@Override
+	public boolean isInFocus() {
+		return false;
+	}
+
 }

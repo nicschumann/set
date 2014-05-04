@@ -1,6 +1,7 @@
 package glfrontend.components;
 
 import static com.workshop.set.view.SetScreen.newRatio;
+import static glfrontend.GLFrontEnd.BUTTON_FONT;
 import static glfrontend.ScreenFrame.MouseButton.LEFT;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
@@ -13,14 +14,10 @@ import glfrontend.Triggerable;
 import glfrontend.Triggerable.TriggerEvent;
 
 import java.awt.Color;
-import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.lwjgl.util.vector.Vector2f;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.UnicodeFont;
-import org.newdawn.slick.font.effects.ColorEffect;
 
 public class GLButton extends GLComponent {
 
@@ -28,7 +25,6 @@ public class GLButton extends GLComponent {
 	private float[] _midColor = new float[4];
 	private float bs; // border size
 	private String text;
-	private UnicodeFont font;
 	private Vector2f textLoc;
 	private boolean pressed;
 	private List<Triggerable> triggers;
@@ -46,7 +42,7 @@ public class GLButton extends GLComponent {
 
 	public void init() {
 		text = "";
-		setFont(new java.awt.Font("Times New Roman", java.awt.Font.BOLD, 14));
+		setTextLoc();
 		triggers = new ArrayList<>();
 	}
 
@@ -63,24 +59,9 @@ public class GLButton extends GLComponent {
 		return text;
 	}
 
-	@SuppressWarnings("unchecked")
-	public void setFont(Font awtFont) {
-		font = new UnicodeFont(awtFont);
-		font.getEffects().add(new ColorEffect(java.awt.Color.black));
-		font.addAsciiGlyphs();
-		try {
-			font.loadGlyphs();
-		} catch (SlickException e) {
-			e.printStackTrace();
-		}
-		setTextLoc();
-	}
-
 	private void setTextLoc() {
-		if (font == null)
-			return;
-		int textWidth = font.getWidth(text);
-		int textHeight = font.getAscent() + font.getDescent();
+		int textWidth = BUTTON_FONT.getWidth(text);
+		int textHeight = BUTTON_FONT.getAscent() + BUTTON_FONT.getDescent();
 		Vector2f mid = new Vector2f();
 		Vector2f.sub(lr, ul, mid);
 		textLoc = new Vector2f((mid.x - textWidth) / 2, (mid.y - textHeight) / 2);
@@ -130,7 +111,7 @@ public class GLButton extends GLComponent {
 		glEnd();
 
 		if (textLoc != null) {
-			font.drawString(textLoc.x + ul.x, textLoc.y + ul.y, text);
+			BUTTON_FONT.drawString(textLoc.x + ul.x, textLoc.y + ul.y, text);
 			glDisable(GL_TEXTURE_2D);
 		}
 

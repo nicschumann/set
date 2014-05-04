@@ -13,12 +13,20 @@ import org.lwjgl.util.vector.Vector2f;
 
 import com.workshop.set.model.VectorSpace.Geometry;
 import com.workshop.set.model.interfaces.Model;
+import com.workshop.set.view.menus.OptionPanel;
+import com.workshop.set.view.viewport.Stage;
+import com.workshop.set.view.viewport.Viewport;
 
 public class SetScreen implements ScreenFrame {
 
+	public static float[] ORANGE = { 1f, 0.5f, 0f };
+	public static float[] CYAN = { 0f, 1f, 1f };
+
 	private Vector2f ul, lr;
 	private Viewport _viewport;
-	// private OptionPanel _options;
+	private OptionPanel _options;
+	private boolean startOnView;
+	// private TestPanel _test;
 
 	private List<ScreenFrame> frames;
 	private Map<ScreenFrame, Boolean> contained;
@@ -27,8 +35,10 @@ public class SetScreen implements ScreenFrame {
 		init();
 		setSize(new Vector2f(w, h));
 		_viewport = new Viewport(model, w, h);
-		// _options = new OptionPanel(300, 30);
-		// this.add(_options);
+		_options = new OptionPanel(model);
+		// _test = new TestPanel(300, 30);
+		this.add(_options);
+		// this.add(_test);
 	}
 
 	private void init() {
@@ -48,14 +58,11 @@ public class SetScreen implements ScreenFrame {
 	}
 
 	public void displaySelected(Geometry selected) {
-		// _options.setLabelText(selected.displayString());
-		// if (!_options.isVisible())
-		// _options.toggle();
+		_options.addGeomPanel(selected);
 	}
 
-	public void removeSelection() {
-		// if (!_options.isMoving() && _options.isVisible())
-		// _options.toggle();
+	public void removeSelection(boolean toggle) {
+		_options.removeGeomPanels(toggle);
 	}
 
 	@Override
@@ -122,10 +129,15 @@ public class SetScreen implements ScreenFrame {
 				Vector2f relativePoint = new Vector2f();
 				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
 				frame.mousePressed(new MouseEvent(relativePoint, e.button));
+				frame.setFocus(true);
+			} else {
+				frame.setFocus(false);
 			}
 		}
-		if (onViewport)
+		if (onViewport) {
 			_viewport.mousePressed(e);
+			startOnView = true;
+		}
 	}
 
 	@Override
@@ -142,32 +154,33 @@ public class SetScreen implements ScreenFrame {
 		}
 		if (onViewport)
 			_viewport.mouseReleased(e);
+
+		startOnView = false;
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		// System.out.println("MouseDragged: " + e.location + ", Button: " + e.button);
-		boolean onViewport = true;
-		for (ScreenFrame frame : frames) {
-			if (frame.contains(e.location)) {
-				onViewport = false;
-				Vector2f relativePoint = new Vector2f();
-				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
+		if (!startOnView) {
+			for (ScreenFrame frame : frames) {
+				if (frame.contains(e.location)) {
+					Vector2f relativePoint = new Vector2f();
+					Vector2f.sub(e.location, frame.getLocation(), relativePoint);
 
-				if (!contained.get(frame)) {
-					frame.mouseEntered(relativePoint);
-					contained.put(frame, true);
+					if (!contained.get(frame)) {
+						frame.mouseEntered(relativePoint);
+						contained.put(frame, true);
+					}
+					frame.mouseDragged(new MouseEvent(relativePoint, e.button));
+				} else if (contained.get(frame)) {
+					Vector2f relativePoint = new Vector2f();
+					Vector2f.sub(e.location, frame.getLocation(), relativePoint);
+
+					frame.mouseExited(relativePoint);
+					contained.put(frame, false);
 				}
-				frame.mouseDragged(new MouseEvent(relativePoint, e.button));
-			} else if (contained.get(frame)) {
-				Vector2f relativePoint = new Vector2f();
-				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
-
-				frame.mouseExited(relativePoint);
-				contained.put(frame, false);
 			}
-		}
-		if (onViewport)
+		} else
 			_viewport.mouseDragged(e);
 	}
 
@@ -184,6 +197,7 @@ public class SetScreen implements ScreenFrame {
 	 */
 	@Override
 	public void render2D() {
+		_viewport.render2D();
 		glTranslatef(ul.x, ul.y, 0);
 		for (ScreenFrame frame : frames)
 			frame.render2D();
@@ -238,14 +252,26 @@ public class SetScreen implements ScreenFrame {
 
 		if (e.keyCode == Keyboard.KEY_T) {
 			// _options.toggle();
+			// _test.setTextBoxText("The quick brown fox haz dog");
 		}
 
+		for (ScreenFrame frame : frames) {
+			if (frame.isInFocus()) {
+				frame.keyPressed(e);
+				return;
+			}
+		}
 		_viewport.keyPressed(e);
-
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
+		for (ScreenFrame frame : frames) {
+			if (frame.isInFocus()) {
+				frame.keyReleased(e);
+				return;
+			}
+		}
 		_viewport.keyReleased(e);
 	}
 
@@ -309,6 +335,14 @@ public class SetScreen implements ScreenFrame {
 		for (ScreenFrame frame : frames) {
 			frame.animate(millisSincePrev);
 		}
+	}
+
+	@Override
+	public void setFocus(boolean focus) {}
+
+	@Override
+	public boolean isInFocus() {
+		return false;
 	}
 
 }

@@ -3,10 +3,8 @@ package glfrontend;
 import static glfrontend.ScreenFrame.MouseButton.LEFT;
 import static glfrontend.ScreenFrame.MouseButton.RIGHT;
 import static glfrontend.ScreenFrame.MouseButton.WHEEL;
-import static org.lwjgl.opengl.GL11.GL_BACK;
 import static org.lwjgl.opengl.GL11.GL_BLEND;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.GL_MODELVIEW;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
@@ -18,7 +16,6 @@ import static org.lwjgl.opengl.GL11.GL_TRANSFORM_BIT;
 import static org.lwjgl.opengl.GL11.glBindTexture;
 import static org.lwjgl.opengl.GL11.glBlendFunc;
 import static org.lwjgl.opengl.GL11.glClear;
-import static org.lwjgl.opengl.GL11.glCullFace;
 import static org.lwjgl.opengl.GL11.glEnable;
 import static org.lwjgl.opengl.GL11.glGetFloat;
 import static org.lwjgl.opengl.GL11.glLoadIdentity;
@@ -34,7 +31,9 @@ import glfrontend.ScreenFrame.KeyEvent;
 import glfrontend.ScreenFrame.MouseEvent;
 import glfrontend.components.GLPanel;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
@@ -45,12 +44,19 @@ import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Vector2f;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.UnicodeFont;
+import org.newdawn.slick.font.effects.ColorEffect;
 
 public class GLFrontEnd implements FrontEnd {
 
 	public static Dimension WINDOW_DIMENSIONS = new Dimension(500, 500);
 	public static Vector2f SCALE = new Vector2f(1, 1);
 	public static String TITLE = "";
+
+	public static UnicodeFont LABEL_FONT;
+	public static UnicodeFont TYPE_FONT;
+	public static UnicodeFont BUTTON_FONT;
 
 	private static final FloatBuffer perspectiveProjectionMatrix = BufferUtils.createFloatBuffer(16);
 	private static final FloatBuffer orthographicProjectionMatrix = BufferUtils.createFloatBuffer(16);
@@ -59,7 +65,7 @@ public class GLFrontEnd implements FrontEnd {
 	private boolean clickLeft, clickRight, clickWheel;
 	private Vector2f prevMouse;
 	private boolean contained;
-	
+
 	private long animationTime;
 
 	private ScreenFrame _frame;
@@ -83,6 +89,10 @@ public class GLFrontEnd implements FrontEnd {
 		setUpDisplay();
 		setUpStates();
 		setUpMatrices();
+		setFonts();
+
+		Keyboard.enableRepeatEvents(true);
+
 		_frame = new GLPanel();
 		_frame.setLocation(new Vector2f(0, 0));
 		_frame.setSize(new Vector2f(WINDOW_DIMENSIONS.width, WINDOW_DIMENSIONS.height));
@@ -296,8 +306,8 @@ public class GLFrontEnd implements FrontEnd {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		// Only shows the image on the front of the surface.
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_BACK);
+		// glEnable(GL_CULL_FACE);
+		// glCullFace(GL_BACK);
 	}
 
 	/**
@@ -348,6 +358,29 @@ public class GLFrontEnd implements FrontEnd {
 
 	public static float mouseY() {
 		return Display.getHeight() - Mouse.getY() - 1;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static void setFonts() {
+		LABEL_FONT = new UnicodeFont(new Font("Sans Serif", Font.BOLD, 14));
+		LABEL_FONT.getEffects().add(new ColorEffect(new Color(255, 128, 0)));
+		LABEL_FONT.addAsciiGlyphs();
+		
+		TYPE_FONT = new UnicodeFont(new Font("Sans Serif", Font.BOLD, 14));
+		TYPE_FONT.getEffects().add(new ColorEffect(Color.WHITE));
+		TYPE_FONT.addAsciiGlyphs();
+
+//		BUTTON_FONT = new UnicodeFont(new Font("Times New Roman", Font.BOLD, 14));
+//		BUTTON_FONT.getEffects().add(new ColorEffect(Color.BLACK));
+//		BUTTON_FONT.addAsciiGlyphs();
+		try {
+			LABEL_FONT.loadGlyphs();
+			TYPE_FONT.loadGlyphs();
+//			BUTTON_FONT.loadGlyphs();
+		} catch (SlickException e) {
+			e.printStackTrace();
+		}
+		BUTTON_FONT = TYPE_FONT;
 	}
 
 }

@@ -16,10 +16,14 @@ public interface Model {
 	
 	public void renderGeometries();
 
-	public void checkIntersections(Point elmt, boolean shift);
+	public void checkIntersections(Point elmt, boolean shift, boolean pivot);
 	
 	public void deleteSelections();
 
 	public void setScreen(SetScreen main);
+	
+	public void createConstraint(String type);
+
+	public void update();
 
 }

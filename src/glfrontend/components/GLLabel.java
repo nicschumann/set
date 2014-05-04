@@ -1,27 +1,20 @@
 package glfrontend.components;
 
 import static com.workshop.set.view.SetScreen.newRatio;
+import static glfrontend.GLFrontEnd.LABEL_FONT;
+import static glfrontend.components.GLComponent.TextAlignment.CENTER;
 import static glfrontend.components.GLComponent.TextAlignment.LEFT;
 import static glfrontend.components.GLComponent.TextAlignment.RIGHT;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
 import static org.lwjgl.opengl.GL11.glDisable;
 
-import java.awt.Color;
-import java.awt.Font;
-
 import org.lwjgl.util.vector.Vector2f;
-import org.newdawn.slick.SlickException;
-import org.newdawn.slick.UnicodeFont;
-import org.newdawn.slick.font.effects.ColorEffect;
 import org.newdawn.slick.opengl.TextureImpl;
 
 public class GLLabel extends GLComponent {
 
 	private String text;
-	private Font awtFont;
-	private UnicodeFont font;
 	private Vector2f textLoc;
-	private Color _foreground;
 	private TextAlignment _textAlign;
 
 	public GLLabel() {
@@ -37,16 +30,10 @@ public class GLLabel extends GLComponent {
 
 	public void init() {
 		text = "";
-		_foreground = Color.BLACK;
-		_textAlign = LEFT;
-		
-		setFont(new java.awt.Font("Sans Serif", java.awt.Font.BOLD, 13));
-		TextureImpl.bindNone();
-	}
+		_textAlign = CENTER;
 
-	public void setForeground(Color color) {
-		_foreground = color;
-		setFont(awtFont);
+		setTextLoc();
+		TextureImpl.bindNone();
 	}
 
 	public void setText(String text) {
@@ -57,47 +44,28 @@ public class GLLabel extends GLComponent {
 	public String getText() {
 		return text;
 	}
-	
+
 	public void setAlignment(TextAlignment align) {
 		_textAlign = align;
 	}
 
-	@SuppressWarnings("unchecked")
-	public void setFont(Font awtFont) {
-		this.awtFont = awtFont;
-		font = new UnicodeFont(awtFont);
-		font.getEffects().add(new ColorEffect(_foreground));
-		font.addAsciiGlyphs();
-		try {
-			font.loadGlyphs();
-		} catch (SlickException e) {
-			e.printStackTrace();
-		}
-		setTextLoc();
-	}
-
 	private void setTextLoc() {
-		if (font == null)
-			return;
-		
 		float x;
-		int textHeight = font.getAscent() + font.getDescent();
+		int textHeight = LABEL_FONT.getAscent() + LABEL_FONT.getDescent();
 		Vector2f mid = new Vector2f();
 		Vector2f.sub(lr, ul, mid);
-		
+
 		if (_textAlign == LEFT) {
 			x = 5;
 		} else {
-			int textWidth = font.getWidth(text);
+			int textWidth = LABEL_FONT.getWidth(text);
 			if (_textAlign == RIGHT) {
 				x = lr.x - textWidth - 5;
 			} else { // CENTER
 				x = (mid.x - textWidth) / 2;
 			}
 		}
-			
-		
-		
+
 		textLoc = new Vector2f(x, (mid.y - textHeight) / 2);
 	}
 
@@ -110,7 +78,7 @@ public class GLLabel extends GLComponent {
 	@Override
 	public void draw() {
 		if (textLoc != null) {
-			font.drawString(textLoc.x + ul.x, textLoc.y + ul.y, text);
+			LABEL_FONT.drawString(textLoc.x + ul.x, textLoc.y + ul.y, text);
 			glDisable(GL_TEXTURE_2D);
 		}
 	}
@@ -138,6 +106,5 @@ public class GLLabel extends GLComponent {
 			break;
 		}
 	}
-
 
 }

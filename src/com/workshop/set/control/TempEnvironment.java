@@ -11,11 +11,14 @@ import static org.lwjgl.opengl.GL11.glTranslated;
 import static org.lwjgl.opengl.GL11.glVertex3d;
 import glfrontend.components.Vector4;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.lwjgl.util.glu.Sphere;
 
+import com.workshop.set.model.Constraint;
+import com.workshop.set.model.RelationalConstraint;
 import com.workshop.set.model.VectorSpace.GeometricFailure;
 import com.workshop.set.model.VectorSpace.Geometry;
 import com.workshop.set.model.VectorSpace.Point;
@@ -101,6 +104,9 @@ public class TempEnvironment implements Model {
 	}
 
 	private void drawPoint(Point p, boolean pivot) {
+		
+		p.applyConstraints();
+		
 		try {
 			double x = p.getN_(1).get();
 			double y = p.getN_(2).get();
@@ -123,6 +129,7 @@ public class TempEnvironment implements Model {
 	public void deselectAll() {
 		for (Geometry elt : _currentSelections) {
 			elt.setHighlight(false);
+			elt.setPivot(false); // can only stop being a pivot if deselected without being used
 		}
 		_currentSelections.clear();
 	}
@@ -133,10 +140,63 @@ public class TempEnvironment implements Model {
 			_currentElements.remove(elt);
 		}
 		_currentSelections.clear();
+		_screen.removeSelection(true);
 	}
 
+	/**
+	 * Given specification of type of constraint, applies it to the current selections
+	 * It should be possible because only possible functions are offered
+	 */
+	public void createConstraint(String type){
+		
+		ArrayList<Point> pivots = new ArrayList<Point>();
+		ArrayList<Point> orbits = new ArrayList<Point>();
+		Set<Integer> indices = new HashSet<Integer>();
+		String relation = "";
+		
+		//parse out the points of interest and send them
+		for (Geometry g : _currentSelections){
+	
+			Set<Geometry> geom = g.getGeometries(); 
+			if(geom.isEmpty()){
+				//add the point to the correct list. 
+				if(g.isPivot())
+					pivots.add((Point)g);
+				else
+					orbits.add((Point)g);
+			}
+			else{
+				//for each element, to appropriate list
+				for(Geometry elt : geom){
+					if(g.isPivot())
+						pivots.add((Point)elt);
+					else
+						orbits.add((Point)elt);
+				}
+			}
+		}
+		
+		switch(type){
+			case("YValsEqual"):
+				indices.add(1);
+				relation = "equality";
+				//System.out.println("y value stuff"); 
+				break; 
+		}
+			
+		try {
+			Constraint c = new RelationalConstraint(pivots, orbits, indices, relation);
+			
+			//add to master list for bookkeeping
+		} catch (GeometricFailure e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	
 	@Override
-	public void checkIntersections(Point elmt, boolean shift) {
+	public void checkIntersections(Point elmt, boolean shift, boolean pivot) {
 
 		boolean intersected = false;
 		boolean selected = false;
@@ -152,18 +212,22 @@ public class TempEnvironment implements Model {
 			if (intersected) {
 				if (!shift) {// if no shift, must first empty previous selections
 					this.deselectAll();
+					_screen.removeSelection(false);
 				}
 				element.setHighlight(true);
-				_currentSelections.add(element);
-				_screen.displaySelected(element);
+				if (_currentSelections.add(element))
+					_screen.displaySelected(element);
 				selected = true;
+				if (pivot)
+					element.setPivot(true); // becomes a pivot if selected with pivot down
+				// update the possible functions to apply display
 			}
 		}
 
 		// if no object was selected deselect all items
 		if (!selected) {
 			this.deselectAll();
-			_screen.removeSelection();
+			_screen.removeSelection(true);
 		}
 	}
 
@@ -177,27 +241,55 @@ public class TempEnvironment implements Model {
 	/**
 	 * returns whether two values are "close enough" or equal within epsilon
 	 */
-	public boolean equalsWithinEps(double val1, double val2) {
-		return (Math.abs(val1 - val2)) < .15;
+	public boolean equalsWithinEps(double val1, double val2, double eps) {
+		return (Math.abs(val1 - val2)) < eps;
 	}
 
 	public boolean checkLineIntersection(Point check, double[] pts) {
 
 		double[] toCheck = check.getPointArray();
-		// direction of line
+		boolean inBounds = false;
+
+		// line's direction vector
 		Vector4 d = new Vector4((float) (pts[0] - pts[3]), (float) (pts[1] - pts[4]), (float) (pts[2] - pts[5]), 0f)
 				.getNormalized();
 
-		// solve linear system for the results toCheck.x,toCheck.y (toCheck.z always 0)
-		double t1 = (toCheck[0] - pts[0]) / d.x;
-		double t2 = (toCheck[1] - pts[1]) / d.y;
+		double waneX = .08; // radius of spheres rendering
+		double waneY = .08;
 
-		double maxX = Math.max(pts[0], pts[3]) - .08;
-		double minX = Math.min(pts[0], pts[3]) + .08;
-		double maxY = Math.max(pts[1], pts[4]) - .08;
-		double minY = Math.min(pts[1], pts[4]) + .08;
+		if (d.x < .12)
+			waneX = -.03; // give selection leeway to vertical/horizontal lines
+		if (d.y < .12)
+			waneY = -.03;
 
-		// if t values are "close enough, and between clipping bounds then point is on the line
-		return (equalsWithinEps(t1, t2) && toCheck[0] <= maxX && toCheck[0] >= minX && toCheck[1] <= maxY && toCheck[1] >= minY);
+		double maxX = Math.max(pts[0], pts[3]) - waneX;
+		double minX = Math.min(pts[0], pts[3]) + waneX;
+		double maxY = Math.max(pts[1], pts[4]) - waneY;
+		double minY = Math.min(pts[1], pts[4]) + waneY;
+
+		if (toCheck[0] <= maxX && toCheck[0] >= minX && toCheck[1] <= maxY && toCheck[1] >= minY)
+			inBounds = true;
+
+		if (equalsWithinEps(d.x, 0, .02)) // vertical line
+			return (equalsWithinEps(toCheck[0], pts[0], .1) && inBounds);
+
+		else if (equalsWithinEps(d.y, 0, .02)) // horizontal line
+			return (equalsWithinEps(toCheck[1], pts[1], .1) && inBounds);
+
+		else {
+			// solve linear system for the results toCheck.x,toCheck.y (toCheck.z always 0)
+			double t1 = (toCheck[0] - pts[0]) / d.x;
+			double t2 = (toCheck[1] - pts[1]) / d.y;
+
+			return (equalsWithinEps(t1, t2, .1) && inBounds);
+		}
+
+	}
+	
+	@Override
+	public void update() {
+		for (Geometry geom : _currentElements) {
+			geom.applyConstraints();
+		}
 	}
 }

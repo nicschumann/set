@@ -107,13 +107,15 @@ public interface ScreenFrame {
 
 	/**
 	 * Triggered once when a key is pressed
-	 * 
+	 * <p>
 	 * Potential Usage:
+	 * <p>switch (e.keyCode) {
+	 * <p>case Keyboard.KEY_A: // do stuff for key 'a' 
+	 * <p>case Keyboard.KEY_W: // do stuff for key 'w'
+	 * <p>case Keyboard.KEY_D: // do stuff for key 'd'
+	 * <p>. . . }
 	 * 
-	 * switch (key) { case Keyboard.KEY_A: // do stuff for key 'a' break; case Keyboard.KEY_W: // do
-	 * stuff for key 'w' break; case Keyboard.KEY_D: // do stuff for key 'd' break; . . . }
-	 * 
-	 * @param key
+	 * @param e - the {@link KeyEvent} for this key press
 	 */
 	public void keyPressed(KeyEvent e);
 
@@ -121,12 +123,13 @@ public interface ScreenFrame {
 	 * Triggered when a key is released
 	 * 
 	 * Potential Usage:
+	 * <p>switch (e.keyCode) {
+	 * <p>case Keyboard.KEY_A: // do stuff for key 'a' 
+	 * <p>case Keyboard.KEY_W: // do stuff for key 'w'
+	 * <p>case Keyboard.KEY_D: // do stuff for key 'd'
+	 * <p>. . . }
 	 * 
-	 * switch (key) { case Keyboard.KEY_A: // do stuff for key 'a' break; case Keyboard.KEY_W: // do
-	 * stuff for key 'w' break; case Keyboard.KEY_D: // do stuff for key 'd' break; . . . }
-	 * 
-	 * @param key
-	 *            - the int representing the key value
+	 * @param e - the {@link KeyEvent} for this key release
 	 */
 	public void keyReleased(KeyEvent e);
 
@@ -180,6 +183,20 @@ public interface ScreenFrame {
 	 *            - time since method was last called
 	 */
 	public void animate(long millisSincePrev);
+	
+	/**
+	 * Sets whether or not this frame is the focus for key events.
+	 * 
+	 * @param focus - the new focus setting
+	 */
+	public void setFocus(boolean focus);
+	
+	/**
+	 * Returns whether or not this frame is the focus for key events.
+	 * 
+	 * @return true if the frame is in focus, false otherwise.
+	 */
+	public boolean isInFocus();
 
 	/**
 	 * A class containing mouse button and location data stored in public variables
@@ -198,12 +215,18 @@ public interface ScreenFrame {
 		}
 
 	}
-	
+
+	/**
+	 * A class containing key code and key character data for key strokes.
+	 * 
+	 * @author ltbarnes
+	 * 
+	 */
 	public static class KeyEvent {
-		
+
 		public final int keyCode;
 		public final char keyChar;
-		
+
 		public KeyEvent(int code, char key) {
 			this.keyCode = code;
 			this.keyChar = key;

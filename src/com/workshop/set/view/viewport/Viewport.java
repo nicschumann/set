@@ -1,4 +1,4 @@
-package com.workshop.set.view;
+package com.workshop.set.view.viewport;
 
 import static com.workshop.set.SetMain.GENSYM;
 import static com.workshop.set.SetMain.VEC_SPACE_3D;
@@ -6,8 +6,10 @@ import static org.lwjgl.opengl.GL11.glColor3f;
 import static org.lwjgl.opengl.GL11.glLoadIdentity;
 import glfrontend.ScreenFrameAdapter;
 import glfrontend.components.Camera;
+import glfrontend.components.GLLabel;
 import glfrontend.components.Vector4;
 
+import java.awt.Color;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -31,16 +33,17 @@ public class Viewport extends ScreenFrameAdapter {
 	private ArrayList<Camera> _cameras;
 	private int _camIndex = 0;
 	private Model _model;
+	private GLLabel _selectionLabel;
 
 	private Vector2f _currPos;
-	private boolean _shiftDown;
+	private boolean _shiftDown, _pivot;
 	private Point[] _linePoints = new Point[2];
 	private int _toUpdate;
 
 	private String _mode; // controls interaction changes for creation or selection mode
 
 	public Viewport(Model model, float w, float h) {
-		init();
+		init(w, h);
 		setSize(new Vector2f(w, h));
 
 		_cameras = new ArrayList<Camera>();
@@ -52,13 +55,18 @@ public class Viewport extends ScreenFrameAdapter {
 		_model = model;
 	}
 
-	private void init() {
+	private void init(float w, float h) {
 		ul = new Vector2f(0f, 0f);
 		lr = new Vector2f(50f, 50f);
 		_shiftDown = false;
+		_pivot = false; 
 		_toUpdate = 0;
 
 		_mode = "creation";
+		_selectionLabel = new GLLabel("CREATE");
+		_selectionLabel.setSize(70, 23);
+		_selectionLabel.setLocation(w - 70, 0);
+		_selectionLabel.setBackground(new Color(255, 255, 255, 30));
 	}
 
 	public void setStage(Stage s) {
@@ -108,10 +116,22 @@ public class Viewport extends ScreenFrameAdapter {
 		_stage.render3D();
 		glColor3f(1, 0, 0);
 		_model.renderGeometries();
+
+		// plane drawing test
+		// glColor3f(0f, 1f, 0f);
+		//
+		// glBegin(GL_QUADS);
+		// glVertex3f(0.5f, 1.5f, 1f);
+		// glVertex3f(1f, 1f, 0f);
+		// glVertex3f(0f, 0f, 0f);
+		// glVertex3f(0.5f, -0.5f, 1f);
+		// glEnd();
 	}
 
 	@Override
-	public void render2D() {}
+	public void render2D() {
+		_selectionLabel.render2D();
+	}
 
 	/**
 	 * Given a mouse position, generates a 3d ray and intersects with the projection plane,
@@ -147,12 +167,10 @@ public class Viewport extends ScreenFrameAdapter {
 
 		Vector4 proj = new Vector4(p.x + d.x * t, p.y + d.y * t, p.z + d.z * t, 0);
 
-		// points off by a factor of two
-
 		Point point = null;
 		try {
-			point = VEC_SPACE_3D.point(GENSYM.generate(), new MDouble((double) proj.x), new MDouble(
-					(double) proj.y), new MDouble((double) proj.z));
+			point = VEC_SPACE_3D.point(GENSYM.generate(), new MDouble((double) proj.x), new MDouble((double) proj.y),
+					new MDouble((double) proj.z));
 		} catch (GeometricFailure e) {
 			e.printStackTrace();
 		}
@@ -164,10 +182,17 @@ public class Viewport extends ScreenFrameAdapter {
 	 */
 
 	public void checkIntersections(Point p) {
-		// may do initial bounds checking here...
-		_model.checkIntersections(p, _shiftDown);
+		_model.checkIntersections(p, _shiftDown, _pivot);
 	}
 
+	/**
+	 * Generally calls temp environment to create a constraint of the given type, if possible
+	 */
+	public void createConstraint(String type){
+		_model.createConstraint(type);
+	}
+	
+	
 	@Override
 	public void mouseClicked(MouseEvent e) {
 
@@ -178,8 +203,7 @@ public class Viewport extends ScreenFrameAdapter {
 
 			_model.addGeometry(p);
 			// if shift key down, take care of adding this point to the lines renderable queue and
-			// creating a
-			// new line as well
+			// creating a new line as well
 			if (_shiftDown) {
 				_linePoints[_toUpdate] = p;
 
@@ -242,22 +266,35 @@ public class Viewport extends ScreenFrameAdapter {
 		}
 		if (keyCode == Keyboard.KEY_LSHIFT || keyCode == Keyboard.KEY_RSHIFT)
 			_shiftDown = true;
-		if (keyCode == Keyboard.KEY_S && _mode.equalsIgnoreCase("creation"))
+		if (keyCode == Keyboard.KEY_S && _mode.equalsIgnoreCase("creation")) {
 			_mode = "selection";
-		if (keyCode == Keyboard.KEY_C && _mode.equalsIgnoreCase("selection"))
+			_selectionLabel.setText("SELECT");
+		}
+		if (keyCode == Keyboard.KEY_C && _mode.equalsIgnoreCase("selection")) {
 			_mode = "creation";
+			_selectionLabel.setText("CREATE");
+		}
 		if (keyCode == Keyboard.KEY_BACK || keyCode == Keyboard.KEY_DELETE)
 			_model.deleteSelections();
+		if (keyCode == Keyboard.KEY_P)
+			_pivot = true; 
+		
+		if (keyCode == Keyboard.KEY_RETURN)
+			this.createConstraint("YValsEqual"); 
+		//System.out.println("key: " + key);
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
+		int key = e.keyCode;
 		if (e.keyCode == Keyboard.KEY_LSHIFT || e.keyCode == Keyboard.KEY_RSHIFT) {
 			_shiftDown = false;
 			_linePoints[0] = null;
 			_linePoints[1] = null;
 			_toUpdate = 0;
 		}
+		if (key == Keyboard.KEY_P)
+			_pivot = false; 
 	}
 
 	@Override
@@ -271,6 +308,8 @@ public class Viewport extends ScreenFrameAdapter {
 		Vector2f.sub(lr, ul, size);
 
 		Vector2f.add(ul, newSize, lr);
+		
+		_selectionLabel.setLocation(newSize.x - _selectionLabel.getSize().x, 0);
 	}
 
 }

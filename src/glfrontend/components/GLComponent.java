@@ -16,11 +16,13 @@ public class GLComponent extends ScreenFrameAdapter {
 	protected float[] _color;
 	protected Vector2f ul;
 	protected Vector2f lr;
+	protected boolean _focus;
 
 	private boolean _visible;
 	private ResizeType resizeType;
 	
-	public enum TextAlignment {
+	
+	public static enum TextAlignment {
 		LEFT,
 		CENTER,
 		RIGHT;
@@ -36,6 +38,7 @@ public class GLComponent extends ScreenFrameAdapter {
 		lr = new Vector2f(50f, 50f);
 		resizeType = ResizeType.RATIO;
 		_visible = true;
+		_focus = false;
 	}
 	
 	public void setVisible(boolean visible) {
@@ -84,6 +87,8 @@ public class GLComponent extends ScreenFrameAdapter {
 
 	@Override
 	public boolean contains(Vector2f p) {
+		if (!isVisible())
+			return false;
 		Vector2f temp1 = new Vector2f();
 		Vector2f temp2 = new Vector2f();
 		Vector2f.sub(lr, p, temp1);
@@ -103,6 +108,16 @@ public class GLComponent extends ScreenFrameAdapter {
 
 	public void resize(float width, float height) {
 		resize(new Vector2f(width, height));
+	}
+	
+	@Override
+	public void setFocus(boolean focus) {
+		_focus = focus;
+	}
+	
+	@Override
+	public boolean isInFocus() {
+		return _focus;
 	}
 
 	@Override

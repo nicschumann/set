@@ -33,6 +33,11 @@ public class GLPanel extends GLComponent {
 		contained.put(c, false);
 	}
 
+	public void remove(GLComponent c) {
+		comps.remove(c);
+		contained.remove(c);
+	}
+
 	@Override
 	public void draw() {
 
@@ -51,6 +56,9 @@ public class GLPanel extends GLComponent {
 				Vector2f relativePoint = new Vector2f();
 				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
 				frame.mousePressed(new MouseEvent(relativePoint, e.button));
+				frame.setFocus(true);
+			} else {
+				frame.setFocus(false);
 			}
 		}
 	}
@@ -118,6 +126,36 @@ public class GLPanel extends GLComponent {
 	}
 
 	@Override
+	public void keyPressed(KeyEvent e) {
+		for (ScreenFrame frame : comps) {
+			if (frame.isInFocus()) {
+				frame.keyPressed(e);
+				return;
+			}
+		}
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		for (ScreenFrame frame : comps) {
+			if (frame.isInFocus()) {
+				frame.keyReleased(e);
+				return;
+			}
+		}
+	}
+
+	@Override
+	public void setFocus(boolean focus) {
+		this._focus = focus;
+		if (!focus) {
+			for (ScreenFrame frame : comps) {
+				frame.setFocus(focus);
+			}
+		}
+	}
+
+	@Override
 	public void resize(Vector2f newSize) {
 		setLocation(newRatio(getLocation(), getSize(), newSize));
 		switch (getResizeType()) {
@@ -147,5 +185,14 @@ public class GLPanel extends GLComponent {
 			break;
 		}
 	}
+
+	@Override
+	public void animate(long millisSincePrev) {
+		for (ScreenFrame comp : comps) {
+			comp.animate(millisSincePrev);
+		}
+	}
+
+	public void update() {}
 
 }

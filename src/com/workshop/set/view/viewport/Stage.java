@@ -1,4 +1,4 @@
-package com.workshop.set.view;
+package com.workshop.set.view.viewport;
 
 import static org.lwjgl.opengl.GL11.GL_LINES;
 import static org.lwjgl.opengl.GL11.GL_LINE_SMOOTH;

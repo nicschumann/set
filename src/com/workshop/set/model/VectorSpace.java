@@ -44,6 +44,8 @@ public class VectorSpace {
          * @return a Symbol object representing this Geometry's name.
          */
         public abstract Symbol name();
+        
+        public abstract void setName(Symbol name);
 
         /**
          * this method returns the atomic names that are bound to values in this geometry.
@@ -90,8 +92,18 @@ public class VectorSpace {
         public abstract void setHighlight(boolean b);
         
         public abstract boolean getHighlight();
+        
+        public abstract void setPivot(boolean p);
+        
+        public abstract boolean isPivot();
 
         public abstract String displayString();
+        
+        public abstract void addConstraint(Constraint c);
+        
+        public abstract void removeConstraint(Constraint c);
+        
+        public abstract void applyConstraints();
 
     }
 
@@ -100,6 +112,9 @@ public class VectorSpace {
      * This class represents a location in n-dimensional space
      */
     public class Point extends Geometry {
+    	
+    	public Set<Constraint> _constraints; 
+    	
         public Point( Symbol name, Map<Symbol,MDouble> components ) throws GeometricFailure {
             if ( components.size() != dimension ) throw new GeometricFailure( components.size() );
 
@@ -149,13 +164,14 @@ public class VectorSpace {
         
         public void init(){
         	highlighted=false; 
+        	_constraints = new HashSet<Constraint>();
         }
 
         private Symbol name;
         private Symbol[] names = new Symbol[ dimension ];
         private MDouble[] components = new MDouble[ dimension ];
         private Map<Symbol,MDouble> namedComponents = new LinkedHashMap<>();
-        private boolean highlighted; 
+        private boolean highlighted, pivot; 
 
         /**
          * getN_( i...n ) is defined.
@@ -169,6 +185,12 @@ public class VectorSpace {
         public MDouble getN_( int i ) throws GeometricFailure {
             if ( i <= 0 || i > dimension ) throw new GeometricFailure( i );
             return components[ i - 1 ];
+        }
+
+        public void setN_( int i, MDouble d ) throws GeometricFailure {
+        	if ( i <= 0 || i > dimension ) throw new GeometricFailure( i );
+        	components[ i - 1 ] = d;
+        	namedComponents.put( names[ i - 1 ], d );
         }
 
         /**
@@ -189,6 +211,11 @@ public class VectorSpace {
          */
         @Override
         public Symbol name() { return name; }
+        
+        @Override
+        public void setName(Symbol name) {
+        	this.name = name;
+        }
 
         /**
          * @return the ( component, value ) pairs contained in this point.
@@ -251,6 +278,10 @@ public class VectorSpace {
         
         @Override
         public Set<Geometry> getGeometries() {
+        	
+//        	Set<Geometry> point = new HashSet<Geometry>();
+//        	point.add(this);
+//        	return point; 
         	return new HashSet<>(0);
         }
         
@@ -284,6 +315,29 @@ public class VectorSpace {
 			String result = String.format("Point \"%s\": (%.2f, %.2f, %.2f)", name, pnts[0], pnts[1], pnts[2]);
 			return result;
 		}
+
+		@Override
+		public void setPivot(boolean p) {pivot=p;}
+
+		@Override
+		public boolean isPivot() {return pivot;}
+
+		@Override
+		public void addConstraint(Constraint c) {
+			_constraints.add(c);
+		}
+
+		@Override
+		public void removeConstraint(Constraint c) {
+			_constraints.remove(c);
+		}
+
+		@Override
+		public void applyConstraints() {
+			for ( Constraint c: _constraints){
+				c.apply(); 
+			}
+		}
 	}
 
 	public class Relation extends Geometry {
@@ -307,11 +361,16 @@ public class VectorSpace {
 		private Symbol name;
 		private Geometry A;
 		private Geometry B;
-		private boolean highlighted;
+		private boolean highlighted, pivot;
 
 		public Symbol name() {
 			return name;
 		}
+        
+        @Override
+        public void setName(Symbol name) {
+        	this.name = name;
+        }
 
 		public Geometry domain() {
 			return A;
@@ -376,10 +435,7 @@ public class VectorSpace {
 			System.arraycopy(b, 0, array, a.length, b.length);
 			return array;
 		}
-
-		/**
-		 * @return A string representation of this point.
-		 */
+		
 		@Override
         public void setHighlight(boolean b) {
             highlighted = b;
@@ -389,6 +445,12 @@ public class VectorSpace {
         public boolean getHighlight() {
             return highlighted;
         }
+        
+		@Override
+		public void setPivot(boolean p) {pivot=p;}
+
+		@Override
+		public boolean isPivot() {return pivot;}
 
         @Override
         public String toString() {
@@ -403,6 +465,15 @@ public class VectorSpace {
             String result = String.format("Relation \"%s\": {A: '%s', B: '%s'}", name, A.name(), B.name());
             return result;
         }
+
+		@Override
+		public void addConstraint(Constraint c) {}
+
+		@Override
+		public void removeConstraint(Constraint c) {}
+
+		@Override
+		public void applyConstraints() {}
     }
 
 	public class GeometricFailure extends Exception {
