@@ -23,6 +23,7 @@ import org.lwjgl.util.vector.Vector2f;
 import com.workshop.set.model.VectorSpace.GeometricFailure;
 import com.workshop.set.model.VectorSpace.Point;
 import com.workshop.set.model.interfaces.Model;
+import com.workshop.set.model.interfaces.Model.Function;
 import com.workshop.set.model.ref.MDouble;
 
 public class Viewport extends ScreenFrameAdapter {
@@ -179,7 +180,7 @@ public class Viewport extends ScreenFrameAdapter {
 	/**
 	 * Generally calls temp environment to create a constraint of the given type, if possible
 	 */
-	public void createConstraint(String type){
+	public void createConstraint(Function type){
 		_model.createConstraint(type);
 	}
 	
@@ -271,8 +272,8 @@ public class Viewport extends ScreenFrameAdapter {
 			_pivot = true; 
 		
 		if (keyCode == Keyboard.KEY_RETURN){
-			//this.createConstraint("YValsEqual"); 
-			this.createConstraint("Parallel");
+//			this.createConstraint(Function.Y_VAL_EQUAL); 
+			this.createConstraint(Function.PARALLEL);
 		}
 		//System.out.println("key: " + key);
 	}
