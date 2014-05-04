@@ -95,9 +95,15 @@ public class VectorSpace {
         
         public abstract void setPivot(boolean p);
         
-        public abstract boolean getPivot();
+        public abstract boolean isPivot();
 
         public abstract String displayString();
+        
+        public abstract void addConstraint(Constraint c);
+        
+        public abstract void removeConstraint(Constraint c);
+        
+        public abstract void applyConstraints();
 
     }
 
@@ -106,6 +112,9 @@ public class VectorSpace {
      * This class represents a location in n-dimensional space
      */
     public class Point extends Geometry {
+    	
+    	public Set<Constraint> _constraints; 
+    	
         public Point( Symbol name, Map<Symbol,MDouble> components ) throws GeometricFailure {
             if ( components.size() != dimension ) throw new GeometricFailure( components.size() );
 
@@ -155,6 +164,7 @@ public class VectorSpace {
         
         public void init(){
         	highlighted=false; 
+        	_constraints = new HashSet<Constraint>();
         }
 
         private Symbol name;
@@ -268,6 +278,10 @@ public class VectorSpace {
         
         @Override
         public Set<Geometry> getGeometries() {
+        	
+//        	Set<Geometry> point = new HashSet<Geometry>();
+//        	point.add(this);
+//        	return point; 
         	return new HashSet<>(0);
         }
         
@@ -306,7 +320,24 @@ public class VectorSpace {
 		public void setPivot(boolean p) {pivot=p;}
 
 		@Override
-		public boolean getPivot() {return pivot;}
+		public boolean isPivot() {return pivot;}
+
+		@Override
+		public void addConstraint(Constraint c) {
+			_constraints.add(c);
+		}
+
+		@Override
+		public void removeConstraint(Constraint c) {
+			_constraints.remove(c);
+		}
+
+		@Override
+		public void applyConstraints() {
+			for ( Constraint c: _constraints){
+				c.apply(); 
+			}
+		}
 	}
 
 	public class Relation extends Geometry {
@@ -419,7 +450,7 @@ public class VectorSpace {
 		public void setPivot(boolean p) {pivot=p;}
 
 		@Override
-		public boolean getPivot() {return pivot;}
+		public boolean isPivot() {return pivot;}
 
         @Override
         public String toString() {
@@ -434,6 +465,15 @@ public class VectorSpace {
             String result = String.format("Relation \"%s\": {A: '%s', B: '%s'}", name, A.name(), B.name());
             return result;
         }
+
+		@Override
+		public void addConstraint(Constraint c) {}
+
+		@Override
+		public void removeConstraint(Constraint c) {}
+
+		@Override
+		public void applyConstraints() {}
     }
 
 	public class GeometricFailure extends Exception {

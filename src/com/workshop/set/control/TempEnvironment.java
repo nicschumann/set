@@ -11,11 +11,14 @@ import static org.lwjgl.opengl.GL11.glTranslated;
 import static org.lwjgl.opengl.GL11.glVertex3d;
 import glfrontend.components.Vector4;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.lwjgl.util.glu.Sphere;
 
+import com.workshop.set.model.Constraint;
+import com.workshop.set.model.RelationalConstraint;
 import com.workshop.set.model.VectorSpace.GeometricFailure;
 import com.workshop.set.model.VectorSpace.Geometry;
 import com.workshop.set.model.VectorSpace.Point;
@@ -101,6 +104,9 @@ public class TempEnvironment implements Model {
 	}
 
 	private void drawPoint(Point p, boolean pivot) {
+		
+		p.applyConstraints();
+		
 		try {
 			double x = p.getN_(1).get();
 			double y = p.getN_(2).get();
@@ -137,6 +143,58 @@ public class TempEnvironment implements Model {
 		_screen.removeSelection(true);
 	}
 
+	/**
+	 * Given specification of type of constraint, applies it to the current selections
+	 * It should be possible because only possible functions are offered
+	 */
+	public void createConstraint(String type){
+		
+		ArrayList<Point> pivots = new ArrayList<Point>();
+		ArrayList<Point> orbits = new ArrayList<Point>();
+		Set<Integer> indices = new HashSet<Integer>();
+		String relation = "";
+		
+		//parse out the points of interest and send them
+		for (Geometry g : _currentSelections){
+	
+			Set<Geometry> geom = g.getGeometries(); 
+			if(geom.isEmpty()){
+				//add the point to the correct list. 
+				if(g.isPivot())
+					pivots.add((Point)g);
+				else
+					orbits.add((Point)g);
+			}
+			else{
+				//for each element, to appropriate list
+				for(Geometry elt : geom){
+					if(g.isPivot())
+						pivots.add((Point)elt);
+					else
+						orbits.add((Point)elt);
+				}
+			}
+		}
+		
+		switch(type){
+			case("YValsEqual"):
+				indices.add(1);
+				relation = "equality";
+				//System.out.println("y value stuff"); 
+				break; 
+		}
+			
+		try {
+			Constraint c = new RelationalConstraint(pivots, orbits, indices, relation);
+			
+			//add to master list for bookkeeping
+		} catch (GeometricFailure e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	
 	@Override
 	public void checkIntersections(Point elmt, boolean shift, boolean pivot) {
 
@@ -226,5 +284,12 @@ public class TempEnvironment implements Model {
 			return (equalsWithinEps(t1, t2, .1) && inBounds);
 		}
 
+	}
+	
+	@Override
+	public void update() {
+		for (Geometry geom : _currentElements) {
+			geom.applyConstraints();
+		}
 	}
 }

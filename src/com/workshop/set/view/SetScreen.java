@@ -25,7 +25,8 @@ public class SetScreen implements ScreenFrame {
 	private Vector2f ul, lr;
 	private Viewport _viewport;
 	private OptionPanel _options;
-//	private TestPanel _test;
+	private boolean startOnView;
+	// private TestPanel _test;
 
 	private List<ScreenFrame> frames;
 	private Map<ScreenFrame, Boolean> contained;
@@ -34,8 +35,8 @@ public class SetScreen implements ScreenFrame {
 		init();
 		setSize(new Vector2f(w, h));
 		_viewport = new Viewport(model, w, h);
-		_options = new OptionPanel();
-//		_test = new TestPanel(300, 30);
+		_options = new OptionPanel(model);
+		// _test = new TestPanel(300, 30);
 		this.add(_options);
 		// this.add(_test);
 	}
@@ -133,8 +134,10 @@ public class SetScreen implements ScreenFrame {
 				frame.setFocus(false);
 			}
 		}
-		if (onViewport)
+		if (onViewport) {
 			_viewport.mousePressed(e);
+			startOnView = true;
+		}
 	}
 
 	@Override
@@ -151,32 +154,33 @@ public class SetScreen implements ScreenFrame {
 		}
 		if (onViewport)
 			_viewport.mouseReleased(e);
+
+		startOnView = false;
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		// System.out.println("MouseDragged: " + e.location + ", Button: " + e.button);
-		boolean onViewport = true;
-		for (ScreenFrame frame : frames) {
-			if (frame.contains(e.location)) {
-				onViewport = false;
-				Vector2f relativePoint = new Vector2f();
-				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
+		if (!startOnView) {
+			for (ScreenFrame frame : frames) {
+				if (frame.contains(e.location)) {
+					Vector2f relativePoint = new Vector2f();
+					Vector2f.sub(e.location, frame.getLocation(), relativePoint);
 
-				if (!contained.get(frame)) {
-					frame.mouseEntered(relativePoint);
-					contained.put(frame, true);
+					if (!contained.get(frame)) {
+						frame.mouseEntered(relativePoint);
+						contained.put(frame, true);
+					}
+					frame.mouseDragged(new MouseEvent(relativePoint, e.button));
+				} else if (contained.get(frame)) {
+					Vector2f relativePoint = new Vector2f();
+					Vector2f.sub(e.location, frame.getLocation(), relativePoint);
+
+					frame.mouseExited(relativePoint);
+					contained.put(frame, false);
 				}
-				frame.mouseDragged(new MouseEvent(relativePoint, e.button));
-			} else if (contained.get(frame)) {
-				Vector2f relativePoint = new Vector2f();
-				Vector2f.sub(e.location, frame.getLocation(), relativePoint);
-
-				frame.mouseExited(relativePoint);
-				contained.put(frame, false);
 			}
-		}
-		if (onViewport)
+		} else
 			_viewport.mouseDragged(e);
 	}
 
@@ -193,6 +197,7 @@ public class SetScreen implements ScreenFrame {
 	 */
 	@Override
 	public void render2D() {
+		_viewport.render2D();
 		glTranslatef(ul.x, ul.y, 0);
 		for (ScreenFrame frame : frames)
 			frame.render2D();
@@ -247,7 +252,7 @@ public class SetScreen implements ScreenFrame {
 
 		if (e.keyCode == Keyboard.KEY_T) {
 			// _options.toggle();
-//			_test.setTextBoxText("The quick brown fox haz dog");
+			// _test.setTextBoxText("The quick brown fox haz dog");
 		}
 
 		for (ScreenFrame frame : frames) {
