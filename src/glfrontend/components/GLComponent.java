@@ -1,9 +1,11 @@
 package glfrontend.components;
 
+import static org.lwjgl.opengl.GL11.GL_LINES;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glColor4f;
 import static org.lwjgl.opengl.GL11.glEnd;
+import static org.lwjgl.opengl.GL11.glLineWidth;
 import static org.lwjgl.opengl.GL11.glVertex2f;
 import glfrontend.ScreenFrameAdapter;
 
@@ -20,12 +22,12 @@ public class GLComponent extends ScreenFrameAdapter {
 
 	private boolean _visible;
 	private ResizeType resizeType;
-	
-	
+
+	private float[] _borderColor;
+	private float _borderWidth;
+
 	public static enum TextAlignment {
-		LEFT,
-		CENTER,
-		RIGHT;
+		LEFT, CENTER, RIGHT;
 	}
 
 	public GLComponent() {
@@ -39,12 +41,14 @@ public class GLComponent extends ScreenFrameAdapter {
 		resizeType = ResizeType.RATIO;
 		_visible = true;
 		_focus = false;
+		_borderColor = null;
+		_borderWidth = 1;
 	}
-	
+
 	public void setVisible(boolean visible) {
 		_visible = visible;
 	}
-	
+
 	public boolean isVisible() {
 		return _visible;
 	}
@@ -55,6 +59,24 @@ public class GLComponent extends ScreenFrameAdapter {
 
 	public void setLocation(float x, float y) {
 		setLocation(new Vector2f(x, y));
+	}
+
+	/**
+	 * Set the color of the border. If {@code color} is null then no border will be drawn.
+	 * 
+	 * @param color - the color of the borders
+	 */
+	public void setBorder(Color color) {
+		if (color == null) {
+			_borderColor = null;
+		} else {
+			_borderColor = new float[4];
+			color.getComponents(_borderColor);
+		}
+	}
+	
+	public void setBorderWidth(float width) {
+		_borderWidth = width;
 	}
 
 	@Override
@@ -109,12 +131,12 @@ public class GLComponent extends ScreenFrameAdapter {
 	public void resize(float width, float height) {
 		resize(new Vector2f(width, height));
 	}
-	
+
 	@Override
 	public void setFocus(boolean focus) {
 		_focus = focus;
 	}
-	
+
 	@Override
 	public boolean isInFocus() {
 		return _focus;
@@ -122,10 +144,10 @@ public class GLComponent extends ScreenFrameAdapter {
 
 	@Override
 	public void render2D() {
-		
+
 		if (!_visible)
 			return;
-		
+
 		// set color
 		glColor4f(_color[0], _color[1], _color[2], _color[3]);
 
@@ -136,6 +158,30 @@ public class GLComponent extends ScreenFrameAdapter {
 		glVertex2f(lr.x, lr.y);
 		glVertex2f(lr.x, ul.y);
 		glEnd();
+		
+		if (_borderColor != null) {
+			// set color and width
+			glColor4f(_borderColor[0], _borderColor[1], _borderColor[2], _borderColor[3]);
+			glLineWidth(_borderWidth);
+			
+			// draw quad
+			glBegin(GL_LINES);
+			
+			glVertex2f(ul.x, ul.y);
+			glVertex2f(ul.x, lr.y);
+			
+			glVertex2f(ul.x, lr.y);
+			glVertex2f(lr.x, lr.y);
+			
+			glVertex2f(lr.x, lr.y);
+			glVertex2f(lr.x, ul.y);
+			
+			glVertex2f(lr.x, ul.y);
+			glVertex2f(ul.x, ul.y);
+			
+			glEnd();
+			
+		}
 
 		draw();
 	}

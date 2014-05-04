@@ -1,4 +1,4 @@
-package com.workshop.set.view.menus;
+package com.workshop.set.view.panels;
 
 import glfrontend.components.GLPanel;
 import glfrontend.components.GLTextBox;

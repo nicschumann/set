@@ -1,5 +1,6 @@
-package com.workshop.set.view.menus;
+package com.workshop.set.view.panels;
 
+import glfrontend.Triggerable;
 import glfrontend.components.GLButton;
 import glfrontend.components.GLPanel;
 
@@ -15,6 +16,7 @@ import com.workshop.set.model.interfaces.Model;
 public class OptionPanel extends GLPanel {
 
 	public static final Vector2f DEFAULT_SIZE = new Vector2f(200, 23);
+	public static final float BUF = 10f;
 
 	private int menuHeight = 0;
 	private Model _model;
@@ -31,10 +33,12 @@ public class OptionPanel extends GLPanel {
 
 	public OptionPanel(Model model) {
 		super();
-		this.setLocation(-DEFAULT_SIZE.x, 0);
+		this.setLocation(-DEFAULT_SIZE.x, 10);
 		this.setSize(DEFAULT_SIZE);
 		this.setBackground(new Color(0, 255, 0, 0));
 		this.setResizeType(ResizeType.FIT_LEFT);
+		this.setBorder(new Color(255, 128, 0));
+		this.setBorderWidth(2f);
 		this.setVisible(false);
 		_panelSpeed = 1000; // pixels/second
 		_menuSpeed = 1000; // pixels/second
@@ -47,10 +51,12 @@ public class OptionPanel extends GLPanel {
 		_buttons = new ArrayList<>();
 		
 		_buttonPanel = new GLPanel();
-		_buttonPanel.setLocation(DEFAULT_SIZE);
+		_buttonPanel.setLocation(0, DEFAULT_SIZE.y);
 		_buttonPanel.setSize(DEFAULT_SIZE.x, 0);
 		_buttonPanel.setBackground(new Color(0, 0, 0, 30));
 		_buttonPanel.setResizeType(ResizeType.FIT_LEFT);
+		_buttonPanel.setBorder(new Color(255, 128, 0));
+		_buttonPanel.setBorderWidth(2f);
 		_buttonPanel.setVisible(false);
 		
 		this.add(_buttonPanel);
@@ -64,7 +70,12 @@ public class OptionPanel extends GLPanel {
 			if (gpane.contains(p))
 				return true;
 		}
-		return super.contains(p) || _buttonPanel.contains(p);
+		Vector2f p2 = new Vector2f(10, 10);
+		Vector2f.sub(p, p2, p2);
+//		System.out.println(p2);
+//		System.out.println("ButtonPanel ul:" + _buttonPanel.ul);
+//		System.out.println("ButtonPanel lr:" + _buttonPanel.lr);
+		return super.contains(p) || _buttonPanel.contains(p2);
 	}
 
 	public void updateGeomPanels() {
@@ -122,16 +133,26 @@ public class OptionPanel extends GLPanel {
 	
 	public void setButtons() {
 		addButton();
-		addButton();
-		addButton();
-		addButton();
+//		addButton();
+//		addButton();
+//		addButton();
 	}
 
 	public void addButton() {
-		GLButton button = new GLButton("Do Things");
+		GLButton button = new GLButton("Set Y Val Equal");
 		button.setSize(DEFAULT_SIZE);
 		button.setLocation(0, _buttons.size() * DEFAULT_SIZE.y);
 		button.setBackground(new Color(255, 128, 0, 0));
+		button.addTriggerable(new Triggerable() {
+
+			@Override
+			public void trigger(TriggerEvent e) {
+				_model.createConstraint("YValsEqual");
+				_model.update();
+				updateGeomPanels();
+			}
+			
+		});
 		_buttons.add(button);
 //		this.add(button);
 
@@ -158,7 +179,8 @@ public class OptionPanel extends GLPanel {
 
 	private void showMenu() {
 		if (!_buttonPanel.isVisible()) {
-//			getOptions();
+//			List<> functions = _model.getFunctions();
+//			setButtons(functions);
 			setButtons();
 			menuHeight = Math.round(_buttons.size() * DEFAULT_SIZE.y);
 			_buttonPanel.setVisible(true);
@@ -182,8 +204,8 @@ public class OptionPanel extends GLPanel {
 				_moving = false;
 				_panelSpeed = -_panelSpeed;
 				actuallyRemovePanels();
-			} else if (x >= 0) {
-				x = 0;
+			} else if (x >= BUF) {
+				x = BUF;
 				_moving = false;
 				_panelSpeed = -_panelSpeed;
 				showMenu();
@@ -213,10 +235,10 @@ public class OptionPanel extends GLPanel {
 	@Override
 	public void resize(Vector2f newSize) {
 		if (isVisible()) {
-			setLocation(0, 0);
+			setLocation(BUF, BUF);
 		} else {
 			Vector2f size = getSize();
-			setLocation(-size.x, 0);
+			setLocation(-size.x, BUF);
 		}
 	}
 	

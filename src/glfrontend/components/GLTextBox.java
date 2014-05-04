@@ -39,7 +39,7 @@ public class GLTextBox extends GLComponent {
 
 	// private String _text;
 	private Vector2f _textLoc;
-	 private Color _foreground;
+	private Color _foreground;
 	private TextAlignment _textAlign;
 
 	private boolean _ctrlDown;
@@ -50,7 +50,7 @@ public class GLTextBox extends GLComponent {
 	private StringBuilder _sb;
 	private int _endSpaces;
 	private float _spaceWidth;
-	
+
 	private List<Triggerable> triggers;
 
 	public GLTextBox() {
@@ -66,6 +66,8 @@ public class GLTextBox extends GLComponent {
 
 	public void init() {
 		_textAlign = LEFT;
+		setBorder(new Color(0, 0, 0, 255));
+		_foreground = Color.BLACK;
 
 		setTextLoc();
 		_spaceWidth = 4.2f;
@@ -79,18 +81,19 @@ public class GLTextBox extends GLComponent {
 
 		_sb = new StringBuilder();
 		_endSpaces = 0;
-		
+
 		triggers = new ArrayList<>();
 	}
-	
+
 	public void setForeground(Color color) {
 		_foreground = color;
 	}
-	
+
 	/**
 	 * Triggered when 'ENTER' or 'RETURN' is pressed
 	 * 
-	 * @param trigger - the (@link Triggerable} event
+	 * @param trigger
+	 *            - the (@link Triggerable} event
 	 */
 	public void addTriggerable(Triggerable trigger) {
 		triggers.add(trigger);
@@ -169,22 +172,6 @@ public class GLTextBox extends GLComponent {
 	@Override
 	public void draw() {
 
-		glColor4f(ORANGE[0], ORANGE[1], ORANGE[2], 1f);
-		glLineWidth(1f);
-		glBegin(GL_LINES);
-		glVertex2f(ul.x, ul.y);
-		glVertex2f(ul.x, lr.y);
-
-		glVertex2f(ul.x, lr.y);
-		glVertex2f(lr.x, lr.y);
-
-		glVertex2f(lr.x, lr.y);
-		glVertex2f(lr.x, ul.y);
-
-		glVertex2f(lr.x, ul.y);
-		glVertex2f(ul.x, ul.y);
-		glEnd();
-
 		if (_textLoc != null) {
 			TYPE_FONT.getEffects().clear();
 			TYPE_FONT.getEffects().add(new ColorEffect(_foreground));
@@ -238,7 +225,7 @@ public class GLTextBox extends GLComponent {
 			break;
 		}
 	}
-	
+
 	public void triggerTriggers() {
 		for (Triggerable trigger : triggers) {
 			trigger.trigger(new TriggerEvent(this));

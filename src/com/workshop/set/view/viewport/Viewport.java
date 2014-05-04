@@ -65,8 +65,9 @@ public class Viewport extends ScreenFrameAdapter {
 		_mode = "creation";
 		_selectionLabel = new GLLabel("CREATE");
 		_selectionLabel.setSize(70, 23);
-		_selectionLabel.setLocation(w - 70, 0);
+		_selectionLabel.setLocation(w - 80, h - 33);
 		_selectionLabel.setBackground(new Color(255, 255, 255, 30));
+		_selectionLabel.setBorder(new Color(255, 128, 0, 255));
 	}
 
 	public void setStage(Stage s) {
@@ -309,7 +310,8 @@ public class Viewport extends ScreenFrameAdapter {
 
 		Vector2f.add(ul, newSize, lr);
 		
-		_selectionLabel.setLocation(newSize.x - _selectionLabel.getSize().x, 0);
+		Vector2f labelSize = _selectionLabel.getSize();
+		_selectionLabel.setLocation(newSize.x - labelSize.x - 10, newSize.y - labelSize.y - 10);
 	}
 
 }
