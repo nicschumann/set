@@ -4,7 +4,7 @@ import com.workshop.set.model.interfaces.Context;
 import com.workshop.set.model.interfaces.Term;
 
 /**
- * Created by nicschumann on 3/30/14.
+ * Exception is thrown when a Failure Occurs during type-checking.
  */
 public class TypecheckingException extends Exception {
     /**
@@ -30,8 +30,8 @@ public class TypecheckingException extends Exception {
     @Override
     public String getLocalizedMessage() {
         StringBuilder s = new StringBuilder("Typechecking Failed : " + text + System.lineSeparator() );
-                      s.append( "\ton Term:\t" + term + "\n" );
-                      s.append( "\tin Context:\n" + context + "\n" );
+                      s.append( "\ton Term:\t" ).append( term ).append( System.lineSeparator() );
+                      s.append( "\tin Context:\n").append( context ).append( System.lineSeparator() );
 
         return s.toString();
     }
