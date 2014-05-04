@@ -10,12 +10,14 @@ import java.util.List;
 import org.lwjgl.util.vector.Vector2f;
 
 import com.workshop.set.model.VectorSpace.Geometry;
+import com.workshop.set.model.interfaces.Model;
 
 public class OptionPanel extends GLPanel {
 
 	public static final Vector2f DEFAULT_SIZE = new Vector2f(200, 23);
 
 	private int menuHeight = 0;
+	private Model _model;
 
 	private int _panelSpeed;
 	private int _menuSpeed;
@@ -27,7 +29,7 @@ public class OptionPanel extends GLPanel {
 
 	// private GLTextBox _focusBox;
 
-	public OptionPanel() {
+	public OptionPanel(Model model) {
 		super();
 		this.setLocation(-DEFAULT_SIZE.x, 0);
 		this.setSize(DEFAULT_SIZE);
@@ -38,6 +40,8 @@ public class OptionPanel extends GLPanel {
 		_menuSpeed = 1000; // pixels/second
 		_moving = false;
 		_rollout = false;
+		
+		_model = model;
 
 		_geoms = new ArrayList<>();
 		_buttons = new ArrayList<>();
@@ -214,6 +218,11 @@ public class OptionPanel extends GLPanel {
 			Vector2f size = getSize();
 			setLocation(-size.x, 0);
 		}
+	}
+	
+	@Override
+	public void update() {
+		_model.update();
 	}
 
 }

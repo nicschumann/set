@@ -108,6 +108,7 @@ public class PointPanel extends GLPanel {
 				double newPoint = Double.parseDouble(tb.getText());
 				_p.getN_(_index).set(newPoint);
 				setFocus(false);
+				options.update();
 				options.updateGeomPanels();
 			} catch (NumberFormatException | GeometricFailure nfe) {}
 		}

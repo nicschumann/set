@@ -22,4 +22,6 @@ public interface Model {
 	
 	public void createConstraint(String type);
 
+	public void update();
+
 }

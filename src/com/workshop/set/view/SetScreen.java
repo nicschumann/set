@@ -35,7 +35,7 @@ public class SetScreen implements ScreenFrame {
 		init();
 		setSize(new Vector2f(w, h));
 		_viewport = new Viewport(model, w, h);
-		_options = new OptionPanel();
+		_options = new OptionPanel(model);
 		// _test = new TestPanel(300, 30);
 		this.add(_options);
 		// this.add(_test);

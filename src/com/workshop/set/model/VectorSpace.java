@@ -95,7 +95,7 @@ public class VectorSpace {
         
         public abstract void setPivot(boolean p);
         
-        public abstract boolean getPivot();
+        public abstract boolean isPivot();
 
         public abstract String displayString();
         
@@ -320,7 +320,7 @@ public class VectorSpace {
 		public void setPivot(boolean p) {pivot=p;}
 
 		@Override
-		public boolean getPivot() {return pivot;}
+		public boolean isPivot() {return pivot;}
 
 		@Override
 		public void addConstraint(Constraint c) {
@@ -450,7 +450,7 @@ public class VectorSpace {
 		public void setPivot(boolean p) {pivot=p;}
 
 		@Override
-		public boolean getPivot() {return pivot;}
+		public boolean isPivot() {return pivot;}
 
         @Override
         public String toString() {

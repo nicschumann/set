@@ -160,7 +160,7 @@ public class TempEnvironment implements Model {
 			Set<Geometry> geom = g.getGeometries(); 
 			if(geom.isEmpty()){
 				//add the point to the correct list. 
-				if(g.getPivot())
+				if(g.isPivot())
 					pivots.add((Point)g);
 				else
 					orbits.add((Point)g);
@@ -168,7 +168,7 @@ public class TempEnvironment implements Model {
 			else{
 				//for each element, to appropriate list
 				for(Geometry elt : geom){
-					if(g.getPivot())
+					if(g.isPivot())
 						pivots.add((Point)elt);
 					else
 						orbits.add((Point)elt);
@@ -284,5 +284,12 @@ public class TempEnvironment implements Model {
 			return (equalsWithinEps(t1, t2, .1) && inBounds);
 		}
 
+	}
+	
+	@Override
+	public void update() {
+		for (Geometry geom : _currentElements) {
+			geom.applyConstraints();
+		}
 	}
 }
