@@ -6,8 +6,10 @@ import static org.lwjgl.opengl.GL11.glColor3f;
 import static org.lwjgl.opengl.GL11.glLoadIdentity;
 import glfrontend.ScreenFrameAdapter;
 import glfrontend.components.Camera;
+import glfrontend.components.GLLabel;
 import glfrontend.components.Vector4;
 
+import java.awt.Color;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -31,6 +33,7 @@ public class Viewport extends ScreenFrameAdapter {
 	private ArrayList<Camera> _cameras;
 	private int _camIndex = 0;
 	private Model _model;
+	private GLLabel _selectionLabel;
 
 	private Vector2f _currPos;
 	private boolean _shiftDown, _pivot;
@@ -40,7 +43,7 @@ public class Viewport extends ScreenFrameAdapter {
 	private String _mode; // controls interaction changes for creation or selection mode
 
 	public Viewport(Model model, float w, float h) {
-		init();
+		init(w, h);
 		setSize(new Vector2f(w, h));
 
 		_cameras = new ArrayList<Camera>();
@@ -52,7 +55,7 @@ public class Viewport extends ScreenFrameAdapter {
 		_model = model;
 	}
 
-	private void init() {
+	private void init(float w, float h) {
 		ul = new Vector2f(0f, 0f);
 		lr = new Vector2f(50f, 50f);
 		_shiftDown = false;
@@ -60,6 +63,10 @@ public class Viewport extends ScreenFrameAdapter {
 		_toUpdate = 0;
 
 		_mode = "creation";
+		_selectionLabel = new GLLabel("CREATE");
+		_selectionLabel.setSize(70, 23);
+		_selectionLabel.setLocation(w - 70, 0);
+		_selectionLabel.setBackground(new Color(255, 255, 255, 30));
 	}
 
 	public void setStage(Stage s) {
@@ -122,7 +129,9 @@ public class Viewport extends ScreenFrameAdapter {
 	}
 
 	@Override
-	public void render2D() {}
+	public void render2D() {
+		_selectionLabel.render2D();
+	}
 
 	/**
 	 * Given a mouse position, generates a 3d ray and intersects with the projection plane,
@@ -257,10 +266,14 @@ public class Viewport extends ScreenFrameAdapter {
 		}
 		if (keyCode == Keyboard.KEY_LSHIFT || keyCode == Keyboard.KEY_RSHIFT)
 			_shiftDown = true;
-		if (keyCode == Keyboard.KEY_S && _mode.equalsIgnoreCase("creation"))
+		if (keyCode == Keyboard.KEY_S && _mode.equalsIgnoreCase("creation")) {
 			_mode = "selection";
-		if (keyCode == Keyboard.KEY_C && _mode.equalsIgnoreCase("selection"))
+			_selectionLabel.setText("SELECT");
+		}
+		if (keyCode == Keyboard.KEY_C && _mode.equalsIgnoreCase("selection")) {
 			_mode = "creation";
+			_selectionLabel.setText("CREATE");
+		}
 		if (keyCode == Keyboard.KEY_BACK || keyCode == Keyboard.KEY_DELETE)
 			_model.deleteSelections();
 		if (keyCode == Keyboard.KEY_P)
@@ -295,6 +308,8 @@ public class Viewport extends ScreenFrameAdapter {
 		Vector2f.sub(lr, ul, size);
 
 		Vector2f.add(ul, newSize, lr);
+		
+		_selectionLabel.setLocation(newSize.x - _selectionLabel.getSize().x, 0);
 	}
 
 }

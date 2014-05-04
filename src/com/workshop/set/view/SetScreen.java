@@ -197,6 +197,7 @@ public class SetScreen implements ScreenFrame {
 	 */
 	@Override
 	public void render2D() {
+		_viewport.render2D();
 		glTranslatef(ul.x, ul.y, 0);
 		for (ScreenFrame frame : frames)
 			frame.render2D();
