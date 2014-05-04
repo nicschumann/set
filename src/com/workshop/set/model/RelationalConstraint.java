@@ -3,8 +3,8 @@ package com.workshop.set.model;
 import java.util.ArrayList;
 import java.util.Set;
 
-import com.workshop.set.model.VectorSpace.GeometricFailure;
-import com.workshop.set.model.VectorSpace.Point;
+import com.workshop.set.model.geometry.VectorSpace.GeometricFailure;
+import com.workshop.set.model.geometry.VectorSpace.Point;
 
 public class RelationalConstraint implements Constraint {
 

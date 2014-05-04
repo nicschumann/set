@@ -22,15 +22,16 @@ module SET/basis[ Symbol ]
 	sig Constraint {
 		equation : one Equation,			-- each constraint attempts to satisfy one equation
 		pivots : set Symbol,				-- each constraint is equipped with a fixed set of fixed-valued pivots,	KNOWNS.
-		orbits : set Symbol					-- each constraint is equipped with a fixed set of variable-valued orbits, UNKNOWNS.
+	--	orbits : set Symbol					-- each constraint is equipped with a fixed set of variable-valued orbits, UNKNOWNS.
+											-- any symbols in the context, not in the set of pivots, are orbits for this constraint.
 	} {
-		no pivots & orbits					-- symbols cannot be both pivots and orbits in a constraint. (is this true?)
+--		no pivots & orbits					-- symbols cannot be both pivots and orbits in a constraint. (is this true?)
 	}
 
 	pred EquivalentConstraints[ c,c' : Constraint ] {
 		c.equation = c'.equation			-- equivalent constraints have the same equation.
 		c.pivots = c'.pivots				-- equivalent constraints have pivot sets P1 and P2 such that P1 contains P2 and P2 contains P1
-		c.orbits = c'.orbits				-- equivalent constraints have orbit sets O1 and O2 such that O1 contains O2 and O2 contains O1
+		--c.orbits = c'.orbits				-- equivalent constraints have orbit sets O1 and O2 such that O1 contains O2 and O2 contains O1
 
 		--and	
 
@@ -141,25 +142,67 @@ module SET/basis[ Symbol ]
 
 	 */
 
-	sig Context {
-		system : set Constraint -> Time
-		objects : set Geometry -> Time,
+	one sig Context {
+		system : set Constraint -> Time,
+		objects : set Geometry -> Time	
 	} {
-		all o : objects  | all c : system | o.defines in (c.pivots + c.orbits)
-		all r : Relation | r in objects implies (r.left in objects and r.right in objects)	
-		
+		all t : Time {
+
+		--	all o : objects.t  | all c : system.t | o.defines in (c.pivots + c.orbits)
+			
+			all r : Relation | r in objects.t implies (r.left in objects.t and r.right in objects.t)
+
+		--	all g : Geometry - objects.t | no s : g.defines | s in (objects.t).defines
+
+		}
+			
+
+	} 
+
+	pred initialCondition[ t : Time ] {
+		no Context.system.t
+		no Context.objects.t	
+	}
+
+	pred addPoint[ t,t' : Time, p : Point ] {	
+		Context.objects.t' = Context.objects.t + p
+		Context.system.t' = Context.system.t
+	}
+
+	pred addRelation[ t,t' : Time, r : Relation ] {
+		some lft, rht : Context.objects.t {
+			Context.system.t' = Context.system.t 
+			Context.objects.t' = Context.objects.t + r
+			r.left = lft and r.right = rht
+		}	
+	}
+
+	pred addConstraint[ t,t' : Time, c : Constraint, p : set Symbol ] {
+	--	no (Context.objects.t).defines - (c.pivots + c.orbits)
+		p in Context.objects.t.defines
+		p = c.pivots
+
+		Context.system.t' = Context.system.t + c
+		Context.objects.t' = Context.objects.t	
 	}
 
 
 
 
 
+	/** [4] : Trace: */
 
-
-
-
-
-
+	fact Traces {
+		first.initialCondition
+		all t : Time - last | 
+			let t' = t.next {
+				some c : Constraint, p : Point, r : Relation, pvts : set Symbol {
+					addPoint[ t, t', p ]
+					or addRelation[ t, t', r ]
+					or addConstraint[ t, t', c, pvts ]
+				}				
+			}
+	} 
 
 
 
@@ -174,9 +217,11 @@ module SET/basis[ Symbol ]
 
 /*
 
-	Tomorrow Goals:
+	-Tomorrow- (Today) Goals:
 	+	Develop state model for the application...
 	+ 	Make a drawing
+	+	No Geometries / Constraints not in Context
+	+ 	Make a pred that shows a more interesting relations
 
 
 */
@@ -195,11 +240,16 @@ module SET/basis[ Symbol ]
 
 
 run { some Relation } for 3 but 12 Symbol,
-								exactly 4 Point,
-								1 Context,
+								4 Point,
 								2 Relation,
 								0 Constraint, 
-								10 int
+								6 int
+
+run addRelation for 3 but 12 Symbol,
+								4 Point,
+								2 Relation,
+								10 int,
+								6 Time
 
 
 

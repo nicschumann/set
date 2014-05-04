@@ -17,6 +17,9 @@ public class ProofFailureException extends Exception {
     private String msg;
 
     @Override
+    public String getMessage() { return msg; }
+
+    @Override
     public String getLocalizedMessage() {
         return msg;
     }

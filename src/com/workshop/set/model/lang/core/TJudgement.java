@@ -13,11 +13,8 @@ import com.workshop.set.model.lang.exceptions.PatternMatchException;
 import com.workshop.set.model.lang.exceptions.ProofFailureException;
 import com.workshop.set.model.lang.exceptions.TypecheckingException;
 import com.workshop.set.model.lang.judgements.HasValue;
-import com.workshop.set.model.lang.ops.Judgements;
+import com.workshop.set.model.lang.ops.Judgement;
 
-/**
- * Created by nicschumann on 3/29/14.
- */
 public class TJudgement implements Term {
     public TJudgement(Term T1, Term T2) {
         left = T1; right = T2;
@@ -25,6 +22,9 @@ public class TJudgement implements Term {
 
     public final Term left;
     public final Term right;
+
+
+    public Judgement judging() { return Judgement.EQUALITY; }
 
     @Override
     public boolean equals( Object o ) {
@@ -74,7 +74,7 @@ public class TJudgement implements Term {
 
     @Override
     public Set<HasValue> bind( Term value ) throws PatternMatchException {
-        return new HashSet<HasValue>();
+        return new HashSet<>();
     }
 
     @Override

@@ -1,13 +1,19 @@
 package com.workshop.set;
 
+import com.workshop.set.model.Interpreter;
+import com.workshop.set.model.Solver;
+import com.workshop.set.model.run.SolverWorkflow;
 import glfrontend.FrontEnd;
 
 import com.workshop.set.control.TempEnvironment;
-import com.workshop.set.model.VectorSpace;
+import com.workshop.set.model.geometry.VectorSpace;
 import com.workshop.set.model.interfaces.Gensym;
 import com.workshop.set.model.interfaces.Model;
 import com.workshop.set.model.lang.core.TNameGenerator;
 import com.workshop.set.view.SetFrontEnd;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public class SetMain {
 
@@ -28,9 +34,12 @@ public class SetMain {
 		}));
 	}
 
-	private FrontEnd fe;
+	private SetFrontEnd fe;
+    private Interpreter interp;
 	// private Control c;
 	private Model model;
+
+    private ExecutorService _pool;
 
 	public SetMain() {
 		// remove flickering
@@ -40,18 +49,26 @@ public class SetMain {
 		// enable OpenGL Hardware Rendering
 		System.setProperty("sun.java2d.opengl", "true");
 
-		model = new TempEnvironment();
+        _pool = new ScheduledThreadPoolExecutor( Runtime.getRuntime().availableProcessors() );
 
-		fe = new SetFrontEnd(model);
-		fe.enterLoop();
-		fe.cleanUp(false);
-		fe = null;
+		model = new SolverWorkflow().run( 3 );
+        fe = new SetFrontEnd(model);
+        interp = new Interpreter( (Solver)model, System.in, System.out, System.err );
+
+
+        interp.enterLoop();
+        fe.enterLoop( interp );
+
+        fe.cleanUp( false );
+        interp = null;
+        fe = null;
 	}
 
 	public void saveAndClose() {
 		// save stuff if need be
 		// exit if need be
-		if (fe != null)
+		if (fe != null && !interp.isRunning() )
 			fe.cleanUp(false);
+
 	}
 }

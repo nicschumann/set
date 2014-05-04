@@ -1,20 +1,21 @@
-package com.workshop.set.model;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import com.workshop.set.model.interfaces.Symbol;
-import com.workshop.set.model.ref.MDouble;
-import com.workshop.set.model.ref.Reference;
-
+//package com.workshop.set.model;
+//
+//import java.util.ArrayList;
+//import java.util.Arrays;
+//import java.util.HashMap;
+//import java.util.HashSet;
+//import java.util.List;
+//import java.util.Map;
+//import java.util.Set;
+//
+//import com.workshop.set.model.geometry.VectorSpace;
+//import com.workshop.set.model.interfaces.Symbol;
+//import com.workshop.set.model.ref.MDouble;
+//import com.workshop.set.model.ref.Reference;
+//
 ///**
-// * Created by nicschumann on 4/29/14.
-// */
+//* Created by nicschumann on 4/29/14.
+//*/
 //public class ConstraintSet {
 //    public class Pivot {
 //        public Pivot( Symbol pivot, List<Symbol> orbits ) {
