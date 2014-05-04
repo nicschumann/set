@@ -13,7 +13,7 @@ import java.util.List;
 import org.lwjgl.util.vector.Vector2f;
 
 import com.workshop.set.SetMain;
-import com.workshop.set.model.VectorSpace.Relation;
+import com.workshop.set.model.geometry.VectorSpace.Relation;
 
 public class RelationPanel extends GLPanel {
 

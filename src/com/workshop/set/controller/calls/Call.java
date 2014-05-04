@@ -1,5 +1,7 @@
 package com.workshop.set.controller.calls;
 
+import com.workshop.set.model.interfaces.Model;
+
 import java.util.concurrent.Callable;
 
 /**

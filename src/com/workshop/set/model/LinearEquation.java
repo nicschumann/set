@@ -1,7 +1,7 @@
 package com.workshop.set.model;
 
-import com.workshop.set.model.VectorSpace.GeometricFailure;
-import com.workshop.set.model.VectorSpace.Point;
+import com.workshop.set.model.geometry.VectorSpace.GeometricFailure;
+import com.workshop.set.model.geometry.VectorSpace.Point;
 import com.workshop.set.model.ref.MDouble;
 
 public class LinearEquation {

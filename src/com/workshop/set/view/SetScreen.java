@@ -11,7 +11,7 @@ import java.util.Map;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector2f;
 
-import com.workshop.set.model.VectorSpace.Geometry;
+import com.workshop.set.model.geometry.VectorSpace.Geometry;
 import com.workshop.set.model.interfaces.Model;
 import com.workshop.set.view.menus.OptionPanel;
 import com.workshop.set.view.viewport.Stage;

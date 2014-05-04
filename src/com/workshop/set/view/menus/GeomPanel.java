@@ -19,9 +19,9 @@ import java.awt.Color;
 import org.lwjgl.util.vector.Vector2f;
 
 import com.workshop.set.SetMain;
-import com.workshop.set.model.VectorSpace.Geometry;
-import com.workshop.set.model.VectorSpace.Point;
-import com.workshop.set.model.VectorSpace.Relation;
+import com.workshop.set.model.geometry.VectorSpace.Geometry;
+import com.workshop.set.model.geometry.VectorSpace.Point;
+import com.workshop.set.model.geometry.VectorSpace.Relation;
 
 public class GeomPanel extends GLPanel {
 

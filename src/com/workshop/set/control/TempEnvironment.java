@@ -19,10 +19,10 @@ import org.lwjgl.util.glu.Sphere;
 
 import com.workshop.set.model.Constraint;
 import com.workshop.set.model.RelationalConstraint;
-import com.workshop.set.model.VectorSpace.GeometricFailure;
-import com.workshop.set.model.VectorSpace.Geometry;
-import com.workshop.set.model.VectorSpace.Point;
-import com.workshop.set.model.VectorSpace.Relation;
+import com.workshop.set.model.geometry.VectorSpace.GeometricFailure;
+import com.workshop.set.model.geometry.VectorSpace.Geometry;
+import com.workshop.set.model.geometry.VectorSpace.Point;
+import com.workshop.set.model.geometry.VectorSpace.Relation;
 import com.workshop.set.model.interfaces.Model;
 import com.workshop.set.view.SetScreen;
 
@@ -36,10 +36,18 @@ public class TempEnvironment implements Model {
 	private final float[] _color = { 0f, 0f, 0f };
 	private final float[] _colorH = { 1f, 1f, 1f };
 
-	public TempEnvironment() {
-		_currentElements = new HashSet<>();
-		_currentSelections = new HashSet<>();
+	public TempEnvironment(
+            HashSet<Geometry> _currentElements,
+            HashSet<Geometry> _currentSelections
+    ) {
+		this._currentElements = _currentElements;
+		this._currentSelections = _currentSelections;
 	}
+
+    public TempEnvironment() {
+        this._currentElements = new HashSet<>();
+        this._currentSelections = new HashSet<>();
+    }
 
 	public void setScreen(SetScreen screen) {
 		_screen = screen;

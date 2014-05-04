@@ -87,20 +87,20 @@ public class Evaluation implements Environment<Term> {
 
     public Evaluation set( Symbol s, double v )
         throws ProofFailureException {
-        if ( !valueContext.containsKey( s ) ) {
+        if ( !(valueContext.containsKey( s ) || typeContext.containsKey( s ) ) ) {
             if ( referenceContext.containsKey( s ) ) {
                 referenceContext.get( s ).set( v );
             } else {
                 referenceContext.put( s, new MDouble( v ) );
             }
-            extend( s, new TField() );
+            extend(s, new TField());
             return this;
         } else throw new ProofFailureException( "Mutability Error: Attempted Redefinition of constant \""+s+"\" as a mutable name."  );
     }
 
     public Evaluation set( Symbol s, MDouble v )
             throws ProofFailureException {
-        if ( !valueContext.containsKey( s ) ) {
+        if ( !(valueContext.containsKey( s ) || typeContext.containsKey( s )) ) {
             if ( referenceContext.containsKey( s ) ) {
                 referenceContext.get( s ).set( v.get() );
             } else {
@@ -110,7 +110,7 @@ public class Evaluation implements Environment<Term> {
             return this;
         } else throw new ProofFailureException( "Mutability Error: Attempted Redefinition of constant \""+s+"\" as a mutable name."  );
     }
-
+     
     public Evaluation assume( Symbol s, Term type )
             throws ProofFailureException,
             TypecheckingException {
@@ -129,10 +129,11 @@ public class Evaluation implements Environment<Term> {
         t.type(this);
         return evaluate( t );
     }
-//
-//    public Term type( Term t ) {
-//
-//    }
+
+
+
+
+
 
     // LANG_INTERNAL methods:
     // Evaluation methods:

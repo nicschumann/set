@@ -1,4 +1,4 @@
-package com.workshop.set.model;
+package com.workshop.set.model.geometry;
 
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.workshop.set.model.Constraint;
 import com.workshop.set.model.interfaces.Gensym;
 import com.workshop.set.model.interfaces.Symbol;
 import com.workshop.set.model.ref.MDouble;
@@ -25,9 +26,8 @@ public class VectorSpace {
      */
     public VectorSpace( int dimension, Gensym g ) { this.dimension = dimension; this.generator = g; }
 
-    private int dimension;
+    public final int dimension;
     private Gensym generator;
-
 
     /**
      * the interface to objects that exist inside of this VectorSpace

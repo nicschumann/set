@@ -3,7 +3,7 @@ package com.workshop.set;
 import glfrontend.FrontEnd;
 
 import com.workshop.set.control.TempEnvironment;
-import com.workshop.set.model.VectorSpace;
+import com.workshop.set.model.geometry.VectorSpace;
 import com.workshop.set.model.interfaces.Gensym;
 import com.workshop.set.model.interfaces.Model;
 import com.workshop.set.model.lang.core.TNameGenerator;
