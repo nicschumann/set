@@ -180,14 +180,16 @@ public class TempEnvironment implements Model {
 			case("YValsEqual"):
 				indices.add(1);
 				relation = "equality";
-				//System.out.println("y value stuff"); 
+				break; 
+			case("Parallel"):
+				relation = "slope_equality";
 				break; 
 		}
 			
 		try {
 			Constraint c = new RelationalConstraint(pivots, orbits, indices, relation);
 			
-			//add to master list for bookkeeping
+			//add to master list for bookkeeping?
 		} catch (GeometricFailure e) {
 			e.printStackTrace();
 		}
@@ -218,8 +220,13 @@ public class TempEnvironment implements Model {
 				if (_currentSelections.add(element))
 					_screen.displaySelected(element);
 				selected = true;
-				if (pivot)
+				if (pivot){
 					element.setPivot(true); // becomes a pivot if selected with pivot down
+				}
+					
+					
+					
+					
 				// update the possible functions to apply display
 			}
 		}

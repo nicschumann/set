@@ -116,16 +116,6 @@ public class Viewport extends ScreenFrameAdapter {
 		_stage.render3D();
 		glColor3f(1, 0, 0);
 		_model.renderGeometries();
-
-		// plane drawing test
-		// glColor3f(0f, 1f, 0f);
-		//
-		// glBegin(GL_QUADS);
-		// glVertex3f(0.5f, 1.5f, 1f);
-		// glVertex3f(1f, 1f, 0f);
-		// glVertex3f(0f, 0f, 0f);
-		// glVertex3f(0.5f, -0.5f, 1f);
-		// glEnd();
 	}
 
 	@Override
@@ -279,8 +269,10 @@ public class Viewport extends ScreenFrameAdapter {
 		if (keyCode == Keyboard.KEY_P)
 			_pivot = true; 
 		
-		if (keyCode == Keyboard.KEY_RETURN)
-			this.createConstraint("YValsEqual"); 
+		if (keyCode == Keyboard.KEY_RETURN){
+			//this.createConstraint("YValsEqual"); 
+			this.createConstraint("Parallel");
+		}
 		//System.out.println("key: " + key);
 	}
 

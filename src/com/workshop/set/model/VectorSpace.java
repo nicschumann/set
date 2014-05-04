@@ -447,7 +447,9 @@ public class VectorSpace {
         }
         
 		@Override
-		public void setPivot(boolean p) {pivot=p;}
+		public void setPivot(boolean p) {
+			pivot=p;
+		}
 
 		@Override
 		public boolean isPivot() {return pivot;}
