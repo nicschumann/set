@@ -1,7 +1,7 @@
 package glfrontend.components;
 
 import static com.workshop.set.view.SetScreen.newRatio;
-import static glfrontend.GLFrontEnd.LABEL_FONT;
+import static glfrontend.GLFrontEnd.ERROR_FONT;
 import static glfrontend.components.GLComponent.TextAlignment.CENTER;
 import static glfrontend.components.GLComponent.TextAlignment.LEFT;
 import static glfrontend.components.GLComponent.TextAlignment.RIGHT;
@@ -11,18 +11,18 @@ import static org.lwjgl.opengl.GL11.glDisable;
 import org.lwjgl.util.vector.Vector2f;
 import org.newdawn.slick.opengl.TextureImpl;
 
-public class GLLabel extends GLComponent {
+public class ErrorLabel extends GLComponent {
 
 	private String text;
 	private Vector2f textLoc;
 	private TextAlignment _textAlign;
 
-	public GLLabel() {
+	public ErrorLabel() {
 		super();
 		init();
 	}
 
-	public GLLabel(String text) {
+	public ErrorLabel(String text) {
 		super();
 		init();
 		setText(text);
@@ -50,14 +50,14 @@ public class GLLabel extends GLComponent {
 
 	private void setTextLoc() {
 		float x;
-		int textHeight = LABEL_FONT.getAscent() + LABEL_FONT.getDescent();
+		int textHeight = ERROR_FONT.getAscent() + ERROR_FONT.getDescent();
 		Vector2f mid = new Vector2f();
 		Vector2f.sub(lr, ul, mid);
 
 		if (_textAlign == LEFT) {
 			x = 5;
 		} else {
-			int textWidth = LABEL_FONT.getWidth(text);
+			int textWidth = ERROR_FONT.getWidth(text);
 			if (_textAlign == RIGHT) {
 				x = lr.x - textWidth - 5;
 			} else { // CENTER
@@ -77,7 +77,7 @@ public class GLLabel extends GLComponent {
 	@Override
 	public void draw() {
 		if (textLoc != null) {
-			LABEL_FONT.drawString(textLoc.x + ul.x, textLoc.y + ul.y, text);
+			ERROR_FONT.drawString(textLoc.x + ul.x, textLoc.y + ul.y, text);
 			glDisable(GL_TEXTURE_2D);
 		}
 	}

@@ -279,9 +279,6 @@ public class VectorSpace {
         @Override
         public Set<Geometry> getGeometries() {
         	
-//        	Set<Geometry> point = new HashSet<Geometry>();
-//        	point.add(this);
-//        	return point; 
         	return new HashSet<>(0);
         }
         
@@ -447,7 +444,9 @@ public class VectorSpace {
         }
         
 		@Override
-		public void setPivot(boolean p) {pivot=p;}
+		public void setPivot(boolean p) {
+			pivot=p;
+		}
 
 		@Override
 		public boolean isPivot() {return pivot;}

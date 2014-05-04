@@ -26,6 +26,7 @@ import org.lwjgl.util.vector.Vector2f;
 import com.workshop.set.model.geometry.VectorSpace.GeometricFailure;
 import com.workshop.set.model.geometry.VectorSpace.Point;
 import com.workshop.set.model.interfaces.Model;
+import com.workshop.set.model.interfaces.Model.Function;
 import com.workshop.set.model.ref.MDouble;
 
 public class Viewport extends ScreenFrameAdapter {
@@ -68,8 +69,9 @@ public class Viewport extends ScreenFrameAdapter {
 		_mode = "creation";
 		_selectionLabel = new GLLabel("CREATE");
 		_selectionLabel.setSize(70, 23);
-		_selectionLabel.setLocation(w - 70, 0);
+		_selectionLabel.setLocation(w - 80, h - 33);
 		_selectionLabel.setBackground(new Color(255, 255, 255, 30));
+		_selectionLabel.setBorder(new Color(255, 128, 0, 255));
 	}
 
 	public void setStage(Stage s) {
@@ -119,16 +121,6 @@ public class Viewport extends ScreenFrameAdapter {
 		_stage.render3D();
 		glColor3f(1, 0, 0);
 		_model.renderGeometries();
-
-		// plane drawing test
-		// glColor3f(0f, 1f, 0f);
-		//
-		// glBegin(GL_QUADS);
-		// glVertex3f(0.5f, 1.5f, 1f);
-		// glVertex3f(1f, 1f, 0f);
-		// glVertex3f(0f, 0f, 0f);
-		// glVertex3f(0.5f, -0.5f, 1f);
-		// glEnd();
 	}
 
 	@Override
@@ -191,7 +183,7 @@ public class Viewport extends ScreenFrameAdapter {
 	/**
 	 * Generally calls temp environment to create a constraint of the given type, if possible
 	 */
-	public void createConstraint(String type){
+	public void createConstraint(Function type){
 		_model.createConstraint(type);
 	}
 	
@@ -299,8 +291,10 @@ public class Viewport extends ScreenFrameAdapter {
 		if (keyCode == Keyboard.KEY_P)
 			_pivot = true; 
 		
-		if (keyCode == Keyboard.KEY_RETURN)
-			this.createConstraint("YValsEqual"); 
+		if (keyCode == Keyboard.KEY_RETURN){
+//			this.createConstraint(Function.Y_VAL_EQUAL); 
+			this.createConstraint(Function.PARALLEL);
+		}
 		//System.out.println("key: " + key);
 	}
 
@@ -329,7 +323,8 @@ public class Viewport extends ScreenFrameAdapter {
 
 		Vector2f.add(ul, newSize, lr);
 		
-		_selectionLabel.setLocation(newSize.x - _selectionLabel.getSize().x, 0);
+		Vector2f labelSize = _selectionLabel.getSize();
+		_selectionLabel.setLocation(newSize.x - labelSize.x - 10, newSize.y - labelSize.y - 10);
 	}
 
 }

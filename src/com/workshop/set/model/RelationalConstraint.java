@@ -15,6 +15,8 @@ public class RelationalConstraint implements Constraint {
 				
 		_equations = new ArrayList<LinearEquation>();
 		
+		
+		if(relation.equalsIgnoreCase("equality")){
 		for (int i=0; i<pivots.size(); i++){
 			Point pivot = pivots.get(i);
 			Point orbit = orbits.get(i);
@@ -25,6 +27,23 @@ public class RelationalConstraint implements Constraint {
 			}
 			orbit.addConstraint(this);
 		}
+		}
+		
+		else if(relation.equalsIgnoreCase("slope_equality")){
+			System.out.println("relate the new lines by slope");
+			
+			
+			//set up equality constraints for slope (decide the pivot based on which values are locked
+			//in the second line 
+			
+			//get the pivot slope and use to set up equality equations 
+			Point p1 = pivots.get(0);
+			Point p2 = pivots.get(1);
+			
+			
+			
+		}
+		
 	}
 	
 	@Override

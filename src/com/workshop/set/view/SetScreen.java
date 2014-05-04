@@ -13,7 +13,8 @@ import org.lwjgl.util.vector.Vector2f;
 
 import com.workshop.set.model.geometry.VectorSpace.Geometry;
 import com.workshop.set.model.interfaces.Model;
-import com.workshop.set.view.menus.OptionPanel;
+import com.workshop.set.view.panels.ErrorPanel;
+import com.workshop.set.view.panels.OptionPanel;
 import com.workshop.set.view.viewport.Stage;
 import com.workshop.set.view.viewport.Viewport;
 
@@ -25,6 +26,7 @@ public class SetScreen implements ScreenFrame {
 	private Vector2f ul, lr;
 	private Viewport _viewport;
 	private OptionPanel _options;
+	private ErrorPanel _errors;
 	private boolean startOnView;
 	// private TestPanel _test;
 
@@ -36,8 +38,10 @@ public class SetScreen implements ScreenFrame {
 		setSize(new Vector2f(w, h));
 		_viewport = new Viewport(model, w, h);
 		_options = new OptionPanel(model);
+		_errors = new ErrorPanel(w, h);
 		// _test = new TestPanel(300, 30);
 		this.add(_options);
+		this.add(_errors);
 		// this.add(_test);
 	}
 
@@ -322,6 +326,7 @@ public class SetScreen implements ScreenFrame {
 		}
 		_viewport.resize(newSize);
 		Vector2f.add(ul, newSize, lr);
+		
 	}
 
 	public static Vector2f newRatio(Vector2f oldTop, Vector2f oldBottom, Vector2f newBottom) {

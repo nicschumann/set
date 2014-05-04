@@ -41,6 +41,7 @@ public class SetFrontEnd extends GLFrontEnd {
 		return main;
 	}
 
+<<<<<<< HEAD
 
     public void enterLoop( Interpreter textual ) {
         animationTime = System.currentTimeMillis();
@@ -69,4 +70,6 @@ public class SetFrontEnd extends GLFrontEnd {
 	// return button;
 	// }
 
+=======
+>>>>>>> master
 }
