@@ -31,7 +31,7 @@ public class TypecheckingException extends Exception {
     public String getLocalizedMessage() {
         StringBuilder s = new StringBuilder("Typechecking Failed : " + text + System.lineSeparator() );
                       s.append( "\ton Term:\t" + term + "\n" );
-                      s.append( "\tin Context:\t" + context + "\n" );
+                      s.append( "\tin Context:\n" + context + "\n" );
 
         return s.toString();
     }
