@@ -348,13 +348,13 @@ public class Solver implements Model {
 
     public synchronized void setScreen(SetScreen main) { _renderer.setScreen( main ); }
 
-    public void createConstraint(Function type) { _renderer.createConstraint( type ); }
+    public void createConstraint( Model.Function type ) { _renderer.createConstraint( type ); }
 
     public void update() { _renderer.update(); }
 
     public Gensym getGenerator() { return _generator; }
 
-    public List<Function> getFunctions() { return _renderer.getFunctions(); }
+    public List<Model.Function> getFunctions() { return _renderer.getFunctions(); }
 
     @Override
     public String toString() {

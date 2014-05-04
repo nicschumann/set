@@ -60,6 +60,7 @@ public class SetMain {
         fe.enterLoop( interp );
 
         fe.cleanUp( false );
+        interp = null;
         fe = null;
 	}
 
