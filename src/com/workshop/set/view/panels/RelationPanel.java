@@ -1,6 +1,6 @@
-package com.workshop.set.view.menus;
+package com.workshop.set.view.panels;
 
-import static com.workshop.set.view.menus.OptionPanel.DEFAULT_SIZE;
+import static com.workshop.set.view.panels.OptionPanel.DEFAULT_SIZE;
 import glfrontend.Triggerable;
 import glfrontend.components.GLLabel;
 import glfrontend.components.GLPanel;
@@ -50,6 +50,7 @@ public class RelationPanel extends GLPanel {
 		tbox.setSize(SIZE.x * 5, SIZE.y - 6);
 		tbox.setLocation(x + SIZE.x, y + 3);
 		tbox.setBackground(new Color(0, 0, 0, 0));
+		tbox.setBorder(new Color(255, 128, 0));
 		tbox.setText(geomName);
 		tbox.setFocus(false);
 
