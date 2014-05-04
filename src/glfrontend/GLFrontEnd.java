@@ -66,7 +66,7 @@ public class GLFrontEnd implements FrontEnd {
 	private Vector2f prevMouse;
 	private boolean contained;
 
-	private long animationTime;
+	protected long animationTime;
 
 	private ScreenFrame _frame;
 
@@ -271,7 +271,7 @@ public class GLFrontEnd implements FrontEnd {
 	/**
 	 * Updates the display at 60 frames per second.
 	 */
-	private void update() {
+	protected void update() {
 		Display.update();
 		Display.sync(60);
 	}

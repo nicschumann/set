@@ -24,10 +24,10 @@ public class Init {
         /** Establish Views */
 
 
-        Interpreter interpreter = new Interpreter( m, stringParser, System.in, System.out, System.err );
+        Interpreter interpreter = new Interpreter( m, System.in, System.out, System.err );
 
 
         // Run all dependencies
-        interpreter.loop();
+        interpreter.enterLoop();
     }
 }

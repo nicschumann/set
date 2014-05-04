@@ -8,15 +8,14 @@ import java.io.*;
 
 
 public class Interpreter {
-    public static final String prompt = "\u001B[32mset>\u001B[0m ";
+    public static final String prompt = "\u001B[32msubstrate>\u001B[0m ";
 
     public Interpreter( Solver model,
-                        ParseWorkflow p,
                         InputStream in,
                         PrintStream out,
                         PrintStream err ) {
 
-        parser = p;
+        parser = new ParseWorkflow( model.getGenerator() );
         this.model = model;
 
         dataIn = in;
@@ -35,7 +34,15 @@ public class Interpreter {
 
     private boolean running;
 
-    public void loop() {
+    public void enterLoop() {
+        new Thread( new Runnable() {
+            public void run() { loop(); }
+        }).start();
+    }
+
+
+
+    private void loop() {
        BufferedReader r = new BufferedReader( new InputStreamReader( dataIn ) );
 
        try {
@@ -178,7 +185,7 @@ public class Interpreter {
         }
     }
 
-
+    public boolean isRunning() { return running; }
 
 
     public void prompt() {

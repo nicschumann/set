@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.Set;
 
 
-public class Solver {
+public class Solver implements Model {
     public Solver( VectorSpace v, Gensym generator ) {
 
         _symbolTable            = new HashMap<>();
@@ -82,7 +82,6 @@ public class Solver {
          // at this point we have a term representation,
          // with well-typed subterms, we can go ahead and type it.
          // its now well-typed an in the context
-
         Term t = geometryIntoTerm( g );
         _renderer.addGeometry(g);
 
@@ -99,7 +98,10 @@ public class Solver {
      */
     public synchronized void addTerm( Symbol s, Term t )
         throws ProofFailureException, TypecheckingException {
-        _environment.name( s, t );
+        Term n = eval( t );
+
+
+        //_environment.name( s, t );
     }
 
     /**
@@ -151,7 +153,14 @@ public class Solver {
         throws ProofFailureException, TypecheckingException {
         Term evaluated = evaluateTerm( t );
         // if the normal form of the term t corresponds to a judgement, we attempt to impose that judgement.
-        if ( evaluated instanceof TJudgement ) { constrain( (TJudgement) evaluated ); }
+        if ( evaluated instanceof TJudgement ) {
+            constrain( (TJudgement) evaluated );
+        }
+        else if ( evaluated instanceof TVector ) {
+           // _renderer.addGeometry( vectorIntoPoint( (TVector)evaluated ) );
+        } else if ( evaluated instanceof TTuple ) {
+           // _renderer.addGeometry( tupleIntoRelation( (TTuple)evaluated ));
+        }
         return evaluated;
     }
 
@@ -284,7 +293,9 @@ public class Solver {
                     geometryIntoTerm( ((Relation) g).domain() ),
                     geometryIntoTerm( ((Relation) g).codomain() )
             );
-            _environment.name( g.name(), t );
+
+            try { _environment.name( g.name(), t ); } catch ( ProofFailureException _ ) {}
+
             return t;
 
         } else if ( g instanceof Point ) {
@@ -296,7 +307,11 @@ public class Solver {
                     components.add( s );
                     _environment.set( s, ((Point) g).getN_( i ) );
                 }
-                return new TVector( components );
+
+                Term t = new TVector( components );
+                try { _environment.name( g.name(), t ); } catch ( ProofFailureException _ ) {}
+                return t;
+
             } catch ( GeometricFailure exn ) {
                 // not technically reachable, unless our vectorspace got fucked ^
                 System.err.println( exn.getLocalizedMessage() );
@@ -306,7 +321,27 @@ public class Solver {
         } else throw new ProofFailureException( "Unrecognized Geometric Type" );
     }
 
+    private Point vectorIntoPoint( TVector vect )
+        throws GeometricFailure, ProofFailureException {
+        try {
 
+            double[ ] arr = new double[ _space.dimension ];
+            for ( int i = 0; i < _space.dimension; i++ ) { arr[ i ] = ((TScalar)vect.components().get( i )).getIndex(); }
+            Point newpt = _space.point( _generator.generate(), arr );
+            return newpt;
+
+        } catch ( ClassCastException e ) {
+
+            throw new ProofFailureException( "The Components of this Vector are not Real Numbers - " + vect );
+
+        }
+
+    }
+
+    private Relation tupleIntoRelation( TTuple tuple )
+        throws GeometricFailure, ProofFailureException {
+        return null;
+    }
 
     public Symbol name( String arg ) { return _environment.basename( arg ); }
 
@@ -320,6 +355,8 @@ public class Solver {
 
     public void update() {}
 
+
+    public Gensym getGenerator() { return _generator; }
 
     @Override
     public String toString() {

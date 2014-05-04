@@ -1,5 +1,6 @@
 package com.workshop.set.view;
 
+import com.workshop.set.model.Interpreter;
 import glfrontend.GLFrontEnd;
 import glfrontend.ScreenFrame;
 
@@ -39,6 +40,17 @@ public class SetFrontEnd extends GLFrontEnd {
 
 		return main;
 	}
+
+
+    public void enterLoop( Interpreter textual ) {
+        animationTime = System.currentTimeMillis();
+        while (!Display.isCloseRequested() && textual.isRunning() ) {
+            onRender();
+            onTick();
+            checkInput();
+            update();
+        }
+    }
 
 	// private GLButton makeButton(float x, float y, float w, float h, String text, Color color) {
 	// GLButton button = new GLButton(text);
