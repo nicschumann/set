@@ -16,8 +16,8 @@ import java.util.Set;
 
 import org.lwjgl.util.vector.Vector2f;
 
-import com.workshop.set.model.VectorSpace.GeometricFailure;
-import com.workshop.set.model.VectorSpace.Point;
+import com.workshop.set.model.geometry.VectorSpace.GeometricFailure;
+import com.workshop.set.model.geometry.VectorSpace.Point;
 
 public class PointPanel extends GLPanel {
 

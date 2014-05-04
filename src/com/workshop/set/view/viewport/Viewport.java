@@ -4,6 +4,9 @@ import static com.workshop.set.SetMain.GENSYM;
 import static com.workshop.set.SetMain.VEC_SPACE_3D;
 import static org.lwjgl.opengl.GL11.glColor3f;
 import static org.lwjgl.opengl.GL11.glLoadIdentity;
+
+import com.workshop.set.model.lang.exceptions.ProofFailureException;
+import com.workshop.set.model.lang.exceptions.TypecheckingException;
 import glfrontend.ScreenFrameAdapter;
 import glfrontend.components.Camera;
 import glfrontend.components.GLLabel;
@@ -20,9 +23,10 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Vector2f;
 
-import com.workshop.set.model.VectorSpace.GeometricFailure;
-import com.workshop.set.model.VectorSpace.Point;
+import com.workshop.set.model.geometry.VectorSpace.GeometricFailure;
+import com.workshop.set.model.geometry.VectorSpace.Point;
 import com.workshop.set.model.interfaces.Model;
+import com.workshop.set.model.interfaces.Model.Function;
 import com.workshop.set.model.ref.MDouble;
 
 public class Viewport extends ScreenFrameAdapter {
@@ -179,7 +183,7 @@ public class Viewport extends ScreenFrameAdapter {
 	/**
 	 * Generally calls temp environment to create a constraint of the given type, if possible
 	 */
-	public void createConstraint(String type){
+	public void createConstraint(Function type){
 		_model.createConstraint(type);
 	}
 	
@@ -192,7 +196,18 @@ public class Viewport extends ScreenFrameAdapter {
 		// if in creation mode, add the element (will add a step to put in right bucket):
 		if (_mode.equalsIgnoreCase("creation")) {
 
-			_model.addGeometry(p);
+            try {
+
+                _model.addGeometry(p);
+
+            } catch ( ProofFailureException exn1 ) {
+                System.err.print( exn1.getLocalizedMessage() );
+                exn1.printStackTrace();
+            } catch ( TypecheckingException exn2 ) {
+                System.err.print( exn2.getLocalizedMessage() );
+                exn2.printStackTrace();
+            }
+
 			// if shift key down, take care of adding this point to the lines renderable queue and
 			// creating a new line as well
 			if (_shiftDown) {
@@ -209,7 +224,13 @@ public class Viewport extends ScreenFrameAdapter {
 						_model.addGeometry(VEC_SPACE_3D.relation(GENSYM.generate(), _linePoints[0], _linePoints[1]));
 					} catch (GeometricFailure e1) {
 						e1.printStackTrace();
-					}
+					} catch ( ProofFailureException exn1 ) {
+                        System.err.print(exn1.getLocalizedMessage());
+                        exn1.printStackTrace();
+                    } catch ( TypecheckingException exn2 ) {
+                        System.err.print( exn2.getLocalizedMessage() );
+                        exn2.printStackTrace();
+                    }
 				}
 			}
 			// if in selection mode, run intersection tests to find out if anything was selected
@@ -271,8 +292,8 @@ public class Viewport extends ScreenFrameAdapter {
 			_pivot = true; 
 		
 		if (keyCode == Keyboard.KEY_RETURN){
-			//this.createConstraint("YValsEqual"); 
-			this.createConstraint("Parallel");
+//			this.createConstraint(Function.Y_VAL_EQUAL); 
+			this.createConstraint(Function.PARALLEL);
 		}
 		//System.out.println("key: " + key);
 	}

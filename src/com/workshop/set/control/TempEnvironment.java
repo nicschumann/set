@@ -1,5 +1,8 @@
 package com.workshop.set.control;
 
+import static com.workshop.set.model.interfaces.Model.Function.X_VAL_EQUAL;
+import static com.workshop.set.model.interfaces.Model.Function.Y_VAL_EQUAL;
+import static com.workshop.set.model.interfaces.Model.Function.Z_VAL_EQUAL;
 import static org.lwjgl.opengl.GL11.GL_LINES;
 import static org.lwjgl.opengl.GL11.GL_LINE_SMOOTH;
 import static org.lwjgl.opengl.GL11.glBegin;
@@ -13,16 +16,17 @@ import glfrontend.components.Vector4;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.lwjgl.util.glu.Sphere;
 
 import com.workshop.set.model.Constraint;
 import com.workshop.set.model.RelationalConstraint;
-import com.workshop.set.model.VectorSpace.GeometricFailure;
-import com.workshop.set.model.VectorSpace.Geometry;
-import com.workshop.set.model.VectorSpace.Point;
-import com.workshop.set.model.VectorSpace.Relation;
+import com.workshop.set.model.geometry.VectorSpace.GeometricFailure;
+import com.workshop.set.model.geometry.VectorSpace.Geometry;
+import com.workshop.set.model.geometry.VectorSpace.Point;
+import com.workshop.set.model.geometry.VectorSpace.Relation;
 import com.workshop.set.model.interfaces.Model;
 import com.workshop.set.view.SetScreen;
 
@@ -36,10 +40,18 @@ public class TempEnvironment implements Model {
 	private final float[] _color = { 0f, 0f, 0f };
 	private final float[] _colorH = { 1f, 1f, 1f };
 
-	public TempEnvironment() {
-		_currentElements = new HashSet<>();
-		_currentSelections = new HashSet<>();
+	public TempEnvironment(
+            HashSet<Geometry> _currentElements,
+            HashSet<Geometry> _currentSelections
+    ) {
+		this._currentElements = _currentElements;
+		this._currentSelections = _currentSelections;
 	}
+
+    public TempEnvironment() {
+        this._currentElements = new HashSet<>();
+        this._currentSelections = new HashSet<>();
+    }
 
 	public void setScreen(SetScreen screen) {
 		_screen = screen;
@@ -104,9 +116,9 @@ public class TempEnvironment implements Model {
 	}
 
 	private void drawPoint(Point p, boolean pivot) {
-		
+
 		p.applyConstraints();
-		
+
 		try {
 			double x = p.getN_(1).get();
 			double y = p.getN_(2).get();
@@ -144,59 +156,59 @@ public class TempEnvironment implements Model {
 	}
 
 	/**
-	 * Given specification of type of constraint, applies it to the current selections
-	 * It should be possible because only possible functions are offered
+	 * Given specification of type of constraint, applies it to the current selections It should be
+	 * possible because only possible functions are offered
 	 */
-	public void createConstraint(String type){
-		
+	public void createConstraint(Function type) {
+
 		ArrayList<Point> pivots = new ArrayList<Point>();
 		ArrayList<Point> orbits = new ArrayList<Point>();
 		Set<Integer> indices = new HashSet<Integer>();
 		String relation = "";
-		
-		//parse out the points of interest and send them
-		for (Geometry g : _currentSelections){
-	
-			Set<Geometry> geom = g.getGeometries(); 
-			if(geom.isEmpty()){
-				//add the point to the correct list. 
-				if(g.isPivot())
-					pivots.add((Point)g);
+
+		// parse out the points of interest and send them
+		for (Geometry g : _currentSelections) {
+
+			Set<Geometry> geom = g.getGeometries();
+			if (geom.isEmpty()) {
+				// add the point to the correct list.
+				if (g.isPivot())
+					pivots.add((Point) g);
 				else
-					orbits.add((Point)g);
-			}
-			else{
-				//for each element, to appropriate list
-				for(Geometry elt : geom){
-					if(g.isPivot())
-						pivots.add((Point)elt);
+					orbits.add((Point) g);
+			} else {
+				// for each element, to appropriate list
+				for (Geometry elt : geom) {
+					if (g.isPivot())
+						pivots.add((Point) elt);
 					else
-						orbits.add((Point)elt);
+						orbits.add((Point) elt);
 				}
 			}
 		}
-		
-		switch(type){
-			case("YValsEqual"):
-				indices.add(1);
-				relation = "equality";
-				break; 
-			case("Parallel"):
-				relation = "slope_equality";
-				break; 
+
+		switch (type) {
+		case Y_VAL_EQUAL:
+			indices.add(1);
+			relation = "equality";
+			break;
+		case PARALLEL:
+			relation = "slope_equality";
+			break;
+		case X_VAL_EQUAL:
+		case Z_VAL_EQUAL:
+			break;
 		}
-			
+
 		try {
 			Constraint c = new RelationalConstraint(pivots, orbits, indices, relation);
-			
-			//add to master list for bookkeeping?
+
+			// add to master list for bookkeeping?
 		} catch (GeometricFailure e) {
 			e.printStackTrace();
 		}
 	}
-	
-	
-	
+
 	@Override
 	public void checkIntersections(Point elmt, boolean shift, boolean pivot) {
 
@@ -220,13 +232,10 @@ public class TempEnvironment implements Model {
 				if (_currentSelections.add(element))
 					_screen.displaySelected(element);
 				selected = true;
-				if (pivot){
+				if (pivot) {
 					element.setPivot(true); // becomes a pivot if selected with pivot down
 				}
-					
-					
-					
-					
+
 				// update the possible functions to apply display
 			}
 		}
@@ -292,11 +301,20 @@ public class TempEnvironment implements Model {
 		}
 
 	}
-	
+
 	@Override
 	public void update() {
 		for (Geometry geom : _currentElements) {
 			geom.applyConstraints();
 		}
+	}
+
+	@Override
+	public List<Function> getFunctions() {
+		List<Function> fx = new ArrayList<>();
+		fx.add(X_VAL_EQUAL);
+		fx.add(Y_VAL_EQUAL);
+		fx.add(Z_VAL_EQUAL);
+		return fx;
 	}
 }

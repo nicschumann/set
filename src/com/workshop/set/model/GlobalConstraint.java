@@ -1,6 +1,6 @@
 package com.workshop.set.model;
 
-import com.workshop.set.model.VectorSpace.Geometry;
+import com.workshop.set.model.geometry.VectorSpace.Geometry;
 
 public class GlobalConstraint implements Constraint{
 
