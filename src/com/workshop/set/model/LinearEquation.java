@@ -11,12 +11,12 @@ public class LinearEquation {
 	
 	//keeps track purely of numbers and variables in n space and solves the equation 
 
-	public LinearEquation(Point pivot, Point orbit, int index, String relation) throws GeometricFailure{
+	public LinearEquation(MDouble known, MDouble unknown, int index, String relation) throws GeometricFailure{
 		_relation = relation; 
-		if(relation.equalsIgnoreCase("equality")){
-			_known = pivot.getN_(index+1);
-			_unknown = orbit.getN_(index+1);
-		}
+		//if(relation.equalsIgnoreCase("equality")){
+			_known = known;
+			_unknown = unknown;
+		//}
 	}
 	
 	public boolean solve(){

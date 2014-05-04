@@ -23,7 +23,7 @@ public class RelationalConstraint implements Constraint {
 			
 			for (int index : indices){
 				//index of interest to be constrained between pivot and orbit in "relation" way
-				_equations.add(new LinearEquation(pivot, orbit, index, relation));
+				_equations.add(new LinearEquation(pivot.getN_(index+1), orbit.getN_(index+1), index, relation));
 			}
 			orbit.addConstraint(this);
 		}
@@ -39,6 +39,22 @@ public class RelationalConstraint implements Constraint {
 			//get the pivot slope and use to set up equality equations 
 			Point p1 = pivots.get(0);
 			Point p2 = pivots.get(1);
+			
+			double deltaY = p1.getN_(2).get() - p2.getN_(2).get();
+			double deltaX = p1.getN_(1).get() - p2.getN_(1).get();
+			
+			Point o1 = orbits.get(0);
+			Point o2 = orbits.get(1);
+			
+			Point internalOrbit; 
+			
+			//choose which part of the orbit is not locked and use that as internal pivot
+			//if both locked, default internal pivot to o1
+			//if locked...etc
+			
+			//if first orbit is locked and second one is not, use second 
+			
+			//otherwise first and try to see if it's possible
 			
 			
 			
