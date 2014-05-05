@@ -1,5 +1,14 @@
 package com.workshop.set.model;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.lwjgl.util.vector.Vector3f;
+
 import com.workshop.set.control.TempEnvironment;
 import com.workshop.set.model.geometry.Equation;
 import com.workshop.set.model.geometry.OperationalGeometry;
@@ -7,17 +16,29 @@ import com.workshop.set.model.geometry.VectorSpace;
 import com.workshop.set.model.geometry.VectorSpace.GeometricFailure;
 import com.workshop.set.model.geometry.VectorSpace.Geometry;
 import com.workshop.set.model.geometry.VectorSpace.Point;
-import com.workshop.set.model.interfaces.*;
-import com.workshop.set.model.lang.core.*;
+import com.workshop.set.model.geometry.VectorSpace.Relation;
+import com.workshop.set.model.interfaces.Gensym;
+import com.workshop.set.model.interfaces.Model;
+import com.workshop.set.model.interfaces.Symbol;
+import com.workshop.set.model.interfaces.Term;
+import com.workshop.set.model.lang.core.TAbstraction;
+import com.workshop.set.model.lang.core.TAdditive;
+import com.workshop.set.model.lang.core.TExponential;
+import com.workshop.set.model.lang.core.TField;
+import com.workshop.set.model.lang.core.TJudgement;
+import com.workshop.set.model.lang.core.TMultiplicative;
+import com.workshop.set.model.lang.core.TNameGenerator;
+import com.workshop.set.model.lang.core.TScalar;
+import com.workshop.set.model.lang.core.TSet;
+import com.workshop.set.model.lang.core.TSum;
+import com.workshop.set.model.lang.core.TTuple;
+import com.workshop.set.model.lang.core.TVector;
 import com.workshop.set.model.lang.environments.Evaluation;
-import com.workshop.set.model.geometry.VectorSpace.*;
 import com.workshop.set.model.lang.exceptions.ProofFailureException;
 import com.workshop.set.model.lang.exceptions.TypecheckingException;
 import com.workshop.set.model.ref.MDouble;
 import com.workshop.set.model.ref.MappableList;
 import com.workshop.set.view.SetScreen;
-
-import java.util.*;
 
 
 public class Solver implements Model {
@@ -421,6 +442,10 @@ public class Solver implements Model {
 
     public void update() { _renderer.update(); }
 
+    public void executeRayCast(Vector3f A, Vector3f B, boolean shift, boolean pivot, Point p) { _renderer.executeRayCast(A, B, shift, pivot, p); }
+
+    public Geometry getGeometry(Vector3f A, Vector3f B, Point p) { return _renderer.getGeometry(A, B, p); }
+
     public Gensym getGenerator() { return _generator; }
 
     public List<Model.Function> getFunctions() {
@@ -475,6 +500,7 @@ public class Solver implements Model {
     public String toString() {
         return _environment.toString();
     }
+
 
 
 }

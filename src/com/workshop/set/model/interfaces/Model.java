@@ -1,14 +1,16 @@
 package com.workshop.set.model.interfaces;
 
 
+import java.util.List;
+
+import org.lwjgl.util.vector.Vector3f;
+
 import com.workshop.set.model.geometry.VectorSpace.GeometricFailure;
 import com.workshop.set.model.geometry.VectorSpace.Geometry;
 import com.workshop.set.model.geometry.VectorSpace.Point;
 import com.workshop.set.model.lang.exceptions.ProofFailureException;
 import com.workshop.set.model.lang.exceptions.TypecheckingException;
 import com.workshop.set.view.SetScreen;
-
-import java.util.List;
 
 public interface Model {
 
@@ -61,6 +63,10 @@ public interface Model {
 	public void update();
 
 	public List<Function> getFunctions();
+	
+	public void executeRayCast(Vector3f A, Vector3f B, boolean shift, boolean pivot, Point p);
+
+	public Geometry getGeometry(Vector3f A, Vector3f V, Point p);
 
 
 }
