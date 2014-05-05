@@ -257,6 +257,7 @@ public class SetScreen implements ScreenFrame {
 		if (e.keyCode == Keyboard.KEY_T) {
 			// _options.toggle();
 			// _test.setTextBoxText("The quick brown fox haz dog");
+			_errors.displayError("This is an error!", getSize().x);
 		}
 
 		for (ScreenFrame frame : frames) {
@@ -326,6 +327,12 @@ public class SetScreen implements ScreenFrame {
 		}
 		_viewport.resize(newSize);
 		Vector2f.add(ul, newSize, lr);
+		
+		if (_errors.isVisible()) {
+			_errors.setLocation(newSize.x - _errors.getSize().x - 10, 10);
+		} else {
+			_errors.setLocation(newSize.x, 10);
+		}
 		
 	}
 
