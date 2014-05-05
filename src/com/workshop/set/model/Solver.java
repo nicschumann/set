@@ -418,11 +418,12 @@ public class Solver implements Model {
 
     public List<Model.Function> getFunctions() {
         List<Function> predef = _renderer.getFunctions();
-        System.out.println( "predef: " + predef );
         for ( Term t : getTerms() ) {
-            System.out.print( "in term cycle" );
             Function f = Function.TERM;
-            f.setString( t.toString() );
+
+            if ( _nameTable.containsKey( t ) ) f.setString( _nameTable.get( t ).toString() );
+            else f.setString( t.toString() );
+
             f.setTerm( t );
             predef.add( f );
         }
@@ -432,7 +433,6 @@ public class Solver implements Model {
 
     public List<Term> getTerms() {
        try {
-           System.out.println( "in getTerms" + _argumentTable );
            Term type;
            if ( (type = welltyped( _currentSelections )) != null ) {
                if ( _argumentTable.containsKey( type ) ) return _argumentTable.get( type );
@@ -449,7 +449,6 @@ public class Solver implements Model {
 
     private Term welltyped( List<Geometry> gs )
         throws ProofFailureException {
-        System.out.println( "current: "  + gs );
         if ( !gs.isEmpty() ) {
             Term type_fst = null;
             Term type_snd = null;
@@ -458,7 +457,6 @@ public class Solver implements Model {
             for ( Geometry g : gs ) {
 
                 type_fst = typeGeometry( g );
-                System.out.println( "typefst: " + type_fst );
                 if ( type_snd != null && !type_fst.equals( type_snd ) ) return null;
                 type_snd = type_fst;
             }
