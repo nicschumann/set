@@ -267,7 +267,7 @@ public class Viewport extends ScreenFrameAdapter {
 		else if (_mode.equalsIgnoreCase("selection")) {
 //			this.checkIntersections(p);
 			Vector3f[] vecs = traceMouse(e.location.x, (this.getSize().y - e.location.y));
-			_model.castRay(vecs[0], vecs[1], _shiftDown, _pivot);
+			_model.executeRayCast(vecs[0], vecs[1], _shiftDown, _pivot);
 		}
 	}
 

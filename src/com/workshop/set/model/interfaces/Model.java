@@ -64,7 +64,7 @@ public interface Model {
 
 	public List<Function> getFunctions();
 	
-	public void castRay(Vector3f A, Vector3f B, boolean shift, boolean pivot);
+	public void executeRayCast(Vector3f A, Vector3f B, boolean shift, boolean pivot);
 
 	public Geometry getGeometry(Vector3f A, Vector3f V);
 
