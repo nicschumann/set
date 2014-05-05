@@ -27,6 +27,7 @@ public class GeomPanel extends GLPanel {
 	private final Geometry _geom;
 	private OptionPanel options;
 	private boolean _point;
+	private GLLabel _label;
 	private GLTextBox _nameBox;
 	private GLPanel _infoPanel;
 
@@ -61,16 +62,20 @@ public class GeomPanel extends GLPanel {
 
 	private void initNameLabel() {
 
-		GLLabel label;
+		String text = "";
+		if (_geom.isPivot())
+			text += "(P) ";
+		
 		if (_point)
-			label = new GLLabel("POINT");
+			text += "POINT";
 		else
-			label = new GLLabel("RELATION");
-
-		label.setLocation(0, 0);
-		label.setSize(DEFAULT_SIZE.x / 2f, DEFAULT_SIZE.y);
-		label.setBackground(new Color(128, 128, 128, 0));
-		this.add(label);
+			text += "RELATION";
+		
+		_label = new GLLabel(text);
+		_label.setLocation(0, 0);
+		_label.setSize(DEFAULT_SIZE.x / 2f, DEFAULT_SIZE.y);
+		_label.setBackground(new Color(128, 128, 128, 0));
+		this.add(_label);
 
 		_nameBox = new GLTextBox();
 		_nameBox.setLocation(DEFAULT_SIZE.x / 2f, 2);
@@ -161,6 +166,16 @@ public class GeomPanel extends GLPanel {
 	}
 
 	public void update() {
+		String text = "";
+		if (_geom.isPivot())
+			text += "(P) ";
+		
+		if (_point)
+			text += "POINT";
+		else
+			text += "RELATION";
+		
+		_label.setText(text);
 		_nameBox.setText(_geom.name().toString());
 		_infoPanel.update();
 	}

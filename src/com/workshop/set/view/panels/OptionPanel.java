@@ -34,7 +34,7 @@ public class OptionPanel extends GLPanel {
 
 	public OptionPanel(Model model) {
 		super();
-		this.setLocation(-DEFAULT_SIZE.x, 10);
+		this.setLocation(-DEFAULT_SIZE.x, BUF);
 		this.setSize(DEFAULT_SIZE);
 		this.setBackground(new Color(0, 255, 0, 0));
 		this.setResizeType(ResizeType.FIT_LEFT);
@@ -67,15 +67,13 @@ public class OptionPanel extends GLPanel {
 
 	@Override
 	public boolean contains(Vector2f p) {
+		Vector2f p2 = new Vector2f(BUF, BUF);
+		Vector2f.sub(p, p2, p2);
+		
 		for (GeomPanel gpane : _geoms) {
-			if (gpane.contains(p))
+			if (gpane.contains(p2))
 				return true;
 		}
-		Vector2f p2 = new Vector2f(10, 10);
-		Vector2f.sub(p, p2, p2);
-		// System.out.println(p2);
-		// System.out.println("ButtonPanel ul:" + _buttonPanel.ul);
-		// System.out.println("ButtonPanel lr:" + _buttonPanel.lr);
 		return super.contains(p) || _buttonPanel.contains(p2);
 	}
 
@@ -136,9 +134,6 @@ public class OptionPanel extends GLPanel {
 		for (Function fx : fxs) {
 			addButton(fx);
 		}
-		// addButton();
-		// addButton();
-		// addButton();
 	}
 
 	public void addButton(final Function fx) {
@@ -157,8 +152,6 @@ public class OptionPanel extends GLPanel {
 
 		});
 		_buttons.add(button);
-		// this.add(button);
-
 	}
 
 	public void showButtons() {
@@ -183,7 +176,6 @@ public class OptionPanel extends GLPanel {
 	private void showMenu() {
 		if (!_buttonPanel.isVisible()) {
 			setButtons(_model.getFunctions());
-			// setButtons();
 			menuHeight = Math.round(_buttons.size() * DEFAULT_SIZE.y);
 			_buttonPanel.setVisible(true);
 			_rollout = true;
