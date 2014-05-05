@@ -212,6 +212,7 @@ public class TempEnvironment implements Model {
 			relation = "slope_equality";
 			break;
 		case PERPENDICULAR:
+			relation = "perpendicular";
 			break;
 		default:
 			break;
@@ -219,8 +220,6 @@ public class TempEnvironment implements Model {
 
 		try {
 			Constraint c = new RelationalConstraint(pivots, orbits, indices, relation);
-
-			// add to master list for bookkeeping?
 		} catch (GeometricFailure e) {
 			e.printStackTrace();
 		}
@@ -378,6 +377,7 @@ public class TempEnvironment implements Model {
 				functions.add(Z_VAL_EQUAL);
 			} else if (counter < 0) {
 				functions.add(PARALLEL);
+				functions.add(PERPENDICULAR);
 			}
 		}
 		return functions;

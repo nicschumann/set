@@ -24,13 +24,13 @@ public class RelationalConstraint implements Constraint {
 			for (int index : indices){
 				
 				//first check if this value is already locked, if so, notify user
-				if(orbit.getN_(index+1).getLocked()){
-					System.out.println("Element is already constrained");
-					break; 
-				}
-				else{
-					orbit.getN_(index+1).lock(); 
-				}
+//				if(orbit.getN_(index+1).getLocked()){
+//					System.out.println("Element is already constrained");
+//					break; 
+//				}
+//				else{
+//					orbit.getN_(index+1).lock(); 
+//				}
 				
 				//index of interest to be constrained between pivot and orbit in "relation" way
 				_equations.add(new LinearEquation(pivot.getN_(index+1), orbit.getN_(index+1), index, relation, 1, pivots));
@@ -39,23 +39,18 @@ public class RelationalConstraint implements Constraint {
 		}
 		}
 		
-		else if(relation.equalsIgnoreCase("slope_equality")){
-			
+		else if(relation.equalsIgnoreCase("slope_equality") || relation.equalsIgnoreCase("perpendicular")){
+
 			Point o1 = orbits.get(0);
-			Point o2 = orbits.get(1);
-			
-			//pivot on o2 only if it is the only one unlocked
-			if(!o2.isLocked() && o1.isLocked()){
-				//o1.y = deltay+o2.y
-				//o1.x = deltax + o2.x	
+			Point o2 = orbits.get(1);			
+			//pivot on o2 only if it is the only one locked
+			if(o2.isLocked() && !o1.isLocked()){
 				_equations.add(new LinearEquation(o2.getN_(2), o1.getN_(2), 2, relation, 1, pivots));
 				_equations.add(new LinearEquation(o2.getN_(1), o1.getN_(1), 1, relation, 1, pivots));
 				o1.addConstraint(this);
 			}
 			
 			else{
-				//o2.y = o1.y - deltaY;
-				//o2.x = o1.x - deltaX;
 				_equations.add(new LinearEquation(o1.getN_(2), o2.getN_(2), 2, relation, -1, pivots));
 				_equations.add(new LinearEquation(o1.getN_(1), o2.getN_(1), 1, relation, -1, pivots));
 				o2.addConstraint(this);
