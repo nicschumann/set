@@ -24,13 +24,13 @@ public class Solver implements Model {
         _argumentTable          = new HashMap<>();
         _symbolTable            = new HashMap<>();
         _currentElements        = new HashSet<>();
-        _currentSelections      = new HashSet<>();
+        _currentSelections      = new ArrayList<>();
         _pivoting               = new HashSet<>();
 
         this._space              = v;
         this._generator          = generator;
         this._environment        = new Evaluation( generator );
-        this._renderer           = new TempEnvironment( new HashSet<Geometry>(), new ArrayList<Geometry>() ); // rendering model
+        this._renderer           = new TempEnvironment( _currentElements,_currentSelections ); // rendering model
 
     }
 
@@ -46,7 +46,7 @@ public class Solver implements Model {
      * These objects are the mappings between terms and their vector representations */
 
     private Map<Symbol,Geometry> _symbolTable;
-    private Set<Geometry> _currentSelections;
+    private List<Geometry> _currentSelections;
     private Set<Geometry> _currentElements;
     private Set<Geometry> _pivoting;
 
