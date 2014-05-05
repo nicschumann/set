@@ -407,12 +407,12 @@ public class TempEnvironment implements Model {
 	}
 
 	@Override
-	public void executeRayCast(Vector3f A, Vector3f B, boolean shift, boolean pivot) {
+	public void executeRayCast(Vector3f A, Vector3f B, boolean shift, boolean pivot, Point p) {
 
 		boolean selected = false;
 
 		Geometry element;
-		if ((element = getGeometry(A, B)) != null) {
+		if ((element = getGeometry(A, B, p)) != null) {
 			if (!shift) {// if no shift, must first empty previous selections
 				this.deselectAll();
 				_screen.removeSelections(false);
@@ -442,7 +442,7 @@ public class TempEnvironment implements Model {
 	}
 
 	@Override
-	public Geometry getGeometry(Vector3f A, Vector3f B) {
+	public Geometry getGeometry(Vector3f A, Vector3f B, Point p) {
 
 		for (Geometry element : _currentElements) {
 			if (element instanceof Point) {
@@ -468,28 +468,39 @@ public class TempEnvironment implements Model {
 			} else {
 				double[] pnts = element.getPointArray();
 				if (pnts.length == 6) { // line
-					Vector3f L = new Vector3f((float) pnts[0], (float) pnts[1], (float) pnts[2]);
-					
-					Vector3f dir1 = new Vector3f();
-					Vector3f dir2 = new Vector3f();
-					Vector3f.sub(new Vector3f((float) pnts[3], (float) pnts[4], (float) pnts[5]), L, dir1);
-					Vector3f.sub(B, A, dir2);
-					dir1.normalise();
-					dir2.normalise();
-					
-					Vector3f aMinL = new Vector3f();
-					Vector3f.sub(A, L, aMinL);
-					float c1 = Vector3f.dot(aMinL, dir1);
-					float c2 = Vector3f.dot(dir1, dir2);
-					float c3 = Vector3f.dot(dir1, dir1);
-					float c4 = Vector3f.dot(aMinL, dir2);
-					float c5 = Vector3f.dot(dir2, dir2);
 
-					float t = (c2*c4 - c1) / (c5*c2 - c3);
-					float s = (t*c3 - c1) / c2;
+					if (this.checkLineIntersection(p, pnts))
+						return element;
+//					Vector3f L = new Vector3f((float) pnts[0], (float) pnts[1], (float) pnts[2]);
+//					
+//					Vector3f dir1 = new Vector3f();
+//					Vector3f dir2 = new Vector3f();
+//					Vector3f.sub(new Vector3f((float) pnts[3], (float) pnts[4], (float) pnts[5]), L, dir1);
+//					Vector3f.sub(B, A, dir2);
+//					dir1.normalise();
+//					dir2.normalise();
 					
-					Vector3f P = new Vector3f(L.x + t*dir1.x, L.y + t*dir1.y, L.z + t*dir1.z);
-					Vector3f Q = new Vector3f(A.x + s*dir2.x, A.y + s*dir2.y, A.z + s*dir2.z);
+//					Vector3f L = new Vector3f(0, 2, -1);
+//					A = new Vector3f(1, 0, -1);
+//					Vector3f dir1 = new Vector3f(1, 1, 2);
+//					Vector3f dir2 = new Vector3f(1, 1, 3);
+//					
+//					Vector3f aMinL = new Vector3f();
+//					Vector3f.sub(A, L, aMinL);
+//					
+//					float c1 = Vector3f.dot(aMinL, dir1);
+//					float c2 = Vector3f.dot(dir1, dir2);
+//					float c3 = Vector3f.dot(dir1, dir1);
+//					float c4 = Vector3f.dot(aMinL, dir2);
+//					float c5 = Vector3f.dot(dir2, dir2);
+//
+//					float t = (c2*c4 - c1) / (c5*c2 - c3);
+//					float s = (t*c3 - c1) / c2;
+//					
+//					System.out.println(s + ", " + t);
+//					
+//					Vector3f P = new Vector3f(L.x + t*dir1.x, L.y + t*dir1.y, L.z + t*dir1.z);
+//					Vector3f Q = new Vector3f(A.x + s*dir2.x, A.y + s*dir2.y, A.z + s*dir2.z);
 					
 					
 				}

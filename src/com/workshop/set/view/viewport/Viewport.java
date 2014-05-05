@@ -267,7 +267,9 @@ public class Viewport extends ScreenFrameAdapter {
 		else if (_mode.equalsIgnoreCase("selection")) {
 //			this.checkIntersections(p);
 			Vector3f[] vecs = traceMouse(e.location.x, (this.getSize().y - e.location.y));
-			_model.executeRayCast(vecs[0], vecs[1], _shiftDown, _pivot);
+
+			Point p = traceMouseClick(e.location.x, (this.getSize().y - e.location.y), 0);
+			_model.executeRayCast(vecs[0], vecs[1], _shiftDown, _pivot, p);
 		}
 	}
 
@@ -277,8 +279,8 @@ public class Viewport extends ScreenFrameAdapter {
 		_currPos = e.location;
 		if (_mode.equalsIgnoreCase("selection")) {
 			Vector3f[] vecs = traceMouse(e.location.x, (this.getSize().y - e.location.y));
-			
-			if ((_currGeom = _model.getGeometry(vecs[0], vecs[1])) == null)
+			Point p = traceMouseClick(e.location.x, (this.getSize().y - e.location.y), 0);
+			if ((_currGeom = _model.getGeometry(vecs[0], vecs[1], p)) == null)
 				return;
 			
 			float zplane = (float)_currGeom.getPointArray()[2];

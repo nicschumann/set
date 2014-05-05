@@ -439,9 +439,9 @@ public class Solver implements Model {
 
     public void update() { _renderer.update(); }
 
-    public void executeRayCast(Vector3f A, Vector3f B, boolean shift, boolean pivot) { _renderer.executeRayCast(A, B, shift, pivot); }
+    public void executeRayCast(Vector3f A, Vector3f B, boolean shift, boolean pivot, Point p) { _renderer.executeRayCast(A, B, shift, pivot, p); }
 
-    public Geometry getGeometry(Vector3f A, Vector3f B) { return _renderer.getGeometry(A, B); }
+    public Geometry getGeometry(Vector3f A, Vector3f B, Point p) { return _renderer.getGeometry(A, B, p); }
 
     public Gensym getGenerator() { return _generator; }
 
