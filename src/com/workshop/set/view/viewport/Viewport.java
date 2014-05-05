@@ -21,6 +21,7 @@ import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Vector2f;
 
 import com.workshop.set.model.geometry.VectorSpace.GeometricFailure;
+import com.workshop.set.model.geometry.VectorSpace.Geometry;
 import com.workshop.set.model.geometry.VectorSpace.Point;
 import com.workshop.set.model.interfaces.Model;
 import com.workshop.set.model.interfaces.Model.Function;
@@ -45,6 +46,8 @@ public class Viewport extends ScreenFrameAdapter {
 	private boolean _shiftDown, _pivot;
 	private Point[] _linePoints = new Point[2];
 	private int _toUpdate;
+	
+	private Geometry _currGeom;
 
 	private String _mode; // controls interaction changes for creation or selection mode
 
@@ -246,6 +249,8 @@ public class Viewport extends ScreenFrameAdapter {
 	public void mousePressed(MouseEvent e) {
 		// when this called, set the current location as the old pos
 		_currPos = e.location;
+		Point p = this.traceMouseClick(e.location.x, (this.getSize().y - e.location.y));
+		_currGeom = _model.getIntersection(p);
 	}
 
 	@Override
@@ -258,6 +263,7 @@ public class Viewport extends ScreenFrameAdapter {
 		// get difference between current location and old location and use for translate
 		if (_currPos == null)
 			return;
+		
 
 		float deltaX = _currPos.x - e.location.x;
 		float deltaY = _currPos.y - e.location.y;

@@ -18,7 +18,9 @@ public interface Model {
 		Y_VAL_EQUAL("Set Y Equal", true),
 		Z_VAL_EQUAL("Set Z Equal", true),
 		PARALLEL("Set Lines Parallel", true),
-        SET_PIVOT("Set As Pivot", false),
+		PERPENDICULAR("Set Lines Perpendicular", true),
+		
+		SET_PIVOT("Set As Pivot", false),
         CREATE_RELATION("Create Relation", false),
         TERM( null, true );
 
@@ -45,6 +47,8 @@ public interface Model {
 	public void renderGeometries();
 
 	public void checkIntersections(Point elmt, boolean shift, boolean pivot);
+	
+	public Geometry getIntersection(Point elmt);
 
 	public void deleteSelections();
 
@@ -57,5 +61,6 @@ public interface Model {
 	public void update();
 
 	public List<Function> getFunctions();
+
 
 }

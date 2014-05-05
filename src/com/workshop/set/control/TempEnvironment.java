@@ -97,7 +97,6 @@ public class TempEnvironment implements Model {
 		}
 
 		drawRelation((Relation) geom, pivot);
-		return;
 	}
 
 	private void drawRelation(Relation geoms, boolean pivot) {
@@ -129,7 +128,7 @@ public class TempEnvironment implements Model {
 
 	private void drawPoint(Point p, boolean pivot) {
 
-		p.applyConstraints();
+//		p.applyConstraints();
 
 		try {
 			double x = p.getN_(1).get();
@@ -217,6 +216,8 @@ public class TempEnvironment implements Model {
 		case PARALLEL:
 			relation = "slope_equality";
 			break;
+		case PERPENDICULAR:
+			break;
 		default:
 			break;
 		}
@@ -272,6 +273,23 @@ public class TempEnvironment implements Model {
 			this.deselectAll();
 			_screen.removeSelections(true);
 		}
+	}
+	
+	@Override
+	public Geometry getIntersection(Point elmt) {
+		for (Geometry element : _currentElements) {
+			double[] pts = element.getPointArray();
+			boolean intersected = false;
+
+			if (pts.length == 3) // point
+				intersected = this.checkPtIntersection(elmt, pts);
+			else if (pts.length == 6) // line
+				intersected = this.checkLineIntersection(elmt, pts);
+			
+			if (intersected)
+				return element;
+		}
+		return null;
 	}
 
 	public boolean checkPtIntersection(Point toCheck, double[] oldLoc) {
@@ -379,6 +397,8 @@ public class TempEnvironment implements Model {
 		case CREATE_RELATION:
 			Relation r = VEC_SPACE_3D.relation(GENSYM.generate(), _currentSelections.get(0), _currentSelections.get(1));
 			_currentElements.add(r);
+			break;
+		case TERM:
 			break;
 		default:
 			break;
