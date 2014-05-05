@@ -8,16 +8,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector2f;
 
-import com.workshop.set.SetMain;
-import com.workshop.set.model.Solver;
 import com.workshop.set.model.geometry.VectorSpace.Geometry;
 import com.workshop.set.model.interfaces.Model;
-import com.workshop.set.model.lang.core.TNameGenerator;
-import com.workshop.set.model.lang.exceptions.ProofFailureException;
-import com.workshop.set.model.lang.exceptions.TypecheckingException;
 import com.workshop.set.view.panels.ErrorPanel;
 import com.workshop.set.view.panels.OptionPanel;
 import com.workshop.set.view.viewport.Stage;
@@ -33,11 +27,9 @@ public class SetScreen implements ScreenFrame {
 	private OptionPanel _options;
 	private ErrorPanel _errors;
 	private boolean startOnView;
-	// private TestPanel _test;
 
 	private List<ScreenFrame> frames;
 	private Map<ScreenFrame, Boolean> contained;
-	private Model _model;
 
 	public SetScreen(Model model, float w, float h) {
 		init();
@@ -45,11 +37,8 @@ public class SetScreen implements ScreenFrame {
 		_viewport = new Viewport(model, this, w, h);
 		_options = new OptionPanel(model);
 		_errors = new ErrorPanel(w, h);
-		_model = model;
-		// _test = new TestPanel(300, 30);
 		this.add(_options);
 		this.add(_errors);
-		// this.add(_test);
 	}
 
 	private void init() {
@@ -76,8 +65,12 @@ public class SetScreen implements ScreenFrame {
 		_options.removeGeomPanels(toggle);
 	}
 	
-	public void dislpayError(String msg) {
+	public void displayError(String msg) {
 		_errors.displayError(msg, getSize().x);
+	}
+	
+	public void closeError() {
+		_errors.closeError();
 	}
 
 	@Override
@@ -136,6 +129,7 @@ public class SetScreen implements ScreenFrame {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
+		closeError();
 		// System.out.println("MousePressed: " + e.location + ", Button: " + e.button);
 		boolean onViewport = true;
 		for (ScreenFrame frame : frames) {
@@ -264,16 +258,7 @@ public class SetScreen implements ScreenFrame {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-
-		if (e.keyCode == Keyboard.KEY_T) {
-			// _options.toggle();
-			// _test.setTextBoxText("The quick brown fox haz dog");
-			try {
-				((Solver) _model).addTerm(SetMain.GENSYM.generate(), new TNameGenerator().generate());
-			} catch (ProofFailureException | TypecheckingException e1) {
-				_errors.displayError(e1.getLocalizedMessage().substring(0, e1.getLocalizedMessage().indexOf('\n')), getSize().x);
-			}
-		}
+		closeError();
 
 		for (ScreenFrame frame : frames) {
 			if (frame.isInFocus()) {

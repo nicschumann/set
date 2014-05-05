@@ -230,7 +230,7 @@ public class Viewport extends ScreenFrameAdapter {
 					} catch ( ProofFailureException | TypecheckingException exn ) {
                         System.err.print( exn.getLocalizedMessage() );
                         exn.printStackTrace();
-                        _set.dislpayError( exn.getLocalizedMessage() );
+                        _set.displayError( exn.getLocalizedMessage() );
                     }
 				}
 			}

@@ -43,12 +43,16 @@ public class ErrorPanel extends GLPanel {
 
 		moveLoc = parentWidth - width - 10;
 
+		_panelSpeed = -1000;
 		setVisible(true);
 		_moving = true;
 	}
 
 	public void closeError() {
-		_moving = true;
+		if (isVisible()) {
+			_panelSpeed = 1000;
+			_moving = true;
+		}
 	}
 
 	@Override
@@ -66,11 +70,9 @@ public class ErrorPanel extends GLPanel {
 			if (x <= moveLoc) {
 				x = moveLoc;
 				_moving = false;
-				_panelSpeed = -_panelSpeed;
 			} else if (x >= moveLoc + xbuf) {
 				x = moveLoc + xbuf;
 				_moving = false;
-				_panelSpeed = -_panelSpeed;
 				setVisible(false);
 			}
 			setLocation(x, loc.y);
