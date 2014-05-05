@@ -18,6 +18,7 @@ public class LinearEquation {
 
 	public LinearEquation(MDouble known, MDouble unknown, int index, String relation, double c, ArrayList<Point> p) throws GeometricFailure{
 		
+		
 		_constant = c; 
 		_pivots = p;
 		_index = index; 
@@ -34,17 +35,32 @@ public class LinearEquation {
 		//if one pivot, it's a line with no constant 
 		if(_pivots.size()==1){
 			constant=0; 
-			
-			//check if value is locked before making changes
-			
-			_unknown.set(_known.get()+constant);
-			return true;  
 		}
 		else if(_pivots.size()==2){	//if two pivots, take delta of the corresponding index 
+			
+			//depending on perpendicular or parallel, may be this value or inverse			
 			Point p1 = _pivots.get(0);
 			Point p2 = _pivots.get(1);
-			double delta = p1.getN_(_index).get() - p2.getN_(_index).get();
-			constant = _constant*delta; 
+			
+			if(_relation.equalsIgnoreCase("perpendicular")){
+				//assign inverse slopes
+				double slope = (p1.getN_(2).get() - p2.getN_(2).get())/(p1.getN_(1).get() - p2.getN_(1).get());
+				if(_index==2)
+					constant=-1; 
+				else	//set equal to slope 
+					constant = slope; 
+			}
+			
+			else{	//parallel
+				double delta = p1.getN_(_index).get() - p2.getN_(_index).get();
+				constant = delta; 
+			}
+			
+			constant *= _constant; 
+		}
+		
+		//check if value is locked before making changes
+		if(!_unknown.getLocked()){
 			_unknown.set(_known.get()+constant);
 			return true;  
 		}
