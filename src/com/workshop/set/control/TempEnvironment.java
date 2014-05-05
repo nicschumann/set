@@ -472,11 +472,13 @@ public class TempEnvironment implements Model {
 //						return element;
 					Vector3f L = new Vector3f((float) pnts[0], (float) pnts[1], (float) pnts[2]);
 					Vector3f L2 = new Vector3f((float) pnts[3], (float) pnts[4], (float) pnts[5]);
-//					
+					
 					Vector3f dir1 = new Vector3f();
 					Vector3f dir2 = new Vector3f();
 					Vector3f.sub(L2, L, dir1);
 					Vector3f.sub(B, A, dir2);
+					if (L.equals(L2))
+						continue;
 					dir1.normalise();
 					dir2.normalise();
 					
