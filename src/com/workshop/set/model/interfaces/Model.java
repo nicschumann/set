@@ -1,6 +1,7 @@
 package com.workshop.set.model.interfaces;
 
 
+import com.workshop.set.model.geometry.VectorSpace.GeometricFailure;
 import com.workshop.set.model.geometry.VectorSpace.Geometry;
 import com.workshop.set.model.geometry.VectorSpace.Point;
 import com.workshop.set.model.lang.exceptions.ProofFailureException;
@@ -12,15 +13,20 @@ import java.util.List;
 public interface Model {
 
 	public enum Function {
-		X_VAL_EQUAL("Set X Equal"),
-		Y_VAL_EQUAL("Set Y Equal"),
-		Z_VAL_EQUAL("Set Z Equal"),
-		PARALLEL("Set Lines Parallel");
+		X_VAL_EQUAL("Set X Equal", true),
+		Y_VAL_EQUAL("Set Y Equal", true),
+		Z_VAL_EQUAL("Set Z Equal", true),
+		PARALLEL("Set Lines Parallel", true),
+		
+		SET_PIVOT("Set As Pivot", false),
+		CREATE_RELATION("Create Relation", false);
 
 		public final String buttonText;
+		public final boolean isConstraint;
 
-		private Function(String buttonText) {
+		private Function(String buttonText, boolean constraint) {
 			this.buttonText = buttonText;
+			this.isConstraint = constraint;
 		}
 	}
 
@@ -39,6 +45,8 @@ public interface Model {
 	public void setScreen(SetScreen main);
 
 	public void createConstraint(Function type);
+	
+	public void executeFunction(Function type) throws GeometricFailure;
 
 	public void update();
 

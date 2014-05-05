@@ -4,8 +4,8 @@ import com.workshop.set.control.TempEnvironment;
 import com.workshop.set.model.geometry.Equation;
 import com.workshop.set.model.geometry.OperationalGeometry;
 import com.workshop.set.model.geometry.VectorSpace;
+import com.workshop.set.model.geometry.VectorSpace.GeometricFailure;
 import com.workshop.set.model.interfaces.*;
-
 import com.workshop.set.model.lang.core.*;
 import com.workshop.set.model.lang.environments.Evaluation;
 import com.workshop.set.model.geometry.VectorSpace.*;
@@ -29,7 +29,7 @@ public class Solver implements Model {
         this._space              = v;
         this._generator          = generator;
         this._environment        = new Evaluation( generator );
-        this._renderer           = new TempEnvironment( new HashSet<Geometry>(), new HashSet<Geometry>() ); // rendering model
+        this._renderer           = new TempEnvironment( new HashSet<Geometry>(), new ArrayList<Geometry>() ); // rendering model
 
     }
 
@@ -355,6 +355,8 @@ public class Solver implements Model {
     public Gensym getGenerator() { return _generator; }
 
     public List<Model.Function> getFunctions() { return _renderer.getFunctions(); }
+    
+    public void executeFunction(Function function) throws GeometricFailure {_renderer.executeFunction(function); }
 
     @Override
     public String toString() {

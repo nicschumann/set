@@ -35,7 +35,7 @@ public class SetScreen implements ScreenFrame {
 		init();
 		setSize(new Vector2f(w, h));
 		_viewport = new Viewport(model, this, w, h);
-		_options = new OptionPanel(model);
+		_options = new OptionPanel(model, this);
 		_errors = new ErrorPanel(w, h);
 		this.add(_options);
 		this.add(_errors);
@@ -61,8 +61,12 @@ public class SetScreen implements ScreenFrame {
 		_options.addGeomPanel(selected);
 	}
 
-	public void removeSelection(boolean toggle) {
+	public void removeSelections(boolean toggle) {
 		_options.removeGeomPanels(toggle);
+	}
+	
+	public void removeSelection(Geometry selected) {
+		_options.removeGeomPanel(selected);
 	}
 	
 	public void displayError(String msg) {
@@ -263,7 +267,7 @@ public class SetScreen implements ScreenFrame {
 		for (ScreenFrame frame : frames) {
 			if (frame.isInFocus()) {
 				frame.keyPressed(e);
-				return;
+//				return;
 			}
 		}
 		_viewport.keyPressed(e);

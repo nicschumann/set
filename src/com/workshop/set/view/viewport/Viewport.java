@@ -294,7 +294,7 @@ public class Viewport extends ScreenFrameAdapter {
 		
 		if (keyCode == Keyboard.KEY_RETURN){
 //			this.createConstraint(Function.Y_VAL_EQUAL); 
-			this.createConstraint(Function.PARALLEL);
+//			this.createConstraint(Function.PARALLEL);
 		}
 		//System.out.println("key: " + key);
 	}
