@@ -410,11 +410,12 @@ public class Solver implements Model {
         }
     }
 
+    public void executeFunction(Function f ) throws GeometricFailure { _renderer.executeFunction( f ); }
+
     public void update() { _renderer.update(); }
 
     public Gensym getGenerator() { return _generator; }
 
-<<<<<<< HEAD
     public List<Model.Function> getFunctions() {
         List<Function> predef = _renderer.getFunctions();
         for ( Term t : getTerms() ) {
@@ -441,7 +442,7 @@ public class Solver implements Model {
        }
     }
 
-    private Term welltyped( Set<Geometry> gs )
+    private Term welltyped( List<Geometry> gs )
         throws ProofFailureException {
         System.out.println( "current: "  + gs );
         if ( !gs.isEmpty() ) {
@@ -460,12 +461,6 @@ public class Solver implements Model {
             return type_fst;
         } else return null;
     }
-
-=======
-    public List<Model.Function> getFunctions() { return _renderer.getFunctions(); }
-    
-    public void executeFunction(Function function) throws GeometricFailure {_renderer.executeFunction(function); }
->>>>>>> master
 
     @Override
     public String toString() {

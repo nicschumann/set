@@ -13,27 +13,18 @@ import java.util.List;
 public interface Model {
 
 	public enum Function {
-<<<<<<< HEAD
-		X_VAL_EQUAL("Set X Equal"),
-		Y_VAL_EQUAL("Set Y Equal"),
-		Z_VAL_EQUAL("Set Z Equal"),
-		PARALLEL("Set Lines Parallel"),
-        TERM( null );
 
-		public String buttonText;
-        private Term value;
-=======
 		X_VAL_EQUAL("Set X Equal", true),
 		Y_VAL_EQUAL("Set Y Equal", true),
 		Z_VAL_EQUAL("Set Z Equal", true),
 		PARALLEL("Set Lines Parallel", true),
-		
-		SET_PIVOT("Set As Pivot", false),
-		CREATE_RELATION("Create Relation", false);
+        SET_PIVOT("Set As Pivot", false),
+        CREATE_RELATION("Create Relation", false),
+        TERM( null, true );
 
-		public final String buttonText;
+		public String buttonText;
+        private Term value;
 		public final boolean isConstraint;
->>>>>>> master
 
 		private Function(String buttonText, boolean constraint) {
 			this.buttonText = buttonText;
