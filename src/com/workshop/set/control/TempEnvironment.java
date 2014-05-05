@@ -180,15 +180,20 @@ public class TempEnvironment implements Model {
 		}
 
 		switch (type) {
+		case X_VAL_EQUAL:
+			indices.add(0);
+			relation = "equality";
+			break;
 		case Y_VAL_EQUAL:
 			indices.add(1);
 			relation = "equality";
 			break;
+		case Z_VAL_EQUAL:
+			indices.add(2);
+			relation = "equality";
+			break;
 		case PARALLEL:
 			relation = "slope_equality";
-			break;
-		case X_VAL_EQUAL:
-		case Z_VAL_EQUAL:
 			break;
 		}
 
@@ -221,12 +226,12 @@ public class TempEnvironment implements Model {
 					_screen.removeSelection(false);
 				}
 				element.setHighlight(true);
-				if (_currentSelections.add(element))
-					_screen.displaySelected(element);
-				selected = true;
 				if (pivot) {
 					element.setPivot(true); // becomes a pivot if selected with pivot down
 				}
+				if (_currentSelections.add(element))
+					_screen.displaySelected(element);
+				selected = true;
 
 				// update the possible functions to apply display
 			}
