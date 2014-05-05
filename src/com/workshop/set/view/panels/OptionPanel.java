@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.lwjgl.util.vector.Vector2f;
 
-import com.workshop.set.model.VectorSpace.Geometry;
+import com.workshop.set.model.geometry.VectorSpace.Geometry;
 import com.workshop.set.model.interfaces.Model;
 import com.workshop.set.model.interfaces.Model.Function;
 

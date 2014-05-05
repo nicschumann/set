@@ -1,18 +1,6 @@
 package com.workshop.set.model;
 
 
-import java.util.*;
-
-import com.google.common.collect.Table;
-import com.google.common.collect.HashBasedTable;
-
-import com.workshop.set.model.interfaces.Symbol;
-import com.workshop.set.model.lang.core.TNameGenerator;
-import com.workshop.set.model.VectorSpace.*;
-import com.workshop.set.model.ref.MDouble;
-import com.workshop.set.model.ref.Mutable;
-
-
 //public class ConstraintGraph {
 //    private static final double MULTIPLICATIVE_IDENTITY = 1.0D;
 //    private static final double MULTIPLICATIVE_INVERSE = -1.0D;
