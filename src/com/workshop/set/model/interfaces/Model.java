@@ -15,13 +15,19 @@ public interface Model {
 		X_VAL_EQUAL("Set X Equal"),
 		Y_VAL_EQUAL("Set Y Equal"),
 		Z_VAL_EQUAL("Set Z Equal"),
-		PARALLEL("Set Lines Parallel");
+		PARALLEL("Set Lines Parallel"),
+        TERM( null );
 
-		public final String buttonText;
+		public String buttonText;
+        private Term value;
 
 		private Function(String buttonText) {
 			this.buttonText = buttonText;
 		}
+
+        public void setTerm( Term t ) { value = t; }
+        public Term getTerm( ) { return value; }
+        public void setString( String name ) { buttonText = name; }
 	}
 
     public void addGeometry(Geometry g) throws ProofFailureException, TypecheckingException;
