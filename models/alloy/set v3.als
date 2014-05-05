@@ -15,7 +15,9 @@ module SET/basis[ Symbol ]
 	   they represent the same equation, contain the same set of pivots, 
 	   contain the same set of orbits, and exist in the same context.
 	*/
-	sig Equation {} 
+	sig Equation {
+		symbols : set Symbol
+	} 
 
 
 
