@@ -418,7 +418,9 @@ public class Solver implements Model {
 
     public List<Model.Function> getFunctions() {
         List<Function> predef = _renderer.getFunctions();
+        System.out.println( "predef: " + predef );
         for ( Term t : getTerms() ) {
+            System.out.print( "in term cycle" );
             Function f = Function.TERM;
             f.setString( t.toString() );
             f.setTerm( t );
@@ -432,7 +434,10 @@ public class Solver implements Model {
        try {
            System.out.println( "in getTerms" + _argumentTable );
            Term type;
-           if ( (type = welltyped( _currentSelections )) != null ) return _argumentTable.get( type );
+           if ( (type = welltyped( _currentSelections )) != null ) {
+               if ( _argumentTable.containsKey( type ) ) return _argumentTable.get( type );
+               else return new ArrayList<>();
+           }
            else return new ArrayList<>();
 
        } catch (ProofFailureException e){
@@ -456,7 +461,6 @@ public class Solver implements Model {
                 System.out.println( "typefst: " + type_fst );
                 if ( type_snd != null && !type_fst.equals( type_snd ) ) return null;
                 type_snd = type_fst;
-                System.out.println( "typefst: " +type_fst );
             }
             return type_fst;
         } else return null;
