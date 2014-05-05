@@ -296,7 +296,7 @@ public class Solver implements Model {
         throws TypecheckingException, ProofFailureException {
         Term term = _environment.getValue( g.name() );
 
-
+        _renderer.removeGeometry( g );
     }
 
     /**
@@ -307,13 +307,13 @@ public class Solver implements Model {
     public void removeGeometryAll(Geometry g ) {
         // this is actually very difficult. it required descending through the geometry, recursively removing all of
         // its atoms, and then checking to see that the heap's well-typing is still maintained.
-
+        _renderer.removeGeometryAll( g );
     }
 
 
 
     public void deleteSelections() {
-
+        _renderer.deleteSelections();
     }
 
 
