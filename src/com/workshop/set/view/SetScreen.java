@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector2f;
 
 import com.workshop.set.model.geometry.VectorSpace.Geometry;
@@ -28,7 +27,6 @@ public class SetScreen implements ScreenFrame {
 	private OptionPanel _options;
 	private ErrorPanel _errors;
 	private boolean startOnView;
-	// private TestPanel _test;
 
 	private List<ScreenFrame> frames;
 	private Map<ScreenFrame, Boolean> contained;
@@ -36,13 +34,11 @@ public class SetScreen implements ScreenFrame {
 	public SetScreen(Model model, float w, float h) {
 		init();
 		setSize(new Vector2f(w, h));
-		_viewport = new Viewport(model, w, h);
-		_options = new OptionPanel(model);
+		_viewport = new Viewport(model, this, w, h);
+		_options = new OptionPanel(model, this);
 		_errors = new ErrorPanel(w, h);
-		// _test = new TestPanel(300, 30);
 		this.add(_options);
 		this.add(_errors);
-		// this.add(_test);
 	}
 
 	private void init() {
@@ -65,8 +61,20 @@ public class SetScreen implements ScreenFrame {
 		_options.addGeomPanel(selected);
 	}
 
-	public void removeSelection(boolean toggle) {
+	public void removeSelections(boolean toggle) {
 		_options.removeGeomPanels(toggle);
+	}
+	
+	public void removeSelection(Geometry selected) {
+		_options.removeGeomPanel(selected);
+	}
+	
+	public void displayError(String msg) {
+		_errors.displayError(msg, getSize().x);
+	}
+	
+	public void closeError() {
+		_errors.closeError();
 	}
 
 	@Override
@@ -125,6 +133,7 @@ public class SetScreen implements ScreenFrame {
 
 	@Override
 	public void mousePressed(MouseEvent e) {
+		closeError();
 		// System.out.println("MousePressed: " + e.location + ", Button: " + e.button);
 		boolean onViewport = true;
 		for (ScreenFrame frame : frames) {
@@ -253,17 +262,12 @@ public class SetScreen implements ScreenFrame {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-
-		if (e.keyCode == Keyboard.KEY_T) {
-			// _options.toggle();
-			// _test.setTextBoxText("The quick brown fox haz dog");
-			_errors.displayError("This is an error!", getSize().x);
-		}
+		closeError();
 
 		for (ScreenFrame frame : frames) {
 			if (frame.isInFocus()) {
 				frame.keyPressed(e);
-				return;
+//				return;
 			}
 		}
 		_viewport.keyPressed(e);

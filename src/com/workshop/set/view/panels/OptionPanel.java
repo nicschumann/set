@@ -10,14 +10,18 @@ import java.util.List;
 
 import org.lwjgl.util.vector.Vector2f;
 
+import com.workshop.set.model.geometry.VectorSpace.GeometricFailure;
 import com.workshop.set.model.geometry.VectorSpace.Geometry;
 import com.workshop.set.model.interfaces.Model;
 import com.workshop.set.model.interfaces.Model.Function;
+import com.workshop.set.view.SetScreen;
 
 public class OptionPanel extends GLPanel {
 
 	public static final Vector2f DEFAULT_SIZE = new Vector2f(200, 23);
 	public static final float BUF = 10f;
+
+	private SetScreen _set;
 
 	private int menuHeight = 0;
 	private Model _model;
@@ -32,7 +36,7 @@ public class OptionPanel extends GLPanel {
 
 	// private GLTextBox _focusBox;
 
-	public OptionPanel(Model model) {
+	public OptionPanel(Model model, SetScreen set) {
 		super();
 		this.setLocation(-DEFAULT_SIZE.x, BUF);
 		this.setSize(DEFAULT_SIZE);
@@ -46,6 +50,7 @@ public class OptionPanel extends GLPanel {
 		_moving = false;
 		_rollout = false;
 
+		_set = set;
 		_model = model;
 
 		_geoms = new ArrayList<>();
@@ -69,7 +74,7 @@ public class OptionPanel extends GLPanel {
 	public boolean contains(Vector2f p) {
 		Vector2f p2 = new Vector2f(BUF, BUF);
 		Vector2f.sub(p, p2, p2);
-		
+
 		for (GeomPanel gpane : _geoms) {
 			if (gpane.contains(p2))
 				return true;
@@ -95,8 +100,12 @@ public class OptionPanel extends GLPanel {
 		// System.out.println(height);
 		_buttonPanel.setLocation(0, height);
 
-		if (!isVisible())
+		removeButtons();
+		if (!isVisible()) {
 			toggle();
+		} else if (!_moving) {
+			showMenu();
+		}
 
 	}
 
@@ -122,6 +131,10 @@ public class OptionPanel extends GLPanel {
 		_geoms.clear();
 		this.setSize(DEFAULT_SIZE);
 
+		removeButtons();
+	}
+
+	private void removeButtons() {
 		for (GLButton button : _buttons) {
 			_buttonPanel.remove(button);
 		}
@@ -145,7 +158,15 @@ public class OptionPanel extends GLPanel {
 
 			@Override
 			public void trigger(TriggerEvent e) {
-				_model.createConstraint(fx);
+				if (fx.isConstraint) {
+					_model.createConstraint(fx);
+				} else {
+					try {
+						_model.executeFunction(fx);
+					} catch (GeometricFailure gf) {
+						_set.displayError(gf.getMessage());
+					}
+				}
 				_model.update();
 				updateGeomPanels();
 			}
@@ -174,12 +195,10 @@ public class OptionPanel extends GLPanel {
 	}
 
 	private void showMenu() {
-		if (!_buttonPanel.isVisible()) {
-			setButtons(_model.getFunctions());
-			menuHeight = Math.round(_buttons.size() * DEFAULT_SIZE.y);
-			_buttonPanel.setVisible(true);
-			_rollout = true;
-		}
+		setButtons(_model.getFunctions());
+		menuHeight = Math.round(_buttons.size() * DEFAULT_SIZE.y);
+		_buttonPanel.setVisible(true);
+		_rollout = true;
 	}
 
 	@Override
@@ -239,6 +258,29 @@ public class OptionPanel extends GLPanel {
 	@Override
 	public void update() {
 		_model.update();
+	}
+
+	public void removeGeomPanel(Geometry selected) {
+		GeomPanel toRemove = null;
+		for (GeomPanel geom : _geoms) {
+			if (geom.getGeometry().equals(selected)) {
+				toRemove = geom;
+				break;
+			}
+		}
+		if (toRemove != null) {
+			if (_geoms.size() > 1) {
+				this.remove(toRemove);
+				_geoms.remove(toRemove);
+
+				float height = _geoms.size() * DEFAULT_SIZE.y;
+				this.setSize(getSize().x, height);
+				removeButtons();
+				showMenu();
+			} else {
+				removeGeomPanels(true);
+			}
+		}
 	}
 
 }

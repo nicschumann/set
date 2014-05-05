@@ -4,8 +4,8 @@ import com.workshop.set.control.TempEnvironment;
 import com.workshop.set.model.geometry.Equation;
 import com.workshop.set.model.geometry.OperationalGeometry;
 import com.workshop.set.model.geometry.VectorSpace;
+import com.workshop.set.model.geometry.VectorSpace.GeometricFailure;
 import com.workshop.set.model.interfaces.*;
-
 import com.workshop.set.model.lang.core.*;
 import com.workshop.set.model.lang.environments.Evaluation;
 import com.workshop.set.model.geometry.VectorSpace.*;
@@ -25,13 +25,13 @@ public class Solver implements Model {
         _argumentTable          = new HashMap<>();
         _symbolTable            = new HashMap<>();
         _currentElements        = new HashSet<>();
-        _currentSelections      = new HashSet<>();
+        _currentSelections      = new ArrayList<>();
         _pivoting               = new HashSet<>();
 
         this._space              = v;
         this._generator          = generator;
         this._environment        = new Evaluation( generator );
-        this._renderer           = new TempEnvironment( new HashSet<Geometry>(), new HashSet<Geometry>() ); // rendering model
+        this._renderer           = new TempEnvironment( _currentElements,_currentSelections ); // rendering model
 
     }
 
@@ -47,7 +47,7 @@ public class Solver implements Model {
      * These objects are the mappings between terms and their vector representations */
 
     private Map<Symbol,Geometry> _symbolTable;
-    private Set<Geometry> _currentSelections;
+    private List<Geometry> _currentSelections;
     private Set<Geometry> _currentElements;
     private Set<Geometry> _pivoting;
 
@@ -414,6 +414,7 @@ public class Solver implements Model {
 
     public Gensym getGenerator() { return _generator; }
 
+<<<<<<< HEAD
     public List<Model.Function> getFunctions() {
         List<Function> predef = _renderer.getFunctions();
         for ( Term t : getTerms() ) {
@@ -460,6 +461,11 @@ public class Solver implements Model {
         } else return null;
     }
 
+=======
+    public List<Model.Function> getFunctions() { return _renderer.getFunctions(); }
+    
+    public void executeFunction(Function function) throws GeometricFailure {_renderer.executeFunction(function); }
+>>>>>>> master
 
     @Override
     public String toString() {

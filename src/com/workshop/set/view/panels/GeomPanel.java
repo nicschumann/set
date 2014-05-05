@@ -180,4 +180,8 @@ public class GeomPanel extends GLPanel {
 		_infoPanel.update();
 	}
 
+	public Geometry getGeometry() {
+		return _geom;
+	}
+
 }

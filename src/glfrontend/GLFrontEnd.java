@@ -287,6 +287,7 @@ public class GLFrontEnd implements FrontEnd {
 			Display.setVSyncEnabled(true); // Prevents flickering frames.
 			Display.setResizable(true);
 			Display.setInitialBackground(0.3f, 0.3f, 0.3f);
+			Display.setFullscreen(true);
 			Display.create();
 		} catch (LWJGLException e) {
 			System.err.println("ERROR: " + e.getMessage());

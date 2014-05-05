@@ -1,10 +1,16 @@
 package com.workshop.set.control;
 
+import static com.workshop.set.SetMain.GENSYM;
+import static com.workshop.set.SetMain.VEC_SPACE_3D;
+import static com.workshop.set.model.interfaces.Model.Function.CREATE_RELATION;
+import static com.workshop.set.model.interfaces.Model.Function.PARALLEL;
+import static com.workshop.set.model.interfaces.Model.Function.SET_PIVOT;
 import static com.workshop.set.model.interfaces.Model.Function.X_VAL_EQUAL;
 import static com.workshop.set.model.interfaces.Model.Function.Y_VAL_EQUAL;
 import static com.workshop.set.model.interfaces.Model.Function.Z_VAL_EQUAL;
 import static org.lwjgl.opengl.GL11.GL_LINES;
 import static org.lwjgl.opengl.GL11.GL_LINE_SMOOTH;
+import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glColor3f;
 import static org.lwjgl.opengl.GL11.glEnable;
@@ -35,23 +41,21 @@ public class TempEnvironment implements Model {
 	private SetScreen _screen;
 
 	private Set<Geometry> _currentElements;
-	private Set<Geometry> _currentSelections;
+	private List<Geometry> _currentSelections;
 
 	private final float[] _color = { 0f, 0f, 0f };
 	private final float[] _colorH = { 1f, 1f, 1f };
+	private final float[] _pivotColor = { 1f, 0.5f, 0 };
 
-	public TempEnvironment(
-            HashSet<Geometry> _currentElements,
-            HashSet<Geometry> _currentSelections
-    ) {
+	public TempEnvironment(Set<Geometry> _currentElements, List<Geometry> _currentSelections) {
 		this._currentElements = _currentElements;
 		this._currentSelections = _currentSelections;
 	}
 
-    public TempEnvironment() {
-        this._currentElements = new HashSet<>();
-        this._currentSelections = new HashSet<>();
-    }
+	public TempEnvironment() {
+		this._currentElements = new HashSet<>();
+		this._currentSelections = new ArrayList<>();
+	}
 
 	public void setScreen(SetScreen screen) {
 		_screen = screen;
@@ -99,7 +103,9 @@ public class TempEnvironment implements Model {
 	private void drawRelation(Relation geoms, boolean pivot) {
 		double[] pnts = geoms.getPointArray();
 
-		if (geoms.getHighlight())
+		if (geoms.isPivot())
+			glColor3f(_pivotColor[0], _pivotColor[1], _pivotColor[2]);
+		else if (geoms.getHighlight())
 			glColor3f(_colorH[0], _colorH[1], _colorH[2]);
 		else
 			glColor3f(_color[0], _color[1], _color[2]);
@@ -111,7 +117,13 @@ public class TempEnvironment implements Model {
 			glVertex3d(pnts[3], pnts[4], pnts[5]);
 			glEnd();
 		} else if (pnts.length == 12) {
-			// TODO: draw plane
+			glColor3f(0.25f, 0.25f, 0.25f);
+			glBegin(GL_QUADS);
+			glVertex3d(pnts[0], pnts[1], pnts[2]);
+			glVertex3d(pnts[3], pnts[4], pnts[5]);
+			glVertex3d(pnts[9], pnts[10], pnts[11]);
+			glVertex3d(pnts[6], pnts[7], pnts[8]);
+			glEnd();
 		}
 	}
 
@@ -124,7 +136,9 @@ public class TempEnvironment implements Model {
 			double y = p.getN_(2).get();
 			double z = p.getN_(3).get();
 
-			if (p.getHighlight())
+			if (p.isPivot())
+				glColor3f(_pivotColor[0], _pivotColor[1], _pivotColor[2]);
+			else if (p.getHighlight())
 				glColor3f(_colorH[0], _colorH[1], _colorH[2]);
 			else
 				glColor3f(_color[0], _color[1], _color[2]);
@@ -152,7 +166,7 @@ public class TempEnvironment implements Model {
 			_currentElements.remove(elt);
 		}
 		_currentSelections.clear();
-		_screen.removeSelection(true);
+		_screen.removeSelections(true);
 	}
 
 	/**
@@ -203,6 +217,8 @@ public class TempEnvironment implements Model {
 		case PARALLEL:
 			relation = "slope_equality";
 			break;
+		default:
+			break;
 		}
 
 		try {
@@ -231,14 +247,20 @@ public class TempEnvironment implements Model {
 			if (intersected) {
 				if (!shift) {// if no shift, must first empty previous selections
 					this.deselectAll();
-					_screen.removeSelection(false);
+					_screen.removeSelections(false);
 				}
-				element.setHighlight(true);
 				if (pivot) {
 					element.setPivot(true); // becomes a pivot if selected with pivot down
 				}
-				if (_currentSelections.add(element))
+				if (!_currentSelections.contains(element)) {
+					element.setHighlight(true);
+					_currentSelections.add(element);
 					_screen.displaySelected(element);
+				} else if (shift) {
+					// element.setHighlight(false);
+					// _currentSelections.remove(element);
+					// _screen.removeSelection(element);
+				}
 				selected = true;
 
 				// update the possible functions to apply display
@@ -248,7 +270,7 @@ public class TempEnvironment implements Model {
 		// if no object was selected deselect all items
 		if (!selected) {
 			this.deselectAll();
-			_screen.removeSelection(true);
+			_screen.removeSelections(true);
 		}
 	}
 
@@ -316,10 +338,50 @@ public class TempEnvironment implements Model {
 
 	@Override
 	public List<Function> getFunctions() {
-		List<Function> fx = new ArrayList<>();
-		fx.add(X_VAL_EQUAL);
-		fx.add(Y_VAL_EQUAL);
-		fx.add(Z_VAL_EQUAL);
-		return fx;
+		List<Function> functions = new ArrayList<>();
+		if (_currentSelections.size() == 1) {
+			functions.add(SET_PIVOT);
+		} else if (_currentSelections.size() == 2) {
+			int counter = 0;
+			boolean hasPivot = false;
+			for (Geometry geom : _currentSelections) {
+				if (geom.isPivot())
+					hasPivot = true;
+				if (geom instanceof Point) {
+					if (counter < 0)
+						return functions;
+					counter++;
+				} else {
+					if (counter > 0)
+						return functions;
+					counter--;
+				}
+			}
+			if (!hasPivot) {
+				functions.add(CREATE_RELATION);
+			} else if (counter > 0) {
+				functions.add(X_VAL_EQUAL);
+				functions.add(Y_VAL_EQUAL);
+				functions.add(Z_VAL_EQUAL);
+			} else if (counter < 0) {
+				functions.add(PARALLEL);
+			}
+		}
+		return functions;
+	}
+
+	@Override
+	public void executeFunction(Function function) throws GeometricFailure {
+		switch (function) {
+		case SET_PIVOT:
+			_currentSelections.get(0).setPivot(true);
+			break;
+		case CREATE_RELATION:
+			Relation r = VEC_SPACE_3D.relation(GENSYM.generate(), _currentSelections.get(0), _currentSelections.get(1));
+			_currentElements.add(r);
+			break;
+		default:
+			break;
+		}
 	}
 }

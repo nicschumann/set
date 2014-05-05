@@ -4,9 +4,6 @@ import static com.workshop.set.SetMain.GENSYM;
 import static com.workshop.set.SetMain.VEC_SPACE_3D;
 import static org.lwjgl.opengl.GL11.glColor3f;
 import static org.lwjgl.opengl.GL11.glLoadIdentity;
-
-import com.workshop.set.model.lang.exceptions.ProofFailureException;
-import com.workshop.set.model.lang.exceptions.TypecheckingException;
 import glfrontend.ScreenFrameAdapter;
 import glfrontend.components.Camera;
 import glfrontend.components.GLLabel;
@@ -27,9 +24,14 @@ import com.workshop.set.model.geometry.VectorSpace.GeometricFailure;
 import com.workshop.set.model.geometry.VectorSpace.Point;
 import com.workshop.set.model.interfaces.Model;
 import com.workshop.set.model.interfaces.Model.Function;
+import com.workshop.set.model.lang.exceptions.ProofFailureException;
+import com.workshop.set.model.lang.exceptions.TypecheckingException;
 import com.workshop.set.model.ref.MDouble;
+import com.workshop.set.view.SetScreen;
 
 public class Viewport extends ScreenFrameAdapter {
+	
+	private SetScreen _set;
 
 	private Vector2f ul, lr;
 	private Stage _stage;
@@ -46,9 +48,10 @@ public class Viewport extends ScreenFrameAdapter {
 
 	private String _mode; // controls interaction changes for creation or selection mode
 
-	public Viewport(Model model, float w, float h) {
+	public Viewport(Model model, SetScreen set, float w, float h) {
 		init(w, h);
 		setSize(new Vector2f(w, h));
+		_set = set;
 
 		_cameras = new ArrayList<Camera>();
 		_cameras.add(0, new Camera("orthographic"));
@@ -224,12 +227,10 @@ public class Viewport extends ScreenFrameAdapter {
 						_model.addGeometry(VEC_SPACE_3D.relation(GENSYM.generate(), _linePoints[0], _linePoints[1]));
 					} catch (GeometricFailure e1) {
 						e1.printStackTrace();
-					} catch ( ProofFailureException exn1 ) {
-                        System.err.print(exn1.getLocalizedMessage());
-                        exn1.printStackTrace();
-                    } catch ( TypecheckingException exn2 ) {
-                        System.err.print( exn2.getLocalizedMessage() );
-                        exn2.printStackTrace();
+					} catch ( ProofFailureException | TypecheckingException exn ) {
+                        System.err.print( exn.getLocalizedMessage() );
+                        exn.printStackTrace();
+                        _set.displayError( exn.getLocalizedMessage() );
                     }
 				}
 			}
@@ -293,7 +294,7 @@ public class Viewport extends ScreenFrameAdapter {
 		
 		if (keyCode == Keyboard.KEY_RETURN){
 //			this.createConstraint(Function.Y_VAL_EQUAL); 
-			this.createConstraint(Function.PARALLEL);
+//			this.createConstraint(Function.PARALLEL);
 		}
 		//System.out.println("key: " + key);
 	}
