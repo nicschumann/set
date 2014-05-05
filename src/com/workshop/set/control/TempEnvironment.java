@@ -352,7 +352,7 @@ public class TempEnvironment implements Model {
 	@Override
 	public List<Function> getFunctions() {
 		List<Function> functions = new ArrayList<>();
-		if (_currentSelections.size() == 1) {
+		if (_currentSelections.size() == 1 && !_currentSelections.get(0).isPivot()) {
 			functions.add(SET_PIVOT);
 		} else if (_currentSelections.size() == 2) {
 			int counter = 0;

@@ -14,6 +14,8 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 
+import javax.vecmath.Vector3d;
+
 import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
@@ -31,7 +33,7 @@ import com.workshop.set.model.ref.MDouble;
 import com.workshop.set.view.SetScreen;
 
 public class Viewport extends ScreenFrameAdapter {
-	
+
 	private SetScreen _set;
 
 	private Vector2f ul, lr;
@@ -46,8 +48,9 @@ public class Viewport extends ScreenFrameAdapter {
 	private boolean _shiftDown, _pivot;
 	private Point[] _linePoints = new Point[2];
 	private int _toUpdate;
-	
+
 	private Geometry _currGeom;
+	private Vector3d _lastPos;
 
 	private String _mode; // controls interaction changes for creation or selection mode
 
@@ -69,7 +72,7 @@ public class Viewport extends ScreenFrameAdapter {
 		ul = new Vector2f(0f, 0f);
 		lr = new Vector2f(50f, 50f);
 		_shiftDown = false;
-		_pivot = false; 
+		_pivot = false;
 		_toUpdate = 0;
 
 		_mode = "creation";
@@ -178,6 +181,19 @@ public class Viewport extends ScreenFrameAdapter {
 		return point;
 	}
 
+	private Vector3d traceMouseClickVector(Point p) {
+		Vector3d result = null;
+		try {
+			double xd = p.getN_(1).get();
+			double yd = p.getN_(2).get();
+			double zd = p.getN_(3).get();
+			result = new Vector3d((float) xd, (float) yd, (float) zd);
+		} catch (GeometricFailure e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
 	/**
 	 * Given an intersection point p, checks for intersections with any object in the scene
 	 */
@@ -189,11 +205,10 @@ public class Viewport extends ScreenFrameAdapter {
 	/**
 	 * Generally calls temp environment to create a constraint of the given type, if possible
 	 */
-	public void createConstraint(Function type){
+	public void createConstraint(Function type) {
 		_model.createConstraint(type);
 	}
-	
-	
+
 	@Override
 	public void mouseClicked(MouseEvent e) {
 
@@ -202,17 +217,17 @@ public class Viewport extends ScreenFrameAdapter {
 		// if in creation mode, add the element (will add a step to put in right bucket):
 		if (_mode.equalsIgnoreCase("creation")) {
 
-            try {
+			try {
 
-                _model.addGeometry(p);
+				_model.addGeometry(p);
 
-            } catch ( ProofFailureException exn1 ) {
-                System.err.print( exn1.getLocalizedMessage() );
-                exn1.printStackTrace();
-            } catch ( TypecheckingException exn2 ) {
-                System.err.print( exn2.getLocalizedMessage() );
-                exn2.printStackTrace();
-            }
+			} catch (ProofFailureException exn1) {
+				System.err.print(exn1.getLocalizedMessage());
+				exn1.printStackTrace();
+			} catch (TypecheckingException exn2) {
+				System.err.print(exn2.getLocalizedMessage());
+				exn2.printStackTrace();
+			}
 
 			// if shift key down, take care of adding this point to the lines renderable queue and
 			// creating a new line as well
@@ -230,11 +245,11 @@ public class Viewport extends ScreenFrameAdapter {
 						_model.addGeometry(VEC_SPACE_3D.relation(GENSYM.generate(), _linePoints[0], _linePoints[1]));
 					} catch (GeometricFailure e1) {
 						e1.printStackTrace();
-					} catch ( ProofFailureException | TypecheckingException exn ) {
-                        System.err.print( exn.getLocalizedMessage() );
-                        exn.printStackTrace();
-                        _set.displayError( exn.getLocalizedMessage() );
-                    }
+					} catch (ProofFailureException | TypecheckingException exn) {
+						System.err.print(exn.getLocalizedMessage());
+						exn.printStackTrace();
+						_set.displayError(exn.getLocalizedMessage());
+					}
 				}
 			}
 			// if in selection mode, run intersection tests to find out if anything was selected
@@ -249,8 +264,11 @@ public class Viewport extends ScreenFrameAdapter {
 	public void mousePressed(MouseEvent e) {
 		// when this called, set the current location as the old pos
 		_currPos = e.location;
-		Point p = this.traceMouseClick(e.location.x, (this.getSize().y - e.location.y));
-		_currGeom = _model.getIntersection(p);
+		if (_mode.equalsIgnoreCase("selection")) {
+			Point p = this.traceMouseClick(e.location.x, (this.getSize().y - e.location.y));
+			_currGeom = _model.getIntersection(p);
+			_lastPos = this.traceMouseClickVector(p);
+		}
 	}
 
 	@Override
@@ -263,12 +281,19 @@ public class Viewport extends ScreenFrameAdapter {
 		// get difference between current location and old location and use for translate
 		if (_currPos == null)
 			return;
-		
 
-		float deltaX = _currPos.x - e.location.x;
-		float deltaY = _currPos.y - e.location.y;
-		_currPos = e.location;
-		_currCamera.mouseMove(deltaX, deltaY, e);
+		if (_currGeom != null) {
+			Vector3d p = this.traceMouseClickVector(traceMouseClick(e.location.x, (this.getSize().y - e.location.y)));
+			Vector3d dir = new Vector3d(p.x - _lastPos.x, p.y - _lastPos.y, p.z - _lastPos.z);
+			_currGeom.move(dir);
+			_lastPos = p;
+		} else {
+
+			float deltaX = _currPos.x - e.location.x;
+			float deltaY = _currPos.y - e.location.y;
+			_currPos = e.location;
+			_currCamera.mouseMove(deltaX, deltaY, e);
+		}
 	}
 
 	@Override
@@ -296,13 +321,13 @@ public class Viewport extends ScreenFrameAdapter {
 		if (keyCode == Keyboard.KEY_BACK || keyCode == Keyboard.KEY_DELETE)
 			_model.deleteSelections();
 		if (keyCode == Keyboard.KEY_P)
-			_pivot = true; 
-		
-		if (keyCode == Keyboard.KEY_RETURN){
-//			this.createConstraint(Function.Y_VAL_EQUAL); 
-//			this.createConstraint(Function.PARALLEL);
+			_pivot = true;
+
+		if (keyCode == Keyboard.KEY_RETURN) {
+			// this.createConstraint(Function.Y_VAL_EQUAL);
+			// this.createConstraint(Function.PARALLEL);
 		}
-		//System.out.println("key: " + key);
+		// System.out.println("key: " + key);
 	}
 
 	@Override
@@ -315,7 +340,7 @@ public class Viewport extends ScreenFrameAdapter {
 			_toUpdate = 0;
 		}
 		if (key == Keyboard.KEY_P)
-			_pivot = false; 
+			_pivot = false;
 	}
 
 	@Override
@@ -329,7 +354,7 @@ public class Viewport extends ScreenFrameAdapter {
 		Vector2f.sub(lr, ul, size);
 
 		Vector2f.add(ul, newSize, lr);
-		
+
 		Vector2f labelSize = _selectionLabel.getSize();
 		_selectionLabel.setLocation(newSize.x - labelSize.x - 10, newSize.y - labelSize.y - 10);
 	}

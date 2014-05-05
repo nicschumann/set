@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.vecmath.Vector3d;
+
 import com.workshop.set.model.Constraint;
 import com.workshop.set.model.interfaces.Gensym;
 import com.workshop.set.model.interfaces.Symbol;
@@ -104,6 +106,8 @@ public class VectorSpace {
         public abstract void removeConstraint(Constraint c);
         
         public abstract void applyConstraints();
+        
+        public abstract void move(Vector3d dir);
 
     }
 
@@ -340,6 +344,21 @@ public class VectorSpace {
 				c.apply(); 
 			}
 		}
+
+		@Override
+		public void move(Vector3d dir) {
+			try {
+				MDouble x = getN_(1);
+				MDouble y = getN_(2);
+				MDouble z = getN_(3);
+				
+				x.set(x.get() + dir.x);
+				y.set(y.get() + dir.y);
+				z.set(z.get() + dir.z);
+			} catch (GeometricFailure e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public class Relation extends Geometry {
@@ -478,6 +497,12 @@ public class VectorSpace {
 
 		@Override
 		public void applyConstraints() {}
+
+		@Override
+		public void move(Vector3d dir) {
+			A.move(dir);
+			B.move(dir);
+		}
     }
 
 	public class GeometricFailure extends Exception {
