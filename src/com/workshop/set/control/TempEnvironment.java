@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.lwjgl.util.glu.Sphere;
+import org.lwjgl.util.vector.Vector3f;
 
 import com.workshop.set.model.Constraint;
 import com.workshop.set.model.RelationalConstraint;
@@ -128,7 +129,7 @@ public class TempEnvironment implements Model {
 
 	private void drawPoint(Point p, boolean pivot) {
 
-//		p.applyConstraints();
+		// p.applyConstraints();
 
 		try {
 			double x = p.getN_(1).get();
@@ -274,7 +275,7 @@ public class TempEnvironment implements Model {
 			_screen.removeSelections(true);
 		}
 	}
-	
+
 	@Override
 	public Geometry getIntersection(Point elmt) {
 		for (Geometry element : _currentElements) {
@@ -285,7 +286,7 @@ public class TempEnvironment implements Model {
 				intersected = this.checkPtIntersection(elmt, pts);
 			else if (pts.length == 6) // line
 				intersected = this.checkLineIntersection(elmt, pts);
-			
+
 			if (intersected)
 				return element;
 		}
@@ -404,4 +405,92 @@ public class TempEnvironment implements Model {
 			break;
 		}
 	}
+
+	@Override
+	public void castRay(Vector3f A, Vector3f B, boolean shift, boolean pivot) {
+
+		boolean intersected = false;
+		boolean selected = false;
+
+		for (Geometry element : _currentElements) {
+			if (element instanceof Point) {
+
+				double[] pnts = element.getPointArray();
+				Vector3f C = new Vector3f((float) pnts[0], (float) pnts[1], (float) pnts[2]);
+
+				// a
+				Vector3f bMinA = new Vector3f();
+				Vector3f.sub(B, A, bMinA);
+				float a = (bMinA.x * bMinA.x) + (bMinA.y * bMinA.y) + (bMinA.z * bMinA.z);
+
+				// b
+				Vector3f aMinC = new Vector3f();
+				Vector3f.sub(A, C, aMinC);
+				float b = 2 * ((bMinA.x * aMinC.x) + (bMinA.y * aMinC.y) + (bMinA.z * aMinC.z));
+
+				// c
+				float c = (aMinC.x * aMinC.x) + (aMinC.y * aMinC.y) + (aMinC.z * aMinC.z) - 0.08f * 0.08f;
+
+				intersected = ((b * b - 4 * a * c) >= 0);
+
+				if (intersected) {
+					if (!shift) {// if no shift, must first empty previous selections
+						this.deselectAll();
+						_screen.removeSelections(false);
+					}
+					if (pivot) {
+						element.setPivot(true); // becomes a pivot if selected with pivot down
+					}
+					if (!_currentSelections.contains(element)) {
+						element.setHighlight(true);
+						_currentSelections.add(element);
+						_screen.displaySelected(element);
+					} else if (shift) {
+						// element.setHighlight(false);
+						// _currentSelections.remove(element);
+						// _screen.removeSelection(element);
+					}
+					selected = true;
+
+					// update the possible functions to apply display
+				}
+			}
+
+			// if no object was selected deselect all items
+			if (!selected) {
+				this.deselectAll();
+				_screen.removeSelections(true);
+			}
+		}
+	}
+
+	@Override
+	public Geometry getGeometry(Vector3f A, Vector3f B) {
+
+		for (Geometry element : _currentElements) {
+			if (element instanceof Point) {
+
+				double[] pnts = element.getPointArray();
+				Vector3f C = new Vector3f((float) pnts[0], (float) pnts[1], (float) pnts[2]);
+
+				// a
+				Vector3f bMinA = new Vector3f();
+				Vector3f.sub(B, A, bMinA);
+				float a = (bMinA.x * bMinA.x) + (bMinA.y * bMinA.y) + (bMinA.z * bMinA.z);
+
+				// b
+				Vector3f aMinC = new Vector3f();
+				Vector3f.sub(A, C, aMinC);
+				float b = 2 * ((bMinA.x * aMinC.x) + (bMinA.y * aMinC.y) + (bMinA.z * aMinC.z));
+
+				// c
+				float c = (aMinC.x * aMinC.x) + (aMinC.y * aMinC.y) + (aMinC.z * aMinC.z) - 0.08f * 0.08f;
+
+				if ((b * b - 4 * a * c) >= 0)
+					return element;
+			}
+		}
+		return null;
+	}
+
 }

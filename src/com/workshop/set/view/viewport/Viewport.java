@@ -21,6 +21,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Vector2f;
+import org.lwjgl.util.vector.Vector3f;
 
 import com.workshop.set.model.geometry.VectorSpace.GeometricFailure;
 import com.workshop.set.model.geometry.VectorSpace.Geometry;
@@ -141,8 +142,30 @@ public class Viewport extends ScreenFrameAdapter {
 	 * Given a mouse position, generates a 3d ray and intersects with the projection plane,
 	 * returning the point of intersection
 	 */
-	public Point traceMouseClick(float x, float y) {
+	public Point traceMouseClick(float x, float y, float zplane) {
+		
+		Vector3f[] vecs = traceMouse(x, y);
+		Vector3f p = vecs[0];
+		Vector3f d = vecs[1];
+		
+		d.normalise();
 
+		// solve for t
+		float t = (zplane - p.z) / d.z;
+
+		Vector3f proj = new Vector3f(p.x + d.x * t, p.y + d.y * t, p.z + d.z * t);
+
+		Point point = null;
+		try {
+			point = VEC_SPACE_3D.point(GENSYM.generate(), new MDouble((double) proj.x), new MDouble((double) proj.y),
+					new MDouble((double) proj.z));
+		} catch (GeometricFailure e) {
+			e.printStackTrace();
+		}
+		return point;
+	}
+	
+	public Vector3f[] traceMouse(float x, float y) {
 		glLoadIdentity();
 		_currCamera.multMatrix(); // keep matrices up to date
 
@@ -160,25 +183,12 @@ public class Viewport extends ScreenFrameAdapter {
 		GLU.gluUnProject(x, y, 1.0f, model, projection, viewport, farPlanePos);
 
 		// initial p will be near plane pos
-		Vector4 p = new Vector4(nearPlanePos.get(0), nearPlanePos.get(1), nearPlanePos.get(2), 0);
+		Vector3f p = new Vector3f(nearPlanePos.get(0), nearPlanePos.get(1), nearPlanePos.get(2));
 
 		// direction vector:
-		Vector4 d = new Vector4(farPlanePos.get(0) - p.x, farPlanePos.get(1) - p.y, farPlanePos.get(2) - p.z, 0);
-		d = d.getNormalized();
-
-		// solve for t
-		float t = -(p.z) / d.z;
-
-		Vector4 proj = new Vector4(p.x + d.x * t, p.y + d.y * t, p.z + d.z * t, 0);
-
-		Point point = null;
-		try {
-			point = VEC_SPACE_3D.point(GENSYM.generate(), new MDouble((double) proj.x), new MDouble((double) proj.y),
-					new MDouble((double) proj.z));
-		} catch (GeometricFailure e) {
-			e.printStackTrace();
-		}
-		return point;
+		Vector3f d = new Vector3f(farPlanePos.get(0) - p.x, farPlanePos.get(1) - p.y, farPlanePos.get(2) - p.z);
+		Vector3f[] result = {p, d};
+		return result;
 	}
 
 	private Vector3d traceMouseClickVector(Point p) {
@@ -201,7 +211,7 @@ public class Viewport extends ScreenFrameAdapter {
 	public void checkIntersections(Point p) {
 		_model.checkIntersections(p, _shiftDown, _pivot);
 	}
-
+	
 	/**
 	 * Generally calls temp environment to create a constraint of the given type, if possible
 	 */
@@ -212,10 +222,9 @@ public class Viewport extends ScreenFrameAdapter {
 	@Override
 	public void mouseClicked(MouseEvent e) {
 
-		Point p = this.traceMouseClick(e.location.x, (this.getSize().y - e.location.y));
-
-		// if in creation mode, add the element (will add a step to put in right bucket):
 		if (_mode.equalsIgnoreCase("creation")) {
+			Point p = this.traceMouseClick(e.location.x, (this.getSize().y - e.location.y), 0);
+		// if in creation mode, add the element (will add a step to put in right bucket):
 
 			try {
 
@@ -256,7 +265,9 @@ public class Viewport extends ScreenFrameAdapter {
 		}
 
 		else if (_mode.equalsIgnoreCase("selection")) {
-			this.checkIntersections(p);
+//			this.checkIntersections(p);
+			Vector3f[] vecs = traceMouse(e.location.x, (this.getSize().y - e.location.y));
+			_model.castRay(vecs[0], vecs[1], _shiftDown, _pivot);
 		}
 	}
 
@@ -265,15 +276,20 @@ public class Viewport extends ScreenFrameAdapter {
 		// when this called, set the current location as the old pos
 		_currPos = e.location;
 		if (_mode.equalsIgnoreCase("selection")) {
-			Point p = this.traceMouseClick(e.location.x, (this.getSize().y - e.location.y));
-			_currGeom = _model.getIntersection(p);
-			_lastPos = this.traceMouseClickVector(p);
+			Vector3f[] vecs = traceMouse(e.location.x, (this.getSize().y - e.location.y));
+			
+			if ((_currGeom = _model.getGeometry(vecs[0], vecs[1])) == null)
+				return;
+			
+			float zplane = (float)_currGeom.getPointArray()[2];
+			_lastPos = this.traceMouseClickVector(traceMouseClick(e.location.x, (this.getSize().y - e.location.y), zplane));
 		}
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
 		_currPos = e.location;
+		_currGeom = null;
 	}
 
 	@Override
@@ -283,7 +299,8 @@ public class Viewport extends ScreenFrameAdapter {
 			return;
 
 		if (_currGeom != null) {
-			Vector3d p = this.traceMouseClickVector(traceMouseClick(e.location.x, (this.getSize().y - e.location.y)));
+			float zplane = (float)_currGeom.getPointArray()[2];
+			Vector3d p = this.traceMouseClickVector(traceMouseClick(e.location.x, (this.getSize().y - e.location.y), zplane));
 			Vector3d dir = new Vector3d(p.x - _lastPos.x, p.y - _lastPos.y, p.z - _lastPos.z);
 			_currGeom.move(dir);
 			_lastPos = p;
