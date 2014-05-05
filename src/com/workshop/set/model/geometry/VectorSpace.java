@@ -192,6 +192,11 @@ public class VectorSpace {
         	components[ i - 1 ] = d;
         	namedComponents.put( names[ i - 1 ], d );
         }
+        
+        public boolean isLocked() throws GeometricFailure{
+        	return (getN_(1).getLocked() || getN_(2).getLocked() || getN_(3).getLocked()); 
+        }
+        
 
         /**
          * getX_( i...n ) is defined.
