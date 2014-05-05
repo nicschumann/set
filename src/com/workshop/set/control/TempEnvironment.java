@@ -511,7 +511,7 @@ public class TempEnvironment implements Model {
 					Vector3f.sub(Q, P, PQ);
 					
 					double d = Math.sqrt(Vector3f.dot(PQ, PQ));
-					if (d < 0.05f && selected == null)
+					if (d < SELECTION_RADIUS - 0.02f && selected == null)
 						 selected = element;
 					
 				}
