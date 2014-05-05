@@ -152,7 +152,9 @@ public class Solver implements Model {
         Term evaluated = evaluateTerm( t );
 
         if ( evaluated instanceof TJudgement ) {
+
             constrain( (TJudgement) evaluated );
+
         } else if ( evaluated instanceof TVector ) {
 
             try {
@@ -170,7 +172,6 @@ public class Solver implements Model {
             }
 
         } else if ( evaluated instanceof TAbstraction ) {
-            System.out.println( "hit an abstraction: " + evaluated );
             try {
 
                 if ( _argumentTable.containsKey( ((TAbstraction) evaluated).type ) ) {
@@ -185,8 +186,8 @@ public class Solver implements Model {
             } catch ( ClassCastException e ) {
                 throw new ProofFailureException( "INTERNAL: Typechecking Failed on Abstraction" );
             }
-
-
+        } else if ( evaluated instanceof TApplication ) {
+            
         }
         return evaluated;
     }
