@@ -27,11 +27,13 @@ public class TypecheckingException extends Exception {
     private final Context<?> context;
     private String text = "";
 
+    public String guiMessage() {  return "Typechecking Failed : " + text; }
+
     @Override
     public String getLocalizedMessage() {
         StringBuilder s = new StringBuilder("Typechecking Failed : " + text + System.lineSeparator() );
-                      s.append( "\ton Term:\t" ).append( term ).append( System.lineSeparator() );
-                      s.append( "\tin Context:\n").append( context ).append( System.lineSeparator() );
+                      s.append( "\ton Term:\t" ).append( term ).append(System.lineSeparator());
+                      s.append( "\tin Context:\n").append( context ).append(System.lineSeparator());
 
         return s.toString();
     }
