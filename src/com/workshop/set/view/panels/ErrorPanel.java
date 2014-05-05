@@ -25,7 +25,7 @@ public class ErrorPanel extends GLPanel {
 		this.setResizeType(ResizeType.FIT_RIGHT);
 		this.setVisible(false);
 
-		_label = new ErrorLabel("Shit happened, son");
+		_label = new ErrorLabel("");
 		_label.setSize(20, 23);
 		_label.setLocation(0, 0);
 		_label.setBackground(new Color(0, 0, 0, 0));
@@ -39,6 +39,7 @@ public class ErrorPanel extends GLPanel {
 		float sizey = getSize().y;
 		setSize(width, sizey);
 		_label.setSize(width, sizey);
+		_label.setText(text);
 
 		moveLoc = parentWidth - width - 10;
 
