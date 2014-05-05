@@ -69,12 +69,12 @@ public class OperationalGeometry {
 
 
     public OperationalGeometry operation( Operation operation ) {
-        // TODO implement
+        operations.push( operation );
         return this;
     }
 
     public OperationalGeometry geometry( Geometry geometry ) {
-        // TODO implement
+        geometries.push( geometry );
         return this;
     }
 

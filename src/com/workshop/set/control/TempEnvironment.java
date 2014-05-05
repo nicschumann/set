@@ -2,12 +2,7 @@ package com.workshop.set.control;
 
 import static com.workshop.set.SetMain.GENSYM;
 import static com.workshop.set.SetMain.VEC_SPACE_3D;
-import static com.workshop.set.model.interfaces.Model.Function.CREATE_RELATION;
-import static com.workshop.set.model.interfaces.Model.Function.PARALLEL;
-import static com.workshop.set.model.interfaces.Model.Function.SET_PIVOT;
-import static com.workshop.set.model.interfaces.Model.Function.X_VAL_EQUAL;
-import static com.workshop.set.model.interfaces.Model.Function.Y_VAL_EQUAL;
-import static com.workshop.set.model.interfaces.Model.Function.Z_VAL_EQUAL;
+import static com.workshop.set.model.interfaces.Model.Function.*;
 import static org.lwjgl.opengl.GL11.GL_LINES;
 import static org.lwjgl.opengl.GL11.GL_LINE_SMOOTH;
 import static org.lwjgl.opengl.GL11.GL_QUADS;

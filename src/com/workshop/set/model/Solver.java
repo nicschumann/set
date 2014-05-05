@@ -157,7 +157,7 @@ public class Solver implements Model {
 
             constrain( (TJudgement) evaluated );
 
-        } else if ( evaluated instanceof TVector ) {
+        } else if ( evaluated instanceof TVector && t instanceof TVector ) {
 
             try {
                 _renderer.addGeometry( vectorIntoPoint( (TVector)evaluated ) );
@@ -165,7 +165,7 @@ public class Solver implements Model {
                 throw new ProofFailureException( "" );
             }
 
-        } else if ( evaluated instanceof TTuple ) {
+        } else if ( evaluated instanceof TTuple && t instanceof TTuple) {
 
             try {
                 _renderer.addGeometry( tupleIntoRelation( (TTuple)evaluated ));
@@ -188,8 +188,10 @@ public class Solver implements Model {
             } catch ( ClassCastException e ) {
                 throw new ProofFailureException( "INTERNAL: Typechecking Failed on Abstraction" );
             }
-        } else if ( evaluated instanceof TApplication ) {
+        } else if ( evaluated instanceof TVector ) {
             
+        } else if ( evaluated instanceof TTuple ) {
+
         }
         return evaluated;
     }
@@ -415,7 +417,7 @@ public class Solver implements Model {
         }
     }
 
-    public void executeFunction(Function f ) throws GeometricFailure { _renderer.executeFunction( f ); }
+    public void executeFunction(Function f ) throws GeometricFailure { _renderer.executeFunction(f); }
 
     public void update() { _renderer.update(); }
 
