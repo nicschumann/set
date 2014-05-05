@@ -17,7 +17,7 @@ module SET/basis[ Symbol ]
 	*/
 	sig Equation {
 		symbols : set Symbol
-	} 
+	}
 
 
 
@@ -27,6 +27,7 @@ module SET/basis[ Symbol ]
 	--	orbits : set Symbol					-- each constraint is equipped with a fixed set of variable-valued orbits, UNKNOWNS.
 											-- any symbols in the context, not in the set of pivots, are orbits for this constraint.
 	} {
+		pivots in equation.symbols
 --		no pivots & orbits					-- symbols cannot be both pivots and orbits in a constraint. (is this true?)
 	}
 
@@ -115,6 +116,8 @@ module SET/basis[ Symbol ]
 		this not in right.^(@right + @left)			-- "
 		defines = left.@defines + right.@defines	-- a Relation defines what its left and right sides define.
 	}
+	-- left  and right maintainence?
+
 
 	fact RelationalArity {
 		all r : Relation {
@@ -155,6 +158,7 @@ module SET/basis[ Symbol ]
 			all r : Relation | r in objects.t implies (r.left in objects.t and r.right in objects.t)
 
 		--	all g : Geometry - objects.t | no s : g.defines | s in (objects.t).defines
+			all e : system.t.equation | e.symbols in objects.t.defines
 
 		}
 			
@@ -181,12 +185,12 @@ module SET/basis[ Symbol ]
 		}	
 	}
 
-	pred addConstraint[ t,t' : Time, c : Constraint, p : set Symbol ] {
+	pred addConstraint[ t,t' : Time, c : Constraint, symb : set Symbol ] {
 	--	no (Context.objects.t).defines - (c.pivots + c.orbits)
 		c not in Context.system.t
 
-		p in Context.objects.t.defines
-		p = c.pivots
+		symb in Context.objects.t.defines
+		symb = c.equation.symbols
 
 		Context.system.t' = Context.system.t + c
 		Context.objects.t' = Context.objects.t	
@@ -239,8 +243,6 @@ module SET/basis[ Symbol ]
 
 	/** 
 		?? applyConstraint ??
-		deletePoint
-		deleteRelation
 	*/
 
 	assert noDoubleInit {
@@ -263,21 +265,55 @@ module SET/basis[ Symbol ]
 		all t : Time - last | 
 			let t' = t.next {
 				some c : Constraint, p : Point, r : Relation, pvts : set Symbol {
-					addPoint[ t, t', p ]
+					   addPoint[ t, t', p ]
 					or addRelation[ t, t', r ]
 					or addConstraint[ t, t', c, pvts ]
 					or deletePoint[ t, t', p]
+					or deleteRelation[ t, t', r ]
+					or deleteConstraint[ t, t', c ]
 				}				
 			}
 	} 
 
 /** assertions... 
 	[x] ** no cycles in a given relation 
-	[X]  ** left & right must have the same arity / structure.
+	[X] ** left & right must have the same arity / structure.
 	[x] ** points cannot share symbols.
 	[x] ** all symbols in geometries must be in the constraints
+
+	[ ] ** deleting a relation preserves points
+	[ ] ** deleting a point deletes the relations containing it, and constraints that contain it, and constraints w/ equations that contain it.
 */
 
+
+	/** [5] : Assertions : */
+
+
+	pred pointDeletion[ t,t' : Time, p : Point ] {
+		deletePoint[ t,t',p ]
+		implies
+		p in Context.objects.t
+		and no (Context.objects.t' & Relation).defines & p.defines
+		and no Context.system.t'.equation.symbols & p.defines
+	}
+	pred relationDeletion[ t,t' : Time, r : Relation ] {
+		deleteRelation[ t,t',r ] 
+		implies
+		r in Context.objects.t
+		and all rel : Context.objects.t' & Relation | no rel.(^left + ^right) & r
+	}
+	assert wellFormedDeletion {
+		all t,t' : Time {
+			t' = t.next implies
+				all p : Point | pointDeletion[ t,t',p ]
+				and all r : Relation | relationDeletion[ t,t',r ]
+		}
+	}
+	check wellFormedDeletion for 3 but 12 Symbol,
+								exactly 2 Point,
+								2 Relation,
+								6 int,
+								6 Time
 
 /*
 
@@ -298,13 +334,31 @@ module SET/basis[ Symbol ]
 
 
 
+pred constrainedContext {
+	some t : Time |
+		some Context.system.t
+}
+
+pred deleteRelationTest {
+	some t : Time |
+	some t' : t.next  | 
+	some r : Relation | deleteRelation[t,t',r]
+}
+
+
+run deleteRelationTest for 3 but 12 Symbol,
+								exactly 2 Point,
+								2 Relation,
+								6 int,
+								6 Time
 
 
 
-
-
-
-
+run constrainedContext for 3 but 12 Symbol,
+								exactly 2 Point,
+								2 Relation,
+								6 int,
+								6 Time
 
 
 run { some Relation } for 3 but 12 Symbol,
