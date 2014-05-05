@@ -21,6 +21,7 @@ import java.util.*;
 public class Solver implements Model {
     public Solver( VectorSpace v, Gensym generator ) {
 
+        _argumentTable          = new HashMap<>();
         _symbolTable            = new HashMap<>();
         _currentElements        = new HashSet<>();
         _currentSelections      = new HashSet<>();
@@ -55,7 +56,7 @@ public class Solver implements Model {
      * Terms into geometries and geometries into terms. ( or some kind of symmetric map )
      */
 
-
+    private Map<Term,Set<Term>> _argumentTable;
 
 
 
@@ -84,7 +85,6 @@ public class Solver implements Model {
 
     }
 
-
     /**
      * Add a named term to the Context.
      *
@@ -96,9 +96,7 @@ public class Solver implements Model {
     public synchronized void addTerm( Symbol s, Term t )
         throws ProofFailureException, TypecheckingException {
         Term n = eval( t );
-
-
-        //_environment.name( s, t );
+        _environment.name( s, n );
     }
 
     /**
@@ -149,18 +147,45 @@ public class Solver implements Model {
     public synchronized Term eval( Term t )
         throws ProofFailureException, TypecheckingException {
         Term evaluated = evaluateTerm( t );
-        // if the normal form of the term t corresponds to a judgement, we attempt to impose that judgement.
+
         if ( evaluated instanceof TJudgement ) {
             constrain( (TJudgement) evaluated );
-        }
-        else if ( evaluated instanceof TVector ) {
-           // _renderer.addGeometry( vectorIntoPoint( (TVector)evaluated ) );
+        } else if ( evaluated instanceof TVector ) {
+
+            try {
+                _renderer.addGeometry( vectorIntoPoint( (TVector)evaluated ) );
+            } catch ( GeometricFailure e ) {
+                throw new ProofFailureException( "" );
+            }
+
         } else if ( evaluated instanceof TTuple ) {
-           // _renderer.addGeometry( tupleIntoRelation( (TTuple)evaluated ));
+
+            try {
+                _renderer.addGeometry( tupleIntoRelation( (TTuple)evaluated ));
+            } catch ( GeometricFailure e ) {
+                throw new ProofFailureException( "" );
+            }
+
+        } else if ( evaluated instanceof TAbstraction ) {
+            try {
+                TAll type = (TAll)_environment.proves( evaluated );
+                if ( _argumentTable.containsKey( type ) ) {
+                    Set<Term> fns = _argumentTable.get( type );
+                    fns.add( evaluated );
+                    _argumentTable.put( type, fns );
+                } else {
+                    Set<Term> fns = new HashSet<>( );
+                    fns.add( evaluated );
+                    _argumentTable.put( type, fns );
+                }
+            } catch ( ClassCastException e ) {
+                throw new ProofFailureException( "INTERNAL: Typechecking Failed on Abstraction" );
+            }
+
+
         }
         return evaluated;
     }
-
 
 
     private synchronized void constrain( TJudgement judgement )
@@ -231,7 +256,7 @@ public class Solver implements Model {
     public synchronized Term evaluateType( Term t )
         throws ProofFailureException, TypecheckingException {
         t.type( _environment );
-        return _environment.proves( t );
+        return _environment.proves(t);
     }
 
 
@@ -318,6 +343,14 @@ public class Solver implements Model {
         } else throw new ProofFailureException( "Unrecognized Geometric Type" );
     }
 
+    /**
+     * takes a TVector into its corresponding vectorspace representation.
+     *
+     * @param vect a TVector to convert
+     * @return the Point representation of this tvector
+     * @throws GeometricFailure just incase this vector is not in RN
+     * @throws ProofFailureException just in case vect is not a vector of real numbers
+     */
     private Point vectorIntoPoint( TVector vect )
         throws GeometricFailure, ProofFailureException {
         try {
@@ -333,6 +366,21 @@ public class Solver implements Model {
 
         }
 
+    }
+
+    private Term typeGeometry( Geometry g )
+        throws ProofFailureException {
+        if ( g instanceof Point ) {
+            return new TExponential( new TField(), g.dimension() );
+        } else if ( g instanceof Relation ) {
+            return new TSum(
+                    name(""),
+                    typeGeometry( ((Relation) g).domain() ),
+                    typeGeometry( ((Relation) g).codomain() )
+            );
+        } else {
+            throw new ProofFailureException( "INTERNAL: unrecognized geometric entity" );
+        }
     }
 
     private Relation tupleIntoRelation( TTuple tuple )
