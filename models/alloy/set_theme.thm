@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<alloy>
+
+<view>
+
+<projection> <type name="Time"/> </projection>
+
+<defaultnode/>
+
+<defaultedge/>
+
+<node>
+   <type name="Constraint"/>
+   <type name="Context"/>
+   <type name="Equation"/>
+   <type name="Geometry"/>
+   <type name="Int"/>
+   <type name="Point"/>
+   <type name="Relation"/>
+   <type name="String"/>
+   <type name="Time"/>
+   <type name="univ"/>
+   <type name="ordering/Ord"/>
+   <type name="seq/Int"/>
+   <set name="$constrainedContext_c" type="Constraint"/>
+   <set name="$constrainedContext_p" type="Point"/>
+   <set name="$constrainedContext_pvts" type="Symbol"/>
+   <set name="$constrainedContext_r" type="Relation"/>
+   <set name="$constrainedContext_t" type="Time"/>
+   <set name="First" type="ordering/Ord"/>
+   <set name="Next" type="ordering/Ord"/>
+</node>
+
+<node visible="no">
+   <type name="Symbol"/>
+</node>
+
+<edge visible="no" attribute="yes" constraint="no">
+   <relation name="defines"> <type name="Geometry"/> <type name="Symbol"/> </relation>
+   <relation name="pivots"> <type name="Constraint"/> <type name="Symbol"/> </relation>
+   <relation name="symbols"> <type name="Equation"/> <type name="Symbol"/> </relation>
+</edge>
+
+</view>
+
+</alloy>
