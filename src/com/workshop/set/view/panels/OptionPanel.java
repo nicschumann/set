@@ -243,6 +243,7 @@ public class OptionPanel extends GLPanel {
 		for (GeomPanel panel : _geoms) {
 			panel.animate(millisSincePrev);
 		}
+		update();
 	}
 
 	@Override

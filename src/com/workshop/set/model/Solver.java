@@ -5,6 +5,8 @@ import com.workshop.set.model.geometry.Equation;
 import com.workshop.set.model.geometry.OperationalGeometry;
 import com.workshop.set.model.geometry.VectorSpace;
 import com.workshop.set.model.geometry.VectorSpace.GeometricFailure;
+import com.workshop.set.model.geometry.VectorSpace.Geometry;
+import com.workshop.set.model.geometry.VectorSpace.Point;
 import com.workshop.set.model.interfaces.*;
 import com.workshop.set.model.lang.core.*;
 import com.workshop.set.model.lang.environments.Evaluation;
@@ -394,6 +396,8 @@ public class Solver implements Model {
 
     public synchronized void checkIntersections(Point elmt, boolean shift, boolean pivot) { _renderer.checkIntersections(elmt, shift, pivot); }
 
+    public Geometry getIntersection(Point elmt) { return _renderer.getIntersection(elmt); }
+
     public synchronized void setScreen(SetScreen main) { _renderer.setScreen( main ); }
 
     public void createConstraint( Model.Function type ) { _renderer.createConstraint( type ); }
@@ -410,5 +414,6 @@ public class Solver implements Model {
     public String toString() {
         return _environment.toString();
     }
+
 
 }
