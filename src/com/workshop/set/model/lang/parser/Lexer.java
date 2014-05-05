@@ -82,6 +82,8 @@ public class Lexer {
 
         else if ( token.equals( "R" ) || token.equals( "field" ) ) { return new FIELD( position ); }
         else if ( token.equals( "univ" ) ) { return new UNIV( position ); }
+        else if ( token.equals( "par" ) ) { return new PAR( position ); }
+        else if ( token.equals( "perp" ) ) { return new PAR( position ); }
 
         else if ( token.equals( "[" ) ) { bracketCount += 1; return new LBRACKET( position ); }
         else if ( token.equals( "(" ) ) { parenCount += 1; return new LPAREN( position ); }

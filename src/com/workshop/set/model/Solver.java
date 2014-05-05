@@ -21,6 +21,7 @@ import java.util.*;
 public class Solver implements Model {
     public Solver( VectorSpace v, Gensym generator ) {
 
+        _nameTable              = new HashMap<>();
         _argumentTable          = new HashMap<>();
         _symbolTable            = new HashMap<>();
         _currentElements        = new HashSet<>();
@@ -56,7 +57,8 @@ public class Solver implements Model {
      * Terms into geometries and geometries into terms. ( or some kind of symmetric map )
      */
 
-    private Map<Term,Set<Term>> _argumentTable;
+    private Map<Term,List<Term>> _argumentTable;
+    private Map<Term,Symbol> _nameTable;
 
 
 
@@ -96,7 +98,8 @@ public class Solver implements Model {
     public synchronized void addTerm( Symbol s, Term t )
         throws ProofFailureException, TypecheckingException {
         Term n = eval( t );
-        _environment.name( s, n );
+        _nameTable.put( n, s );
+        _environment.name(s, n);
     }
 
     /**
@@ -113,12 +116,12 @@ public class Solver implements Model {
      */
     public synchronized void addSymbolicValue( Symbol s, MDouble val )
         throws ProofFailureException {
-        _environment.set( s, val );
+        _environment.set(s, val);
     }
 
     public synchronized void addSymbolicValue( Symbol s, double val )
         throws ProofFailureException {
-        _environment.set( s, val );
+        _environment.set(s, val);
     }
 
 
@@ -167,16 +170,17 @@ public class Solver implements Model {
             }
 
         } else if ( evaluated instanceof TAbstraction ) {
+            System.out.println( "hit an abstraction: " + evaluated );
             try {
-                TAll type = (TAll)_environment.proves( evaluated );
-                if ( _argumentTable.containsKey( type ) ) {
-                    Set<Term> fns = _argumentTable.get( type );
+
+                if ( _argumentTable.containsKey( ((TAbstraction) evaluated).type ) ) {
+                    List<Term> fns = _argumentTable.get( ((TAbstraction) evaluated).type );
                     fns.add( evaluated );
-                    _argumentTable.put( type, fns );
+                    _argumentTable.put( ((TAbstraction) evaluated).type, fns );
                 } else {
-                    Set<Term> fns = new HashSet<>( );
+                    List<Term> fns = new ArrayList<>( );
                     fns.add( evaluated );
-                    _argumentTable.put( type, fns );
+                    _argumentTable.put( ((TAbstraction) evaluated).type, fns );
                 }
             } catch ( ClassCastException e ) {
                 throw new ProofFailureException( "INTERNAL: Typechecking Failed on Abstraction" );
@@ -242,7 +246,7 @@ public class Solver implements Model {
      */
     public synchronized Term evaluateTerm( Term t )
         throws ProofFailureException, TypecheckingException {
-        return _environment.eval( t );
+        return _environment.eval(t);
     }
 
     /**
@@ -396,15 +400,69 @@ public class Solver implements Model {
 
     public synchronized void setScreen(SetScreen main) { _renderer.setScreen( main ); }
 
-    public void createConstraint( Model.Function type ) { _renderer.createConstraint( type ); }
+    public void createConstraint( Model.Function type ) {
+        switch ( type ) {
+            case TERM:
+                System.out.println("term applied");
+                break;
+            default:
+                _renderer.createConstraint( type );
+        }
+    }
+
+    public void executeFunction(Function f ) throws GeometricFailure { _renderer.executeFunction( f ); }
 
     public void update() { _renderer.update(); }
 
     public Gensym getGenerator() { return _generator; }
 
-    public List<Model.Function> getFunctions() { return _renderer.getFunctions(); }
-    
-    public void executeFunction(Function function) throws GeometricFailure {_renderer.executeFunction(function); }
+    public List<Model.Function> getFunctions() {
+        List<Function> predef = _renderer.getFunctions();
+        for ( Term t : getTerms() ) {
+            Function f = Function.TERM;
+
+            if ( _nameTable.containsKey( t ) ) f.setString( _nameTable.get( t ).toString() );
+            else f.setString( t.toString() );
+
+            f.setTerm( t );
+            predef.add( f );
+        }
+        return predef;
+    }
+
+
+    public List<Term> getTerms() {
+       try {
+           Term type;
+           if ( (type = welltyped( _currentSelections )) != null ) {
+               if ( _argumentTable.containsKey( type ) ) return _argumentTable.get( type );
+               else return new ArrayList<>();
+           }
+           else return new ArrayList<>();
+
+       } catch (ProofFailureException e){
+           System.err.println(e.getLocalizedMessage());
+           e.printStackTrace();
+           return new ArrayList<>();
+       }
+    }
+
+    private Term welltyped( List<Geometry> gs )
+        throws ProofFailureException {
+        if ( !gs.isEmpty() ) {
+            Term type_fst = null;
+            Term type_snd = null;
+
+
+            for ( Geometry g : gs ) {
+
+                type_fst = typeGeometry( g );
+                if ( type_snd != null && !type_fst.equals( type_snd ) ) return null;
+                type_snd = type_fst;
+            }
+            return type_fst;
+        } else return null;
+    }
 
     @Override
     public String toString() {
