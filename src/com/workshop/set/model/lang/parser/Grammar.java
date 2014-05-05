@@ -171,6 +171,16 @@ public class Grammar {
             public boolean equals( Object o ) { return o instanceof COMMA; }
             public String toString() { return "COMMA"; }
         }
+        public static class PAR extends TERMINAL {
+            public PAR( int position ) { super(position); }
+            public boolean equals( Object o ) { return o instanceof PAR; }
+            public String toString() { return "PAR"; }
+        }
+        public static class PERP extends TERMINAL {
+            public PERP( int position ) { super(position); }
+            public boolean equals( Object o ) { return o instanceof PERP; }
+            public String toString() { return "PERP"; }
+        }
         public static class END extends TERMINAL {
             public END( int position ) { super(position); }
             public boolean equals( Object o ) { return o instanceof END; }

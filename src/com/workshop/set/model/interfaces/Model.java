@@ -13,6 +13,7 @@ import java.util.List;
 public interface Model {
 
 	public enum Function {
+
 		X_VAL_EQUAL("Set X Equal", true),
 		Y_VAL_EQUAL("Set Y Equal", true),
 		Z_VAL_EQUAL("Set Z Equal", true),
@@ -20,15 +21,21 @@ public interface Model {
 		PERPENDICULAR("Set Lines Perpendicular", true),
 		
 		SET_PIVOT("Set As Pivot", false),
-		CREATE_RELATION("Create Relation", false);
+        CREATE_RELATION("Create Relation", false),
+        TERM( null, true );
 
-		public final String buttonText;
+		public String buttonText;
+        private Term value;
 		public final boolean isConstraint;
 
 		private Function(String buttonText, boolean constraint) {
 			this.buttonText = buttonText;
 			this.isConstraint = constraint;
 		}
+
+        public void setTerm( Term t ) { value = t; }
+        public Term getTerm( ) { return value; }
+        public void setString( String name ) { buttonText = name; }
 	}
 
     public void addGeometry(Geometry g) throws ProofFailureException, TypecheckingException;

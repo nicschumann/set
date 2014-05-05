@@ -47,7 +47,7 @@ public class TempEnvironment implements Model {
 	private final float[] _colorH = { 1f, 1f, 1f };
 	private final float[] _pivotColor = { 1f, 0.5f, 0 };
 
-	public TempEnvironment(HashSet<Geometry> _currentElements, List<Geometry> _currentSelections) {
+	public TempEnvironment(Set<Geometry> _currentElements, List<Geometry> _currentSelections) {
 		this._currentElements = _currentElements;
 		this._currentSelections = _currentSelections;
 	}
@@ -397,6 +397,8 @@ public class TempEnvironment implements Model {
 		case CREATE_RELATION:
 			Relation r = VEC_SPACE_3D.relation(GENSYM.generate(), _currentSelections.get(0), _currentSelections.get(1));
 			_currentElements.add(r);
+			break;
+		case TERM:
 			break;
 		default:
 			break;
