@@ -10,6 +10,7 @@ import static com.workshop.set.model.interfaces.Model.Function.Y_VAL_EQUAL;
 import static com.workshop.set.model.interfaces.Model.Function.Z_VAL_EQUAL;
 import static org.lwjgl.opengl.GL11.GL_LINES;
 import static org.lwjgl.opengl.GL11.GL_LINE_SMOOTH;
+import static org.lwjgl.opengl.GL11.GL_QUADS;
 import static org.lwjgl.opengl.GL11.glBegin;
 import static org.lwjgl.opengl.GL11.glColor3f;
 import static org.lwjgl.opengl.GL11.glEnable;
@@ -116,7 +117,13 @@ public class TempEnvironment implements Model {
 			glVertex3d(pnts[3], pnts[4], pnts[5]);
 			glEnd();
 		} else if (pnts.length == 12) {
-			// TODO: draw plane
+			glColor3f(0.25f, 0.25f, 0.25f);
+			glBegin(GL_QUADS);
+			glVertex3d(pnts[0], pnts[1], pnts[2]);
+			glVertex3d(pnts[3], pnts[4], pnts[5]);
+			glVertex3d(pnts[9], pnts[10], pnts[11]);
+			glVertex3d(pnts[6], pnts[7], pnts[8]);
+			glEnd();
 		}
 	}
 
@@ -250,9 +257,9 @@ public class TempEnvironment implements Model {
 					_currentSelections.add(element);
 					_screen.displaySelected(element);
 				} else if (shift) {
-//					element.setHighlight(false);
-//					_currentSelections.remove(element);
-//					_screen.removeSelection(element);
+					// element.setHighlight(false);
+					// _currentSelections.remove(element);
+					// _screen.removeSelection(element);
 				}
 				selected = true;
 
