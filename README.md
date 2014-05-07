@@ -112,7 +112,7 @@ In this case, it is simply annotated as an assumed term. For example:
 
 
 
-```
+```sh
 set> :let <name> <term>
 ```
 
@@ -120,12 +120,6 @@ Typing ":let" followed by a name and then a term object introduces a new term in
 \<name\> with it. If \<term\> is well typed with respect to the current heap context, it is admitted into the context and
 can be used in the REPL or the Stage.
 
-```
-set> :assume <name> <type>
-```
-Typing ":let" followed by a name and then a term object introduces a new term into the heap, and associates the identifier
-\<name\> with it. If \<term\> is well typed with respect to the current heap context, it is admitted into the context and
-can be used in the REPL or the Stage. The following examples serve to clarify:
 
 Entering
 
@@ -139,7 +133,32 @@ entering
 ```racket
 set> :let idVect3 (id R^3)
 ```
-at the prompt would create an instance of this function applicable to vectors in 3-space. This function coul
+
+at the prompt would create an instance of this function applicable to vectors in 3-space. This function could then be applied
+to arbitrary vectors, and would show up as applicable in the stage's contextual menu whenever an 3-dimension vector is selected.
+
+```sh
+set> :assume <name> <type>
+```
+
+Typing ":assume" followed by a name and then a term object introduces a new symbol into the heap, and judges it of type \<type\>
+assuming <\type\> itself is well-typed in the current context. This allows for the definition of new data-types, which can be used to
+provide proof of useful properties. For examples, the user could define the set of all pivoting geometries, and then require that
+functions accept proof of pivoting elements before being applied.
+
+```racket
+set> :assume pivot (all (A : univ) (all (elem : A) univ))
+```
+
+Assume that "pivot" is a type-level function from the element of some set into judgement that it is a pivoting element.
+
+```racket
+set> :assume PVT (all (A : univ) (all (elem : A) ((pivot A) elem)))
+```
+
+Assume that "PVT" is constructor injecting elements of some set A into the pivoting judgement. Now we can require that
+any element ```racket x``` of ```racket R^3``` that a constraint is applied to, has a proof ```racket ((PVT R^3) x)```
+of ```racket ((pivot R^3) x)```
 
 ##Build
 
