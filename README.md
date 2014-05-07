@@ -14,7 +14,7 @@ when it comes to automated manufacturing, systems integration, and reasoning abo
 
 ##Geometric Formalism
 
-Instead of encoding points as locations, Set encodes points as ordered *n*-tuples of symbols, each of which varies over the Real numbers.
+Instead of encoding points as locations, Set encodes points as ordered *n*-tuples of symbols, each of which varies over the real numbers.
 The symbols in a point never change once the point is defined; their values may, as constraints are imposed and satisfied by the solver.
 
 Set uses a lightweight, inductive definition to introduce Geometry, as follows:
@@ -36,7 +36,7 @@ Set uses a lightweight, inductive definition to introduce Geometry, as follows:
 All more complicated geometric structures are encoded as relations between points. For examples, a line is a simple relation between points,
 a plane is a relation between lines, and a volume a relation between planes. Relations of greater depth than this have more than 3 dimensions;
 one might visualize a relation between volumes ( ie, a relation between relations between relations between relations between points ) as a transition function
-from the "A" volume into the "B" volume. NB, Set does not implement this representation.
+from the "A" volume into the "B" volume. *NB*, Set does not implement this representation.
 
 ##Using Set
 
@@ -53,10 +53,20 @@ Command Line based Read-Evaluate-Print loop. The following subsections detail th
 #####Stage
 
 The stage has two modes, a **create** mode, and a **select** mode. The current mode is displayed in the stage's bottom right hand corner, as a flag. These modes can
-be toggled between using the **s** keyboard key for select and the **c** keyboard key for create.
+be toggled between using the **s** keyboard key for **select** and the **c** keyboard key for **create**. Set also currently contains two camera modes, which can be toggled between
+using the **spacebar**. It provides an orthographic camera pointing down on the XY construction plane, and and a perspective camera that orbits the Y axis. Both of these cameras can
+can be repositioned by clicking and dragging anywhere on the stage. In perspective mode, the camera can also be made to orbit the Y axis, by right-clicking and dragging.
 
 
-in **create** mode, the user can create points and relations between them.
+In **create** mode, the user can create points and lines. Clicking anywhere on the stage creates a point on the current construction plane at that location
+(currently the XY Plane, with Z zero, is the only accessible construction plane). Holding down shift and clicking twice creates two points with a relation (ie, a line) between them.
+
+In **select** mode, points and lines can be selected by the user. Selecting a geometric object populates a menu in the upper left hand corner of the stage, which displays vital statistics
+about that geometry. These data include whether the geometry is a Point or a Relation, the name of that geometry, and, if it is a Point, its X, Y, and Z coordinate symbols, otherwise its
+related sub-geometries. Coordinates and sub-geometry fields are text-fields which can be edited, points can be relocated by changing their coordinates in these fields; relations can
+be re-related to other geometries by changing the names of sub-geometries. The name field of each geometry can also be edited.
+
+In general, geometries can be relocated by clicking and dragging them to a new location. Geometries move in a plane that is coplanar with the XY plane, offset by their Z coordinate.
 
 
 
