@@ -65,6 +65,29 @@ public class RelationalConstraint implements Constraint {
 			
 			dynamicOrbit.addConstraint(this);
 		}
+
+        else if(relation.equalsIgnoreCase("slope_inverse")){
+
+            Point o1 = orbits.get(0);
+            Point o2 = orbits.get(1);
+
+            //pivot on o2 only if it is the only one unlocked
+            if(!o2.isLocked() && o1.isLocked()){
+                //o1.y = deltay+o2.y
+                //o1.x = deltax + o2.x
+                _equations.add(new LinearEquation(o2.getN_(2), o1.getN_(2), 2, relation, 1, pivots));
+                _equations.add(new LinearEquation(o2.getN_(1), o1.getN_(1), 1, relation, 1, pivots));
+                o1.addConstraint(this);
+            }
+
+            else{
+                //o2.y = o1.y - deltaY;
+                //o2.x = o1.x - deltaX;
+                _equations.add(new LinearEquation(o1.getN_(2), o2.getN_(2), 2, relation, -1, pivots));
+                _equations.add(new LinearEquation(o1.getN_(1), o2.getN_(1), 1, relation, -1, pivots));
+                o2.addConstraint(this);
+            }
+        }
 	}
 	
 	@Override

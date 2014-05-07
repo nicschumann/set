@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.util.vector.Vector2f;
 
 import com.workshop.set.model.geometry.VectorSpace.Geometry;
@@ -64,15 +65,15 @@ public class SetScreen implements ScreenFrame {
 	public void removeSelections(boolean toggle) {
 		_options.removeGeomPanels(toggle);
 	}
-	
+
 	public void removeSelection(Geometry selected) {
 		_options.removeGeomPanel(selected);
 	}
-	
+
 	public void displayError(String msg) {
 		_errors.displayError(msg, getSize().x);
 	}
-	
+
 	public void closeError() {
 		_errors.closeError();
 	}
@@ -267,7 +268,8 @@ public class SetScreen implements ScreenFrame {
 		for (ScreenFrame frame : frames) {
 			if (frame.isInFocus()) {
 				frame.keyPressed(e);
-//				return;
+				if (e.keyCode == Keyboard.KEY_DELETE || e.keyCode == Keyboard.KEY_BACK)
+					return;
 			}
 		}
 		_viewport.keyPressed(e);
@@ -331,13 +333,13 @@ public class SetScreen implements ScreenFrame {
 		}
 		_viewport.resize(newSize);
 		Vector2f.add(ul, newSize, lr);
-		
+
 		if (_errors.isVisible()) {
 			_errors.setLocation(newSize.x - _errors.getSize().x - 10, 10);
 		} else {
 			_errors.setLocation(newSize.x, 10);
 		}
-		
+
 	}
 
 	public static Vector2f newRatio(Vector2f oldTop, Vector2f oldBottom, Vector2f newBottom) {

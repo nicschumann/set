@@ -175,8 +175,10 @@ public class Solver implements Model {
         Term evaluated = evaluateTerm( t );
 
         if ( evaluated instanceof TJudgement ) {
+
             constrain( (TJudgement) evaluated );
-        } else if ( evaluated instanceof TVector ) {
+
+        } else if ( evaluated instanceof TVector && t instanceof TVector ) {
 
             try {
                 _renderer.addGeometry( vectorIntoPoint( (TVector)evaluated ) );
@@ -184,7 +186,7 @@ public class Solver implements Model {
                 throw new ProofFailureException( "" );
             }
 
-        } else if ( evaluated instanceof TTuple ) {
+        } else if ( evaluated instanceof TTuple && t instanceof TTuple) {
 
             try {
                 _renderer.addGeometry( tupleIntoRelation( (TTuple)evaluated ));
@@ -193,7 +195,6 @@ public class Solver implements Model {
             }
 
         } else if ( evaluated instanceof TAbstraction ) {
-            System.out.println( "hit an abstraction: " + evaluated );
             try {
 
                 if ( _argumentTable.containsKey( ((TAbstraction) evaluated).type ) ) {
@@ -208,7 +209,9 @@ public class Solver implements Model {
             } catch ( ClassCastException e ) {
                 throw new ProofFailureException( "INTERNAL: Typechecking Failed on Abstraction" );
             }
-
+        } else if ( evaluated instanceof TVector ) {
+            
+        } else if ( evaluated instanceof TTuple ) {
 
         }
         return evaluated;
@@ -295,8 +298,9 @@ public class Solver implements Model {
     public void removeGeometry( Geometry g )
         throws TypecheckingException, ProofFailureException {
         Term term = _environment.getValue( g.name() );
+        _renderer.removeGeometry( g );
 
-
+        _renderer.removeGeometry( g );
     }
 
     /**
@@ -307,11 +311,11 @@ public class Solver implements Model {
     public void removeGeometryAll(Geometry g ) {
         // this is actually very difficult. it required descending through the geometry, recursively removing all of
         // its atoms, and then checking to see that the heap's well-typing is still maintained.
-
+        _renderer.removeGeometryAll( g );
     }
 
     public void deleteSelections() {
-    	//_renderer.deleteSelections();
+        _renderer.deleteSelections();
     }
 
 
@@ -428,7 +432,7 @@ public class Solver implements Model {
         }
     }
 
-    public void executeFunction(Function f ) throws GeometricFailure { _renderer.executeFunction( f ); }
+    public void executeFunction(Function f ) throws GeometricFailure { _renderer.executeFunction(f); }
 
     public void update() { _renderer.update(); }
 
@@ -474,7 +478,6 @@ public class Solver implements Model {
         if ( !gs.isEmpty() ) {
             Term type_fst = null;
             Term type_snd = null;
-
 
             for ( Geometry g : gs ) {
 

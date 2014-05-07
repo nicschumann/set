@@ -1,0 +1,49 @@
+
+README - Model of "Set", A Constraint-Based, Three Dimensional CAD Program
+
+
+
+
+Nic Schumann, Christie Whalen - CS1950Y
+
+
+[1] . Sketch of the Modeled Software -
+	  "Formal Reasoning Informs Reasoning About Form"
+
+Instead of using a traditional representation of geometric objects by locating spacial boundaries and volumes in space - as clouds of points that are only differentiated by their current locations in space - Set takes a notion of logical constraint between geometric elements as primitive. That is to say, instead of representing a cube as a set of points { x1, x2, .., x8 }, that happen to be located in a cubic configuration at the time of viewing, Set represents a cube as a series of invariants between geometries - ie. a set of parallel, perpindicular, and coincident lines. In this way, Set encodes the "logic" of what it means to be Cube into the represented geometry, rather than relying on an incidental configuration of random points. Being able to bake these invariants into a drawing allows the user to make sound logical judgements about their form - a key ability when it comes to automated manufacturing, systems integration, and reasoning about form.
+
+[2] . Geometric Data Structures in Set and Their Represenation in Alloy.
+
+Instead of encoding points as locations, Set encodes points as ordered n-tuples of symbols, each of which varies over the Real numbers. The symbols in a point never change once the point is defined; their values may, as constraints are imposed and satisfied by the solver.
+
+Set uses a lightweight, inductive definition to introduce Geometry, as follows:
+
+	x : Symbol    y : Symbol   z : Symbol
+	------------------------------------- ( PointIntro )
+	         ( x y z ) : Geometry
+
+	    A : Geometry    B : Geometry
+	------------------------------------- ( RelationIntro )
+	        ( A, B ) : Geometry
+
+All more complicated geometric structures are encoded as relations between points. For examples, a line is a simple relation between points, a plane is a relation between lines, and a volume a relation between planes. Relations of greater depth than this have more than 3 dimensions; one might visualize a relation between volumes ( ie, a relation between relations between relations between relations between points ) as a transition function from the "A" volume into the "B" volume. NB, Set does not implement this representation.
+
+This inductive definition is translated directly into alloy signatures, along with a signature fact which mandates that the depth of either side of the geometric tree must be equal - ie, no relations between points and lines, and so on.
+
+[3] . Modeling User Interaction with these Structures.
+
+We modeled Set's context as a system of linear equations, along with a set of defined geometries, each indexed over time. A trace fact was introduced to model runs of the program. We admitted all of the representable user interactions into our model - Addition of a point, Addition of a relation, Addition of a constraint, Deletion of a point, Deletion of a relation, and Deletion of a constraint.
+
+[4] . Assertions
+
+We proved a variety of assertions about the way deletion affects the context. Because of the close association of points and symbols, point deletion has ramifications for the validity of relations and the applicability of constraints. In general, we proved that deletion in a well-formed context ( ie, a context in which all subelements of a relation are in the context, and all symbols involved in a constraint are in the context ) produces a well-formed context.
+
+
+[5] . Exploring the Model
+
+Because several complicated relations are used mostly for bookkeeping and strain visual parsing of the model, we recommend setting the "defines" relation to "off", the "symbols" relation to its inline mode, the "pivots" relation to its inline mode, and to project the model over the Time sig. This allows for easier parsing, and affords the ability to step the model through time.  
+
+
+
+
+
