@@ -12,6 +12,31 @@ it means to be Cube into the represented geometry, rather than relying on an inc
 Being able to bake these invariants into a drawing allows the user to make sound logical judgements about their form - a key ability
 when it comes to automated manufacturing, systems integration, and reasoning about form.
 
+##Geometric Formalism
+
+Instead of encoding points as locations, Set encodes points as ordered *n*-tuples of symbols, each of which varies over the Real numbers.
+The symbols in a point never change once the point is defined; their values may, as constraints are imposed and satisfied by the solver.
+
+Set uses a lightweight, inductive definition to introduce Geometry, as follows:
+
+
+
+	x : Symbol    y : Symbol   z : Symbol
+	------------------------------------- ( PointIntro )
+	         ( x y z ) : Geometry
+
+
+
+	    A : Geometry    B : Geometry
+	------------------------------------- ( RelationIntro )
+	        ( A, B ) : Geometry
+
+
+
+All more complicated geometric structures are encoded as relations between points. For examples, a line is a simple relation between points,
+a plane is a relation between lines, and a volume a relation between planes. Relations of greater depth than this have more than 3 dimensions;
+one might visualize a relation between volumes ( ie, a relation between relations between relations between relations between points ) as a transition function
+from the "A" volume into the "B" volume. NB, Set does not implement this representation.
 
 ##Using Set
 
@@ -29,6 +54,9 @@ Command Line based Read-Evaluate-Print loop. The following subsections detail th
 
 The stage has two modes, a **create** mode, and a **select** mode. The current mode is displayed in the stage's bottom right hand corner, as a flag. These modes can
 be toggled between using the **s** keyboard key for select and the **c** keyboard key for create.
+
+
+in **create** mode, the user can create points and relations between them.
 
 
 
