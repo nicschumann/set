@@ -101,14 +101,35 @@ appears on in the contextual menu, it can be applied with a click. Currently imp
 The REPL is a command-line based interface to Set's intermediate representation. It allows the heap to be accessed and
 manipulated directly. The following is the list of recognized terms.
 
-```shell set> :context```
+```
+set> :context
+```
 
 Typing ":context" at the prompt instructs set to traverse and print the current heap. The heap is printed
 as a mapping from symbolic names, into the types ascribed to those names, mapped to the values affixed to those names. It
 is possible that a heap object may have no associated value if it is an assumption introduced into the heap by the user.
-this
+In this case, it is simply annotated as an assumed term. For example:
 
 
+
+```
+set> :let <name> <term>
+```
+
+Typing ":let" followed by a name and then a term object introduces a new term into the heap, and associates the identifier
+\<name\> with it. If \<term\> is well typed with respect to the current heap context, it is admitted into the context and
+can be used in the REPL or the Stage.
+
+```
+set> :assume <name> <type>
+```
+Typing ":let" followed by a name and then a term object introduces a new term into the heap, and associates the identifier
+\<name\> with it. If \<term\> is well typed with respect to the current heap context, it is admitted into the context and
+can be used in the REPL or the Stage. The following examples serve to clarify:
+
+```lisp
+(fn (x : R) x)
+```
 
 
 ##Build
