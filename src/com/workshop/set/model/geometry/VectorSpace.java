@@ -47,7 +47,7 @@ public class VectorSpace {
          * @return the immediate parent of this geometry
          */
         public Geometry getParent() { return parent; }
-        protected void setParent( Geometry parent ) { this.parent = parent; }
+        public void setParent( Geometry parent ) { this.parent = parent; }
 
         /**
          * Returns the set of all anscestors of this geometry;
