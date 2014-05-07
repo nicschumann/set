@@ -79,7 +79,12 @@ is coplanar with the XY plane, offset by their Z coordinate.
 As geometries are selected a menu at the top left of the stage is populated with the constraints that are applicable to
 the current selection. In order for a constraint to be applied, a pivot object must be set. This pivot acts as the fixed
 point for the constraint, while the other constrained objects are allowed to vary with the constraint. When a constraint
-appears on in the contextual menu, it can be applied with a click. Currently implemented constraints include:
+appears on in the contextual menu, it can be applied with a click. Alternatively, a constraint may be applied with the
+appropriate keystroke - a list of keystrokes is displayed next to each constraint.
+
+
+
+Currently implemented constraints include:
 
 -   Setting equal X coordinates between points
 
