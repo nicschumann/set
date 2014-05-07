@@ -76,8 +76,8 @@ public class TempEnvironment implements Model {
 	@Override
 	public void removeGeometry(Geometry g) {
         for ( Geometry anc : g.getAncestors() ) {
-            ((Relation) anc).domain().removeParent( anc  );
-            ((Relation) anc).codomain().removeParent( anc );
+            ((Relation) anc).domain().removeParent(anc);
+            ((Relation) anc).codomain().removeParent(anc);
             _currentElements.remove( anc );
         }
 		_currentElements.remove(g);
@@ -237,8 +237,10 @@ public class TempEnvironment implements Model {
 
 		try {
 			Constraint c = new RelationalConstraint(pivots, orbits, indices, relation);
-			
-			
+			for ( Point o : orbits ) { 
+                o.addConstraint( c );
+                for ( Geometry r : o.getAncestors() ) { r.addConstraint( c );  }
+            }
 		} catch (GeometricFailure e) {
 			e.printStackTrace();
 		}
@@ -269,6 +271,7 @@ public class TempEnvironment implements Model {
 				if (!_currentSelections.contains(element)) {
 					element.setHighlight(true);
 					_currentSelections.add(element);
+
 					_screen.displaySelected(element);
 				} else if (shift) {
 					// element.setHighlight(false);
