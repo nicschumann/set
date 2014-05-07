@@ -10,6 +10,7 @@ import java.util.Set;
 import org.lwjgl.util.vector.Vector3f;
 
 import com.workshop.set.control.TempEnvironment;
+import com.workshop.set.control.TempEnvironment.RelationException;
 import com.workshop.set.model.geometry.Equation;
 import com.workshop.set.model.geometry.OperationalGeometry;
 import com.workshop.set.model.geometry.VectorSpace;
@@ -430,7 +431,7 @@ public class Solver implements Model {
         }
     }
 
-    public void executeFunction(Function f ) throws GeometricFailure { _renderer.executeFunction(f); }
+    public void executeFunction(Function f ) throws GeometricFailure, RelationException { _renderer.executeFunction(f); }
 
     public void update() { _renderer.update(); }
 

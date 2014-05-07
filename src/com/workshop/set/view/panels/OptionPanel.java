@@ -12,6 +12,7 @@ import java.util.Map;
 
 import org.lwjgl.util.vector.Vector2f;
 
+import com.workshop.set.control.TempEnvironment.RelationException;
 import com.workshop.set.model.geometry.VectorSpace.GeometricFailure;
 import com.workshop.set.model.geometry.VectorSpace.Geometry;
 import com.workshop.set.model.interfaces.Model;
@@ -168,8 +169,8 @@ public class OptionPanel extends GLPanel {
 				} else {
 					try {
 						_model.executeFunction(fx);
-					} catch (GeometricFailure gf) {
-						_set.displayError(gf.getMessage());
+					} catch (GeometricFailure | RelationException e1) {
+						_set.displayError(e1.getMessage());
 					}
 				}
 				_model.update();
@@ -201,10 +202,15 @@ public class OptionPanel extends GLPanel {
 	}
 
 	private void showMenu() {
-		setButtons(_model.getFunctions());
-		menuHeight = Math.round(_buttons.size() * DEFAULT_SIZE.y);
-		_buttonPanel.setVisible(true);
-		_rollout = true;
+		List<Function> functions = _model.getFunctions();
+		if (functions != null) {
+			setButtons(_model.getFunctions());
+			menuHeight = Math.round(_buttons.size() * DEFAULT_SIZE.y);
+			_buttonPanel.setVisible(true);
+			_rollout = true;
+		} else {
+			_set.displayError("Relation already exists!");
+		}
 	}
 
 	@Override

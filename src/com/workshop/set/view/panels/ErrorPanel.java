@@ -35,6 +35,7 @@ public class ErrorPanel extends GLPanel {
 	}
 
 	public void displayError(String text, float parentWidth) {
+		
 		float width = ERROR_FONT.getWidth(text) + 40f;
 		float sizey = getSize().y;
 		setSize(width, sizey);
