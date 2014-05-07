@@ -101,7 +101,7 @@ appears on in the contextual menu, it can be applied with a click. Currently imp
 The REPL is a command-line based interface to Set's intermediate representation. It allows the heap to be accessed and
 manipulated directly. The following is the list of recognized terms.
 
-``` set> :context```
+```shell set> :context```
 
 Typing ":context" at the prompt instructs set to traverse and print the current heap. The heap is printed
 as a mapping from symbolic names, into the types ascribed to those names, mapped to the values affixed to those names. It
