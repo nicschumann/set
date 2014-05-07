@@ -52,32 +52,59 @@ Command Line based Read-Evaluate-Print loop. The following subsections detail th
 
 #####Stage
 
-The stage has two modes, a **create** mode, and a **select** mode. The current mode is displayed in the stage's bottom right hand corner, as a flag. These modes can
-be toggled between using the **s** keyboard key for **select** and the **c** keyboard key for **create**. Set also currently contains two camera modes, which can be toggled between
-using the **spacebar**. It provides an orthographic camera pointing down on the XY construction plane, and and a perspective camera that orbits the Y axis. Both of these cameras can
-can be repositioned by clicking and dragging anywhere on the stage. In perspective mode, the camera can also be made to orbit the Y axis, by right-clicking and dragging.
+The stage has two modes, a **create** mode, and a **select** mode. The current mode is displayed in the stage's bottom
+right hand corner, as a flag. These modes can be toggled between using the **s** keyboard key for **select** and the
+**c** keyboard key for **create**. Set also currently contains two camera modes, which can be toggled between using the
+**spacebar**. It provides an orthographic camera pointing down on the XY construction plane, and and a perspective camera
+that orbits the Y axis. Both of these cameras can can be repositioned by clicking and dragging anywhere on the stage.
+In perspective mode, the camera can also be made to orbit the Y axis, by right-clicking and dragging.
+
+In **create** mode, the user can create points and lines. Clicking anywhere on the stage creates a point on the current
+construction plane at that location (currently the XY Plane, with Z zero, is the only accessible construction plane).
+Holding down shift and clicking twice creates two points with a relation (ie, a line) between them.
+
+In **select** mode, points and lines can be selected by the user. Selecting a geometric object populates a menu in the
+upper left hand corner of the stage, which displays vital statistics about that geometry. These data include whether the
+geometry is a Point or a Relation, the name of that geometry, and, if it is a Point, its X, Y, and Z coordinate symbols,
+otherwise its related sub-geometries. Coordinates and sub-geometry fields are text-fields which can be edited, points can
+be relocated by changing their coordinates in these fields; relations can be re-related to other geometries by changing
+the names of sub-geometries. The name field of each geometry can also be edited.
+
+In general, geometries can be relocated by clicking and dragging them to a new location. Geometries move in a plane that
+is coplanar with the XY plane, offset by their Z coordinate.
+
+As geometries are selected a menu at the top left of the stage is populated with the constraints that are applicable to
+the current selection. In order for a constraint to be applied, a pivot object must be set. This pivot acts as the fixed
+point for the constraint, while the other constrained objects are allowed to vary with the constraint. Currently implemented
+constraints include:
+
+-   Setting equal X coordinates between points
 
 
-In **create** mode, the user can create points and lines. Clicking anywhere on the stage creates a point on the current construction plane at that location
-(currently the XY Plane, with Z zero, is the only accessible construction plane). Holding down shift and clicking twice creates two points with a relation (ie, a line) between them.
+-   Setting equal Y coordinates between points
 
-In **select** mode, points and lines can be selected by the user. Selecting a geometric object populates a menu in the upper left hand corner of the stage, which displays vital statistics
-about that geometry. These data include whether the geometry is a Point or a Relation, the name of that geometry, and, if it is a Point, its X, Y, and Z coordinate symbols, otherwise its
-related sub-geometries. Coordinates and sub-geometry fields are text-fields which can be edited, points can be relocated by changing their coordinates in these fields; relations can
-be re-related to other geometries by changing the names of sub-geometries. The name field of each geometry can also be edited.
 
-In general, geometries can be relocated by clicking and dragging them to a new location. Geometries move in a plane that is coplanar with the XY plane, offset by their Z coordinate.
+-   Setting equal Z coordinates between points
+
+
+-   Constraining two lines to be parallel.
+
+
+-   Constraining two lines to be perpendicular.
+
 
 
 
 
 ##Build
 
-Set depends on Google's guava libraries for several collection classes, and the LWJGL game library - a java interface to OpenGL - for a low level rendering API.
-As such, after being .jar'ed, Set must be run with the JVM flag -Djava.library.path={native.file.path.here}, where the native file path points to a directory of LWJGL's
-native-code openGL implementations.
+Set depends on Google's guava libraries for several collection classes, and the LWJGL game library - a java interface to
+OpenGL - for a low level rendering API. As such, after being .jar'ed, Set must be run with the JVM flag
+-Djava.library.path={native.file.path.here}, where the native file path points to a directory of LWJGL's native-code
+openGL implementations.
 
 ##Additional Resources
 
-See resources in the /docs folder for more information.
-See models in the /models folder for a formal specification of Set's behavior in the Alloy modeling language.
+-   See resources in the **/docs** folder for more information.
+
+-   See models in the **/models** folder for a formal specification of Set's behavior in the Alloy modeling language.
