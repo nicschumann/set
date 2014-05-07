@@ -310,16 +310,9 @@ public class Solver implements Model {
 
     }
 
-
-
     public void deleteSelections() {
-
+    	//_renderer.deleteSelections();
     }
-
-
-
-
-
 
 
     private Map<Symbol,Geometry> getSymbolTable() {

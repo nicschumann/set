@@ -76,4 +76,21 @@ public class Vector4 {
 		return Math.sqrt((v1.x-v2.x)*(v1.x-v2.x) + (v1.y-v2.y)*(v1.y-v2.y));
 	}
 	
+//	/**
+//		Return the vector in the perpendicular direction
+//	 */
+//	public Vector4 getPerpendicular(){
+//		
+//		if(this.z!=0){
+//			return new Vector4(-1/this.x, -1/this.y, -1/this.z, 0);
+//		}
+//		else
+//			return new Vector4(-1/this.x, -1/this.y, 0, 0);
+//	}
+	
+	public float getMagnitude(Vector4 v){
+		return (float)(Math.sqrt((v.x*v.x) + (v.y*v.y) + (v.z*v.z)));
+	}
+	
+	
 }

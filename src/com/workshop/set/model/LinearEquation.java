@@ -35,6 +35,12 @@ public class LinearEquation {
 		//if one pivot, it's a line with no constant 
 		if(_pivots.size()==1){
 			constant=0; 
+			//check if value is locked before making changes
+			//if(!_unknown.getLocked()){
+				_unknown.set(_known.get()+constant);
+				_unknown.lock(); 
+				return true;  
+			//}
 		}
 		else if(_pivots.size()==2){	//if two pivots, take delta of the corresponding index 
 			
@@ -49,22 +55,25 @@ public class LinearEquation {
 					constant=-1; 
 				else	//set equal to slope 
 					constant = slope; 
+				constant *= _constant;
+				//if(!_unknown.getLocked()){
+					_unknown.set(_known.get()+constant); 
+					return true;  
+				//}
 			}
 			
 			else{	//parallel
 				double delta = p1.getN_(_index).get() - p2.getN_(_index).get();
 				constant = delta; 
+				constant *= _constant; 
+				//if(!_unknown.getLocked()){
+					_unknown.set(_known.get()+constant); 
+					return true;  
+				//}
 			}
-			
-			constant *= _constant; 
 		}
 		
-		//check if value is locked before making changes
-		if(!_unknown.getLocked()){
-			_unknown.set(_known.get()+constant);
-			return true;  
-		}
-		
+		//System.out.println("cannot reset locked value");
 		return false; 
 	}
 }
