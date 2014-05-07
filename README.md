@@ -13,7 +13,7 @@ Being able to bake these invariants into a drawing allows the user to make sound
 when it comes to automated manufacturing, systems integration, and reasoning about form.
 
 
-####Using Set
+##Using Set
 
 Set has two principle interfaces. First, it provides a stage on which geometric objects are rendered, and can be interacted with.
 This stage can be used to create points, lines, and planes, move these objects around in space, apply defined constraints between them, and
@@ -25,16 +25,21 @@ heap of geometry, constraints, and their applications - the runtime enforces a w
 interpreter should affect Set's stage (although much of this dialog is not connected as of now). Set exposes its intermediate representation through a
 Command Line based Read-Evaluate-Print loop. The following subsections detail the functionality in the stage and in the REPL.
 
+#####Stage
+
+The stage has two modes, a **create** mode, and a **select** mode. The current mode is displayed in the stage's bottom right hand corner, as a flag. These modes can
+be toggled between using the **s** keyboard key for select and the **c** keyboard key for create.
 
 
 
-####Build
+
+##Build
 
 Set depends on Google's guava libraries for several collection classes, and the LWJGL game library - a java interface to OpenGL - for a low level rendering API.
 As such, after being .jar'ed, Set must be run with the JVM flag -Djava.library.path={native.file.path.here}, where the native file path points to a directory of LWJGL's
 native-code openGL implementations.
 
-####Additional Resources
+##Additional Resources
 
 See resources in the /docs folder for more information.
 See models in the /models folder for a formal specification of Set's behavior in the Alloy modeling language.
