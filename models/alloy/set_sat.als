@@ -24,20 +24,14 @@ module SET/basis[ Symbol ]
 	sig Constraint {
     	equation : one Equation,        	-- each constraint attempts to satisfy one equation
     	pivots : set Symbol,            	-- each constraint is equipped with a fixed set of fixed-valued pivots,	KNOWNS.
-                                        	-- any symbols in the context, not in the set of pivots, are orbits for this constraint.
-		satisfied : set Time 				-- the set of times at which this specific constraint is satisfied.
+                                        	-- any symbols in the context, not in the set of pivots, are considered orbits for this constraint.
 	} {
-    	pivots in equation.symbols
+    	pivots in equation.symbols			-- all the pivots in the constraint must be involved in the equations symbols.
 	}
 
 	pred EquivalentConstraints[ c,c' : Constraint ] {
     	c.equation = c'.equation        	-- equivalent constraints have the same equation.
     	c.pivots = c'.pivots            	-- equivalent constraints have pivot sets P1 and P2 such that P1 contains P2 and P2 contains P1
-    	--c.orbits = c'.orbits            	-- equivalent constraints have orbit sets O1 and O2 such that O1 contains O2 and O2 contains O1
-
-    	--and    
-
-    	--objects.c = objects.c'            	-- equivalent constraints live in the same context.
 	}
 
 
@@ -60,6 +54,7 @@ module SET/basis[ Symbol ]
     	between the lines, relation between planes as the volume contained between them, a relation between
     	volumes as a path space mapping the elements of the left volume into the right volume ( an animation, perhaps? ).
        	 
+		the defines relation is a book-keeping relation that contains the set of symbols contained in this geometry
        	 
  	*/
 	abstract sig Geometry { defines : set Symbol }
@@ -67,14 +62,14 @@ module SET/basis[ Symbol ]
 	/* 	A Point represents a location in 3-space;
     	each component of a point is represented by a UNIQUE symbol,
     	which refers to that components current position in 3-space.
-    	THis could be generalized into n arbitrary dimensions, but higher dimensional
+    	This could be generalized into n arbitrary dimensions, but higher-dimensional
     	geometry is not implemented in SET, so we limit ourselves to the space of R3.
  
       	x : Symbol	y : Symbol   z : Symbol
     	----------------------------------------	(PointIntro)
               	( x y z ) : Geometry
-                	^ ^ ^
-              	location
+                  ^ ^ ^
+              	locations in R
 
 	*/
 	sig Point extends Geometry {
@@ -89,13 +84,7 @@ module SET/basis[ Symbol ]
         	no (p1.x + p1.y + p1.z) & (p2.x + p2.y + p2.z)
 	}
     
-	-- it could be interesting to remove this constraint - then points would easily vary with one another...
-
-
-
-
-
-
+	-- NB. it could be interesting to remove this constraint - then points would easily vary with one another... definitionally.
 
 
 	/*  A Relation relates two Geometries with equivalent structure.
@@ -103,21 +92,21 @@ module SET/basis[ Symbol ]
       	A : Geometry  	B : Geometry 	depth( A ) = depth( B )
        	-------------------------------------------------------------    	(RelIntro)
                           	( A , B ) : Geometry
-                          	^   ^
-                      	proj1   proj2                    	 
+                          	  ^   ^
+                      	  proj1   proj2                    	 
 	*/
 	sig Relation extends Geometry {
     	left : one Geometry,
     	right : one Geometry
 	} {
-    	no (left + right) & this                	-- a Relation cannot contain itself
-    	this not in left.^(@left + @right)         	-- "
-    	this not in right.^(@right + @left)        	-- "
+    	this not in left.^(@left + @right)         	-- a Relation cannot contain itself
+    	this not in right.^(@right + @left)        	-- a Relation cannot contain itself
     	defines = left.@defines + right.@defines	-- a Relation defines what its left and right sides define.
 	}
-	-- left  and right maintainence?
 
-
+	/*
+		A relation must relate elements with equivalent structure.
+	*/
 	fact RelationalArity {
     	all r : Relation {
         	r.left in Point iff r.right in Point
@@ -126,55 +115,55 @@ module SET/basis[ Symbol ]
     	}
 	}
 
-	assert NoGeometricCycles {
-    	all r : Relation {
-        	r not in r.^left
-        	r not in r.^right
-    	}
-	}
-
-	assert NoConstraintCycles {}
-
-	assert NoSharedSymbols {}
-
-	assert inGeometryIFFinConstraint {}
 
 
 	/** [3] : Contexts: */
 	/*
-    	a Context represents the current state of the constraint problem
+    	a Context represents the current state of the program. That is, it contains the set of currently-rendered Geometries,
+		as well as the set of constraints currently imposed on those geometries. In order to model runs of the program,
+		the set of constrains and the set of geometries are indexed by the ordered set Time.
 
  	*/
 
 	one sig Context {
-    	system : set Constraint -> Time,
-    	objects : set Geometry -> Time    
+    	system : set Constraint -> Time,			-- the set of constrains imposed at a given time
+    	objects : set Geometry -> Time    			-- the set of geometries defined at a given time
 	} {
     	all t : Time {
-
-    	--	all o : objects.t  | all c : system.t | o.defines in (c.pivots + c.orbits)
        	 
-        	all r : Relation | r in objects.t implies (r.left in objects.t and r.right in objects.t)
-
-    	--	all g : Geometry - objects.t | no s : g.defines | s in (objects.t).defines
-        	all e : system.t.equation | e.symbols in objects.t.defines
+        	all r : Relation | r in objects.t implies (r.left in objects.t and r.right in objects.t) -- relations must be well-defined in a context
+        	all e : system.t.equation | e.symbols in objects.t.defines	-- equations may not mention undefined symbols.
 
     	}
        	 
 
 	}
 
+
+	/** [4] : Trace: */
+	/*
+		In order to model a run of the system, we used a trace fact, paired with predicates
+		that model an initial empty condition, as well as transitions between times in the trace.
+	*/
+
+	/*  [4.1] : The Initial condition is an empty context */
 	pred initialCondition[ t : Time ] {
     	no Context.system.t
     	no Context.objects.t    
 	}
 
+	/*  [4.2] : Adding a point to the context at time t augments the set of objects with that point in t'
+				and leaves the constraint system as it was. That point must also be a new point; you can't add a 
+				point that already exists! */
 	pred addPoint[ t,t' : Time, p : Point ] {
     	p not in Context.objects.t    
     	Context.objects.t' = Context.objects.t + p
     	Context.system.t' = Context.system.t
 	}
 
+	/*  [4.3] : Adding a relation means selecting two Geometries and relating them. As such, the selected geometries must
+				already be in the context - no adding relations on things that don't exist. Adding a relation doesn't add
+				any new constraints or geometry to the context, just the specified relation. */
 	pred addRelation[ t,t' : Time, r : Relation ] {
     	r not in Context.objects.t
     	some lft, rht : Context.objects.t {
@@ -184,8 +173,10 @@ module SET/basis[ Symbol ]
     	}    
 	}
 
+	/*  [4.4] : a constraint may be added between objects that already exist in the context; that is
+				the symbols involved in a constraint must be defined by objects already in the context at time t.
+				Adding a constraint doesn't change the set of defined Geometries. */
 	pred addConstraint[ t,t' : Time, c : Constraint, symb : set Symbol ] {
-	--	no (Context.objects.t).defines - (c.pivots + c.orbits)
     	c not in Context.system.t
 
     	symb in Context.objects.t.defines
@@ -195,6 +186,10 @@ module SET/basis[ Symbol ]
     	Context.objects.t' = Context.objects.t    
 	}
 
+	/*  [4.5] : Deleting a point means deleting all of the relations that contain it in their subtrees, and
+				all the constrains that mention its symbols. Deletion deletes strictly, although more than just
+				the given point may vanish, nothing will ever be added; a transition via deletion results in a
+				strictly smaller context. */
 	pred deletePoint[ t,t' : Time, p : Point ] {
 
     	p in Context.objects.t
@@ -216,6 +211,8 @@ module SET/basis[ Symbol ]
    	 
 	}
 
+	/*  [4.6] : Deleting a relation means deleting all relations that mention it in their subtrees. Because the set of symbols doesn't change,
+				the set of constraints is maintained as-is. Likewise, deleting a relation does not delete any points.  */
 	pred deleteRelation[ t, t' : Time, r: Relation ] {
    	 
     	r in Context.objects.t
@@ -231,38 +228,24 @@ module SET/basis[ Symbol ]
    	 (Context.objects.t & Point) = (Context.objects.t' & Point)
     	Context.system.t' = Context.system.t
 	}
-
+	
+	/*  [4.7] : Deleting a constraint is simple - the constraint is removed from the context; nothing else is changed. */
 	pred deleteConstraint[ t, t' : Time, c: Constraint ] {    
     	c in Context.system.t
     	Context.system.t' = Context.system.t - c
     	Context.objects.t = Context.objects.t'
 	}
 
-	/**
-    	?? applyConstraint ??
-	*/
 
-	assert noDoubleInit {
-    	no disj t,t' : Time {
-        	t' = t.next and initialCondition[t] and initialCondition[t']
-    	}   	 
-	}
-	check noDoubleInit for 3 but 12 Symbol,
-                            	exactly 4 Point,
-                            	4 Relation,
-                            	6 int,
-                            	6 Time
+	
 
-	-- Can't represent movement!
-
-	/** [4] : Trace: */
-
+	/*  [4.8] : The traces specify the set of legal transitions of the system. */	
 	fact Traces {
     	first.initialCondition
     	all t : Time - last |
         	let t' = t.next {
             	some c : Constraint, p : Point, r : Relation, pvts : set Symbol {
-                   	addPoint[ t, t', p ]
+                   	   addPoint[ t, t', p ]
                 	or addRelation[ t, t', r ]
                 	or addConstraint[ t, t', c, pvts ]
                 	or deletePoint[ t, t', p]
@@ -272,20 +255,28 @@ module SET/basis[ Symbol ]
         	}
 	}
 
-/** assertions...
-	[x] ** no cycles in a given relation
-	[X] ** left & right must have the same arity / structure.
-	[x] ** points cannot share symbols.
-	[x] ** all symbols in geometries must be in the constraints
-
-	[ ] ** deleting a relation preserves points
-	[x] ** deleting a point deletes the relations containing it, and constraints that contain it, and constraints w/ equations that contain it.
-*/
-
 
 	/** [5] : Assertions : */
+	/* 
+		We were especially interested in checking that deletion maintained a well-formed context; in order
+		to do this we had to check some assertions about what it means for a context to be well-formed.
+	*/
+	
+	/* [5.1] : no relation should be able to contain itself as a child. */
+	assert NoGeometricCycles {
+    	all r : Relation {
+        	r not in r.^left
+        	r not in r.^right
+    	}
+	}
+	check NoGeometricCycles for 3 but 12 Symbol,
+                            	exactly 4 Point,
+                            	4 Relation,
+                            	6 int,
+                            	6 Time	
 
-
+	/* [5.2] : deleting a point should mean that that point was in the context, that it is no longer in the context,
+			   and that no relation or constraint mentions its symbols. Note this is NOT true conversely. */
 	pred pointDeletion[ t,t' : Time, p : Point ] {
     	deletePoint[ t,t',p ]
     	implies
@@ -293,22 +284,27 @@ module SET/basis[ Symbol ]
     	and no (Context.objects.t' & Relation).defines & p.defines
     	and no Context.system.t'.equation.symbols & p.defines
 	}
+	/* [5.3.1] : deleting a relation should mean that that relation is no longer reachable from any other relation in the context. */
 	pred relationDeletion[ t,t' : Time, r : Relation ] {
     	deleteRelation[ t,t',r ]
     	implies
     	r in Context.objects.t
     	and all rel : Context.objects.t' & Relation | no rel.(^left + ^right) & r
 	}
-     pred relationDeletionPreservesPoints[ t,t' : Time, r : Relation ] {
+	/* [5.3.2] : deleting a relation should not affect the points in the context. */
+    pred relationDeletionPreservesPoints[ t,t' : Time, r : Relation ] {
     	deleteRelation[ t,t',r ]
     	implies
-   	 (Context.objects.t & Point) = (Context.objects.t' & Point)
+   	 	(Context.objects.t & Point) = (Context.objects.t' & Point)
     }
+	/* [5.4] : deleting a constraint removes that constraint and does nothing else. */
     pred constraintDeletion[ t, t' : Time, c : Constraint ] {
    	 deleteConstraint[t, t', c]
    	 implies
    	 c in Context.system.t and no c & Context.system.t'
+	 and Context.objects.t = Context.objects.t'
     }
+	/* [5.5] : if the above predicates hold for every transition, then deletion maps well-formed contexts into well-formed context */
 	assert wellFormedDeletion {
     	all t,t' : Time {
         	t' = t.next implies
@@ -323,6 +319,7 @@ module SET/basis[ Symbol ]
                             	6 int,
                             	6 Time
     
+	/* [5.6] : relations are symmetric : ie, relational trees are perfectly balanced. */
     assert relationDepth {
    	 all r : Relation | #(r.^left) = #(r.^right)
     }
@@ -331,86 +328,33 @@ module SET/basis[ Symbol ]
                             	2 Relation,
                             	10 int,
                             	6 Time
-/*
+	/* [5.7] : no transition maps empty contexts into empty contexts - each transition does something. */
+	assert noConsecutiveInit {
+    	no disj t,t' : Time {
+        	t' = t.next and initialCondition[t] and initialCondition[t']
+    	}   	 
+	}
+	check noConsecutiveInit for 3 but 12 Symbol,
+                            	exactly 4 Point,
+                            	4 Relation,
+                            	6 int,
+                            	6 Time
 
-	(Today) Goals:
-	+	Develop state model for the application...
-	+ 	Make a drawing
-	+	No Geometries / Constraints not in Context
-	+ 	Make a pred that shows a more interesting relations
+	/** [6] : Instance Generator Predicates */
+	/*  the following predicates make for some interesting instances... */
 
-	+ 	Add constraints that have no pivots?
+	pred extantRelationI { some Relation } -- there's some relation in the model.
 
-	+ Constraints indexed by time?
-
-
-*/
-
-pred wellconstrainedContext[ t : Time ] {
-	no con : Context.system.t | t not in con.satisfied
-}
-
--- pred underconstrainedContext[] {}
-
-pred overconstrainedContext[ t : Time ] { not wellconstrainedContext[ t ] }
-
-pred unsatisfiableAddition[ t,t' : Time, c : Constraint ] {
-	t not in c.satisfied
-	c not in Context.system.t
-	c in Context.system.t'
-	all s : Context.objects.t'.defines {
-		s
-	
+	pred constrainedContext {
+		some t : Time |
+    		some Context.system.t		  -- the context is constrained at some point
 	}
 
-}
-
--- context transitions
-
-/*
-	when you add a constraint to the system, the constraint can be satisfiable or unsatisfiable
-	( in this model, this is an arbitrary choice that affects the remaining run of the trace )
-	
-	if the added constraint is UNSATISFIABLE:
-	S1 ->	A: constraint(t,s,u) sat
-
-	S2 ->	A: constraint(t,s,u) sat	
-		  	B: constraint(x,y,z) sat
-	
-	S3 ->	A: constraint(t,s,u) sat	
-		  	B: constraint(x,y,z) sat
-			C: constraint(a,b,z) sat
-
-	S4 -> 	A: constraint(t,s,u) sat	
-		  	B: constraint(x,y,z) sat
-			C: constraint(a,b,z) sat
-			D: constraint(z) unsat  
-
-	S5 ->	A: constraint(t,s,u) sat	
-		  	B: constraint(x,y,z) unsat
-			C: constraint(a,b,z) unsat
-			D: constraint(z) unsat 	
-
-	S6 ->		
-
-
-
-
-
-*/
-
-
-
-pred constrainedContext {
-	some t : Time |
-    	some Context.system.t
-}
-
-pred deleteRelationTest {
-	some t : Time |
-	some t' : t.next  |
-	some r : Relation | deleteRelation[t,t',r]
-}
+	pred deleteRelationTest {
+		some t : Time |
+		some t' : t.next  |
+		some r : Relation | deleteRelation[t,t',r]	-- a relation is deleted
+	}
 
 pred pointDeletionCausesAllDeletion {
     some t: Time {
@@ -430,7 +374,7 @@ pred pointDeletionCausesAllDeletion {
    		 deletePoint[t.next.next.next, t.next.next.next.next, p]
    	 }
     }
-}
+}	-- deleting a point clears the context.
 
 pred planeExample {
     some t: Time {
@@ -454,7 +398,7 @@ pred planeExample {
    		 }
    	 }
     }
-}
+}	-- a non-trivial plane is constructed
 
 run planeExample for 3 but 12 Symbol,
                             	exactly 4 Point,
@@ -481,7 +425,7 @@ run constrainedContext for 3 but 12 Symbol,
                             	6 int,
                             	6 Time
 
-run { some Relation } for 3 but 12 Symbol,
+run extantRelationI for 3 but 12 Symbol,
                             	exactly 2 Point,
                             	2 Relation,
                             	6 int,
