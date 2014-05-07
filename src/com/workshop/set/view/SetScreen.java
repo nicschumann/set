@@ -362,5 +362,9 @@ public class SetScreen implements ScreenFrame {
 	public boolean isInFocus() {
 		return false;
 	}
+	
+	public void update() {
+		_options.updateGeomPanels();
+	}
 
 }

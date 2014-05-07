@@ -2,7 +2,13 @@ package com.workshop.set.control;
 
 import static com.workshop.set.SetMain.GENSYM;
 import static com.workshop.set.SetMain.VEC_SPACE_3D;
-import static com.workshop.set.model.interfaces.Model.Function.*;
+import static com.workshop.set.model.interfaces.Model.Function.CREATE_RELATION;
+import static com.workshop.set.model.interfaces.Model.Function.PARALLEL;
+import static com.workshop.set.model.interfaces.Model.Function.PERPENDICULAR;
+import static com.workshop.set.model.interfaces.Model.Function.SET_PIVOT;
+import static com.workshop.set.model.interfaces.Model.Function.X_VAL_EQUAL;
+import static com.workshop.set.model.interfaces.Model.Function.Y_VAL_EQUAL;
+import static com.workshop.set.model.interfaces.Model.Function.Z_VAL_EQUAL;
 import static org.lwjgl.opengl.GL11.GL_LINES;
 import static org.lwjgl.opengl.GL11.GL_LINE_SMOOTH;
 import static org.lwjgl.opengl.GL11.GL_QUADS;
@@ -33,7 +39,7 @@ import com.workshop.set.model.interfaces.Model;
 import com.workshop.set.view.SetScreen;
 
 public class TempEnvironment implements Model {
-	
+
 	public static final float SELECTION_RADIUS = 0.1f;
 
 	private SetScreen _screen;
@@ -430,7 +436,7 @@ public class TempEnvironment implements Model {
 
 			// update the possible functions to apply display
 		}
-		
+
 		// if no object was selected deselect all items
 		if (!selected) {
 			this.deselectAll();
@@ -442,7 +448,7 @@ public class TempEnvironment implements Model {
 	public Geometry getGeometry(Vector3f A, Vector3f B, Point p) {
 
 		Geometry selected = null;
-		
+
 		for (Geometry element : _currentElements) {
 			if (element instanceof Point) {
 
@@ -460,7 +466,8 @@ public class TempEnvironment implements Model {
 				float b = 2 * ((bMinA.x * aMinC.x) + (bMinA.y * aMinC.y) + (bMinA.z * aMinC.z));
 
 				// c
-				float c = (aMinC.x * aMinC.x) + (aMinC.y * aMinC.y) + (aMinC.z * aMinC.z) - SELECTION_RADIUS * SELECTION_RADIUS;
+				float c = (aMinC.x * aMinC.x) + (aMinC.y * aMinC.y) + (aMinC.z * aMinC.z) - SELECTION_RADIUS
+						* SELECTION_RADIUS;
 
 				if ((b * b - 4 * a * c) >= 0)
 					selected = element;
@@ -468,60 +475,58 @@ public class TempEnvironment implements Model {
 				double[] pnts = element.getPointArray();
 				if (pnts.length == 6) { // line
 
-//					if (this.checkLineIntersection(p, pnts))
-//						return element;
+					// if (this.checkLineIntersection(p, pnts))
+					// return element;
 					Vector3f L = new Vector3f((float) pnts[0], (float) pnts[1], (float) pnts[2]);
 					Vector3f L2 = new Vector3f((float) pnts[3], (float) pnts[4], (float) pnts[5]);
-					
-					Vector3f dir1 = new Vector3f();
-					Vector3f dir2 = new Vector3f();
-					Vector3f.sub(L2, L, dir1);
-					Vector3f.sub(B, A, dir2);
-					if (L.equals(L2))
-						continue;
-					dir1.normalise();
-					dir2.normalise();
-					
-//					Vector3f L = new Vector3f(0, 2, -1);
-//					A = new Vector3f(1, 0, -1);
-//					Vector3f dir1 = new Vector3f(1, 1, 2);
-//					Vector3f dir2 = new Vector3f(1, 1, 3);
-					
-					Vector3f aMinL = new Vector3f();
-					Vector3f.sub(A, L, aMinL);
-					
-					float c1 = Vector3f.dot(aMinL, dir1);
-					float c2 = Vector3f.dot(dir1, dir2);
-					float c3 = Vector3f.dot(dir1, dir1);
-					float c4 = Vector3f.dot(aMinL, dir2);
-					float c5 = Vector3f.dot(dir2, dir2);
-					float c6 = c2;
 
-					float s = (c1*c6 - c4*c3) / (c5*c3 - c6*c2);
-					float t = (s*c2 + c1) / c3;
-					
-//					System.out.println(c4 + ", " + c5 + ", " + c6);
-//					System.out.println(s + ", " + t);
-					
-					Vector3f P = new Vector3f(L.x + t*dir1.x, L.y + t*dir1.y, L.z + t*dir1.z);
-					Vector3f Q = new Vector3f(A.x + s*dir2.x, A.y + s*dir2.y, A.z + s*dir2.z);
-					if (!betweenPoint(L, L2, P)) {
+					Vector3f[] pAndQ = getPQ(L, L2, A, B);
+					if (!betweenPoint(L, L2, pAndQ[0])) {
 						continue;
 					}
-					
+
 					Vector3f PQ = new Vector3f();
-					Vector3f.sub(Q, P, PQ);
-					
+					Vector3f.sub(pAndQ[1], pAndQ[0], PQ);
+
 					double d = Math.sqrt(Vector3f.dot(PQ, PQ));
 					if (d < SELECTION_RADIUS - 0.02f && selected == null)
-						 selected = element;
-					
+						selected = element;
+
 				}
 			}
 		}
 		return selected;
 	}
-	
+
+	public static Vector3f[] getPQ(Vector3f L1a, Vector3f L1b, Vector3f L2a, Vector3f L2b) {
+
+		Vector3f dir1 = new Vector3f();
+		Vector3f dir2 = new Vector3f();
+		Vector3f.sub(L1b, L1a, dir1);
+		Vector3f.sub(L2b, L2a, dir2);
+		if (L1a.equals(L1b))
+			return null;
+		dir1.normalise();
+		dir2.normalise();
+
+		Vector3f aMinL = new Vector3f();
+		Vector3f.sub(L2a, L1a, aMinL);
+
+		float c1 = Vector3f.dot(aMinL, dir1);
+		float c2 = Vector3f.dot(dir1, dir2);
+		float c3 = Vector3f.dot(dir1, dir1);
+		float c4 = Vector3f.dot(aMinL, dir2);
+		float c5 = Vector3f.dot(dir2, dir2);
+		float c6 = c2;
+
+		float s = (c1 * c6 - c4 * c3) / (c5 * c3 - c6 * c2);
+		float t = (s * c2 + c1) / c3;
+
+		Vector3f[] PandQ = { new Vector3f(L1a.x + t * dir1.x, L1a.y + t * dir1.y, L1a.z + t * dir1.z),
+				new Vector3f(L2a.x + s * dir2.x, L2a.y + s * dir2.y, L2a.z + s * dir2.z) };
+		return PandQ;
+	}
+
 	public static boolean betweenPoint(Vector3f p1, Vector3f p2, Vector3f p) {
 		if (p1.x < p2.x) {
 			if (p.x < p1.x || p.x > p2.x) {
@@ -550,7 +555,7 @@ public class TempEnvironment implements Model {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
 

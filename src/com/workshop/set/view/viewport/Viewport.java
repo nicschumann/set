@@ -7,7 +7,6 @@ import static org.lwjgl.opengl.GL11.glLoadIdentity;
 import glfrontend.ScreenFrameAdapter;
 import glfrontend.components.Camera;
 import glfrontend.components.GLLabel;
-import glfrontend.components.Vector4;
 
 import java.awt.Color;
 import java.nio.FloatBuffer;
@@ -23,6 +22,7 @@ import org.lwjgl.util.glu.GLU;
 import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
 
+import com.workshop.set.control.TempEnvironment;
 import com.workshop.set.model.geometry.VectorSpace.GeometricFailure;
 import com.workshop.set.model.geometry.VectorSpace.Geometry;
 import com.workshop.set.model.geometry.VectorSpace.Point;
@@ -63,8 +63,8 @@ public class Viewport extends ScreenFrameAdapter {
 		_cameras = new ArrayList<Camera>();
 		_cameras.add(0, new Camera("orthographic"));
 		_cameras.add(1, new Camera("perspective"));
-		_currCamera = _cameras.get(_camIndex % _cameras.size());
-		_camIndex += 1;
+		_currCamera = _cameras.get(_camIndex);
+		_camIndex = (_camIndex + 1) % _cameras.size();
 
 		_model = model;
 	}
@@ -143,11 +143,11 @@ public class Viewport extends ScreenFrameAdapter {
 	 * returning the point of intersection
 	 */
 	public Point traceMouseClick(float x, float y, float zplane) {
-		
+
 		Vector3f[] vecs = traceMouse(x, y);
 		Vector3f p = vecs[0];
 		Vector3f d = vecs[1];
-		
+
 		d.normalise();
 
 		// solve for t
@@ -164,7 +164,7 @@ public class Viewport extends ScreenFrameAdapter {
 		}
 		return point;
 	}
-	
+
 	public Vector3f[] traceMouse(float x, float y) {
 		glLoadIdentity();
 		_currCamera.multMatrix(); // keep matrices up to date
@@ -187,7 +187,7 @@ public class Viewport extends ScreenFrameAdapter {
 
 		// direction vector:
 		Vector3f d = new Vector3f(farPlanePos.get(0) - p.x, farPlanePos.get(1) - p.y, farPlanePos.get(2) - p.z);
-		Vector3f[] result = {p, d};
+		Vector3f[] result = { p, d };
 		return result;
 	}
 
@@ -211,7 +211,7 @@ public class Viewport extends ScreenFrameAdapter {
 	public void checkIntersections(Point p) {
 		_model.checkIntersections(p, _shiftDown, _pivot);
 	}
-	
+
 	/**
 	 * Generally calls temp environment to create a constraint of the given type, if possible
 	 */
@@ -224,7 +224,7 @@ public class Viewport extends ScreenFrameAdapter {
 
 		if (_mode.equalsIgnoreCase("creation")) {
 			Point p = this.traceMouseClick(e.location.x, (this.getSize().y - e.location.y), 0);
-		// if in creation mode, add the element (will add a step to put in right bucket):
+			// if in creation mode, add the element (will add a step to put in right bucket):
 
 			try {
 
@@ -265,7 +265,7 @@ public class Viewport extends ScreenFrameAdapter {
 		}
 
 		else if (_mode.equalsIgnoreCase("selection")) {
-//			this.checkIntersections(p);
+			// this.checkIntersections(p);
 			Vector3f[] vecs = traceMouse(e.location.x, (this.getSize().y - e.location.y));
 
 			Point p = traceMouseClick(e.location.x, (this.getSize().y - e.location.y), 0);
@@ -282,9 +282,10 @@ public class Viewport extends ScreenFrameAdapter {
 			Point p = traceMouseClick(e.location.x, (this.getSize().y - e.location.y), 0);
 			if ((_currGeom = _model.getGeometry(vecs[0], vecs[1], p)) == null)
 				return;
-			
-			float zplane = (float)_currGeom.getPointArray()[2];
-			_lastPos = this.traceMouseClickVector(traceMouseClick(e.location.x, (this.getSize().y - e.location.y), zplane));
+
+			float zplane = (float) _currGeom.getPointArray()[2];
+			_lastPos = this.traceMouseClickVector(traceMouseClick(e.location.x, (this.getSize().y - e.location.y),
+					zplane));
 		}
 	}
 
@@ -292,6 +293,7 @@ public class Viewport extends ScreenFrameAdapter {
 	public void mouseReleased(MouseEvent e) {
 		_currPos = e.location;
 		_currGeom = null;
+		_set.update();
 	}
 
 	@Override
@@ -301,11 +303,22 @@ public class Viewport extends ScreenFrameAdapter {
 			return;
 
 		if (_currGeom != null) {
-			float zplane = (float)_currGeom.getPointArray()[2];
-			Vector3d p = this.traceMouseClickVector(traceMouseClick(e.location.x, (this.getSize().y - e.location.y), zplane));
-			Vector3d dir = new Vector3d(p.x - _lastPos.x, p.y - _lastPos.y, p.z - _lastPos.z);
+			Vector3d dir;
+			if (_shiftDown && _camIndex == 0) {
+				Vector3f[] vecs = traceMouse(e.location.x, (this.getSize().y - e.location.y));
+				Vector3f A = new Vector3f((float) _lastPos.x, (float) _lastPos.y, -500f);
+				Vector3f B = new Vector3f((float) _lastPos.x, (float) _lastPos.y, 500f);
+				Vector3f[] pAndQ = TempEnvironment.getPQ(vecs[0], vecs[1], A, B);
+				dir = new Vector3d(pAndQ[1].x - _lastPos.x, pAndQ[1].y - _lastPos.y, pAndQ[1].z - _lastPos.z);
+				_lastPos = new Vector3d(pAndQ[1].x, pAndQ[1].y, pAndQ[1].z);
+			} else {
+				float zplane = (float) _currGeom.getPointArray()[2];
+				Vector3d p = this.traceMouseClickVector(traceMouseClick(e.location.x,
+						(this.getSize().y - e.location.y), zplane));
+				dir = new Vector3d(p.x - _lastPos.x, p.y - _lastPos.y, p.z - _lastPos.z);
+				_lastPos = p;
+			}
 			_currGeom.move(dir);
-			_lastPos = p;
 		} else {
 
 			float deltaX = _currPos.x - e.location.x;
@@ -313,6 +326,7 @@ public class Viewport extends ScreenFrameAdapter {
 			_currPos = e.location;
 			_currCamera.mouseMove(deltaX, deltaY, e);
 		}
+		_set.update();
 	}
 
 	@Override
@@ -324,8 +338,8 @@ public class Viewport extends ScreenFrameAdapter {
 	public void keyPressed(KeyEvent e) {
 		int keyCode = e.keyCode;
 		if (keyCode == Keyboard.KEY_SPACE) { // flip through list of cameras
-			_currCamera = _cameras.get(_camIndex % _cameras.size());
-			_camIndex += 1;
+			_currCamera = _cameras.get(_camIndex);
+			_camIndex = (_camIndex + 1) % _cameras.size();
 		}
 		if (keyCode == Keyboard.KEY_LSHIFT || keyCode == Keyboard.KEY_RSHIFT)
 			_shiftDown = true;
