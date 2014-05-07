@@ -66,6 +66,12 @@ public class GLButton extends GLComponent {
 		Vector2f.sub(lr, ul, mid);
 		textLoc = new Vector2f((mid.x - textWidth) / 2, (mid.y - textHeight) / 2);
 	}
+	
+	public void triggerButton() {
+		for (Triggerable trigger : triggers) {
+			trigger.trigger(new TriggerEvent(this));
+		}
+	}
 
 	@Override
 	public void setSize(Vector2f dim) {
@@ -138,9 +144,7 @@ public class GLButton extends GLComponent {
 			pressed = false;
 			textLoc.x -= bs;
 			textLoc.y -= bs;
-			for (Triggerable trigger : triggers) {
-				trigger.trigger(new TriggerEvent(this));
-			}
+			triggerButton();
 		}
 	}
 	

@@ -374,6 +374,7 @@ public class Viewport extends ScreenFrameAdapter {
 		}
 		if (key == Keyboard.KEY_P)
 			_pivot = false;
+		_set.checkHotKey(e);
 	}
 
 	@Override

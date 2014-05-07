@@ -3,6 +3,7 @@ package com.workshop.set.model.interfaces;
 
 import java.util.List;
 
+import static org.lwjgl.input.Keyboard.*;
 import org.lwjgl.util.vector.Vector3f;
 
 import com.workshop.set.model.geometry.VectorSpace.GeometricFailure;
@@ -16,22 +17,24 @@ public interface Model {
 
 	public enum Function {
 
-		X_VAL_EQUAL("Set X Equal", true),
-		Y_VAL_EQUAL("Set Y Equal", true),
-		Z_VAL_EQUAL("Set Z Equal", true),
-		PARALLEL("Set Lines Parallel", true),
-		PERPENDICULAR("Set Lines Perpendicular", true),
+		X_VAL_EQUAL("Set X Equal (X)", KEY_X, true),
+		Y_VAL_EQUAL("Set Y Equal (Y)", KEY_Y, true),
+		Z_VAL_EQUAL("Set Z Equal (Z)", KEY_Z, true),
+		PARALLEL("Set Lines Parallel (L)", KEY_L, true),
+		PERPENDICULAR("Set Lines Perpendicular (X)", KEY_X, true),
 		
-		SET_PIVOT("Set As Pivot", false),
-        CREATE_RELATION("Create Relation", false),
-        TERM( null, true );
+		SET_PIVOT("Set As Pivot (P)", KEY_P, false),
+        CREATE_RELATION("Create Relation (R)", KEY_R, false),
+        TERM( null, KEY_T, true );
 
 		public String buttonText;
         private Term value;
+        public final int key;
 		public final boolean isConstraint;
 
-		private Function(String buttonText, boolean constraint) {
+		private Function(String buttonText, int key, boolean constraint) {
 			this.buttonText = buttonText;
+			this.key = key;
 			this.isConstraint = constraint;
 		}
 

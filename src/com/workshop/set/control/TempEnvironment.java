@@ -46,6 +46,8 @@ public class TempEnvironment implements Model {
 
 	private Set<Geometry> _currentElements;
 	private List<Geometry> _currentSelections;
+	
+//	private Map<Geometry, Constraint> _constraints;
 
 	private final float[] _color = { 0f, 0f, 0f };
 	private final float[] _colorH = { 1f, 1f, 1f };
@@ -54,6 +56,7 @@ public class TempEnvironment implements Model {
 	public TempEnvironment(Set<Geometry> _currentElements, List<Geometry> _currentSelections) {
 		this._currentElements = _currentElements;
 		this._currentSelections = _currentSelections;
+//		this._constraints = 
 	}
 
 	public TempEnvironment() {
@@ -236,6 +239,8 @@ public class TempEnvironment implements Model {
 
 		try {
 			Constraint c = new RelationalConstraint(pivots, orbits, indices, relation);
+			
+			
 		} catch (GeometricFailure e) {
 			e.printStackTrace();
 		}

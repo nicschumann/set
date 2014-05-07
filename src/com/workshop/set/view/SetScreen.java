@@ -77,6 +77,10 @@ public class SetScreen implements ScreenFrame {
 	public void closeError() {
 		_errors.closeError();
 	}
+	
+	public void checkHotKey(KeyEvent e) {
+		_options.checkHotKey(e);
+	}
 
 	@Override
 	public void setLocation(Vector2f loc) {

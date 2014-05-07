@@ -6,7 +6,9 @@ import glfrontend.components.GLPanel;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.lwjgl.util.vector.Vector2f;
 
@@ -32,6 +34,7 @@ public class OptionPanel extends GLPanel {
 	private boolean _rollout;
 	private List<GeomPanel> _geoms;
 	private List<GLButton> _buttons;
+	private Map<GLButton, Function> _functions;
 	private GLPanel _buttonPanel;
 
 	// private GLTextBox _focusBox;
@@ -55,6 +58,7 @@ public class OptionPanel extends GLPanel {
 
 		_geoms = new ArrayList<>();
 		_buttons = new ArrayList<>();
+		_functions = new HashMap<>();
 
 		_buttonPanel = new GLPanel();
 		_buttonPanel.setLocation(0, DEFAULT_SIZE.y);
@@ -139,6 +143,7 @@ public class OptionPanel extends GLPanel {
 			_buttonPanel.remove(button);
 		}
 		_buttons.clear();
+		_functions.clear();
 		_buttonPanel.setSize(DEFAULT_SIZE.x, 0);
 		_buttonPanel.setVisible(false);
 	}
@@ -173,6 +178,7 @@ public class OptionPanel extends GLPanel {
 
 		});
 		_buttons.add(button);
+		_functions.put(button, fx);
 	}
 
 	public void showButtons() {
@@ -280,6 +286,14 @@ public class OptionPanel extends GLPanel {
 				showMenu();
 			} else {
 				removeGeomPanels(true);
+			}
+		}
+	}
+
+	public void checkHotKey(KeyEvent e) {
+		for (GLButton button : _buttons) {
+			if (_functions.get(button).key == e.keyCode) {
+				button.triggerButton();
 			}
 		}
 	}
