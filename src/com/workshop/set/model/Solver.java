@@ -300,7 +300,7 @@ public class Solver implements Model {
         Term term = _environment.getValue( g.name() );
         _renderer.removeGeometry( g );
 
-
+        _renderer.removeGeometry( g );
     }
 
     /**
@@ -312,7 +312,10 @@ public class Solver implements Model {
         // this is actually very difficult. it required descending through the geometry, recursively removing all of
         // its atoms, and then checking to see that the heap's well-typing is still maintained.
         _renderer.removeGeometryAll( g );
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
     }
 
 
