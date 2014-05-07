@@ -28,7 +28,7 @@ public class SlopeEquation {
 		//System.out.println("The direction vector 1: " + dir.x + " " + dir.y + " " + dir.z);
 		
 		if(_relation.equalsIgnoreCase("perpendicular")){
-			//make a new vector out of a componenet of pivot and orbit and take cross product 
+			//make a new vector out of a component of pivot and orbit and take cross product
 			Vector4 toCross = new Vector4(0,0,1,0);
 			dir = dir.getCrossProd(toCross);
 		}
