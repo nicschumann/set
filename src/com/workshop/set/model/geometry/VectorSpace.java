@@ -538,9 +538,18 @@ public class VectorSpace {
 		public GeometricFailure(int i) {
 			this.i = i;
 		}
+		
+		public GeometricFailure(String msg) {
+			this.guiMsg = msg;
+		}
 
 		private static final long serialVersionUID = 432234L;
 		private int i;
+		private String guiMsg;
+		
+		public String guimessage() {
+			return guiMsg;
+		}
 
 		@Override
 		public String getMessage() {

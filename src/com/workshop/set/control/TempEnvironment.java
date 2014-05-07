@@ -46,8 +46,8 @@ public class TempEnvironment implements Model {
 
 	private Set<Geometry> _currentElements;
 	private List<Geometry> _currentSelections;
-	
-//	private Map<Geometry, Constraint> _constraints;
+
+	// private Map<Geometry, Constraint> _constraints;
 
 	private final float[] _color = { 0f, 0f, 0f };
 	private final float[] _colorH = { 1f, 1f, 1f };
@@ -56,7 +56,7 @@ public class TempEnvironment implements Model {
 	public TempEnvironment(Set<Geometry> _currentElements, List<Geometry> _currentSelections) {
 		this._currentElements = _currentElements;
 		this._currentSelections = _currentSelections;
-//		this._constraints = 
+		// this._constraints =
 	}
 
 	public TempEnvironment() {
@@ -111,12 +111,12 @@ public class TempEnvironment implements Model {
 		drawRelation((Relation) geom, pivot);
 	}
 
-	private void drawRelation(Relation geoms, boolean pivot) {
-		double[] pnts = geoms.getPointArray();
+	private void drawRelation(Relation geom, boolean pivot) {
+		double[] pnts = geom.getPointArray();
 
-		if (geoms.isPivot())
+		if (geom.isPivot())
 			glColor3f(_pivotColor[0], _pivotColor[1], _pivotColor[2]);
-		else if (geoms.getHighlight())
+		else if (geom.getHighlight())
 			glColor3f(_colorH[0], _colorH[1], _colorH[2]);
 		else
 			glColor3f(_color[0], _color[1], _color[2]);
@@ -129,12 +129,22 @@ public class TempEnvironment implements Model {
 			glEnd();
 		} else if (pnts.length == 12) {
 			glColor3f(0.25f, 0.25f, 0.25f);
-			glBegin(GL_QUADS);
-			glVertex3d(pnts[0], pnts[1], pnts[2]);
-			glVertex3d(pnts[3], pnts[4], pnts[5]);
-			glVertex3d(pnts[9], pnts[10], pnts[11]);
-			glVertex3d(pnts[6], pnts[7], pnts[8]);
-			glEnd();
+			if (pnts[3] == pnts[6] && pnts[4] == pnts[7] && pnts[5] == pnts[8] || pnts[0] == pnts[9]
+					&& pnts[1] == pnts[10] && pnts[2] == pnts[11]) {
+				glBegin(GL_QUADS);
+				glVertex3d(pnts[0], pnts[1], pnts[2]);
+				glVertex3d(pnts[3], pnts[4], pnts[5]);
+				glVertex3d(pnts[6], pnts[7], pnts[8]);
+				glVertex3d(pnts[9], pnts[10], pnts[11]);
+				glEnd();
+			} else {
+				glBegin(GL_QUADS);
+				glVertex3d(pnts[0], pnts[1], pnts[2]);
+				glVertex3d(pnts[3], pnts[4], pnts[5]);
+				glVertex3d(pnts[9], pnts[10], pnts[11]);
+				glVertex3d(pnts[6], pnts[7], pnts[8]);
+				glEnd();
+			}
 		}
 	}
 
@@ -174,7 +184,7 @@ public class TempEnvironment implements Model {
 	@Override
 	public void deleteSelections() {
 		for (Geometry elt : _currentSelections) {
-			removeGeometry( elt );
+			removeGeometry(elt);
 		}
 		_currentSelections.clear();
 		_screen.removeSelections(true);
@@ -406,12 +416,16 @@ public class TempEnvironment implements Model {
 	}
 
 	@Override
-	public void executeFunction(Function function) throws GeometricFailure {
+	public void executeFunction(Function function) throws GeometricFailure, RelationException {
 		switch (function) {
 		case SET_PIVOT:
 			_currentSelections.get(0).setPivot(true);
 			break;
 		case CREATE_RELATION:
+			Set<Geometry> parents = _currentSelections.get(0).getParents();
+			parents.retainAll(_currentSelections.get(1).getParents());
+			if (!parents.isEmpty())
+				throw new RelationException("Relation already exists!");
 			Relation r = VEC_SPACE_3D.relation(GENSYM.generate(), _currentSelections.get(0), _currentSelections.get(1));
 			_currentElements.add(r);
 			break;
@@ -570,6 +584,23 @@ public class TempEnvironment implements Model {
 		}
 
 		return true;
+	}
+
+	public class RelationException extends Exception {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 2651900498136114620L;
+
+		public RelationException() {
+			super();
+		}
+
+		public RelationException(String msg) {
+			super(msg);
+		}
+
 	}
 
 }
