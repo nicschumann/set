@@ -1,8 +1,4 @@
 #! /usr/bin/env bash
 
-ant clean
-
-ant
-
-./bin/set
+java -cp derived/set.jar:lib/* -Djava.library.path=lib/natives com.workshop.set.SetMain
 
