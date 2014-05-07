@@ -101,7 +101,7 @@ appears on in the contextual menu, it can be applied with a click. Currently imp
 The REPL is a command-line based interface to Set's intermediate representation. It allows the heap to be accessed and
 manipulated directly. The following is the list of recognized terms.
 
-```
+```sh
 set> :context
 ```
 
@@ -157,8 +157,20 @@ set> :assume PVT (all (A : univ) (all (elem : A) ((pivot A) elem)))
 ```
 
 Assume that "PVT" is constructor injecting elements of some set A into the pivoting judgement. Now we can require that
-any element ```racket x``` of ```racket R^3``` that a constraint is applied to, has a proof ```racket ((PVT R^3) x)```
-of ```racket ((pivot R^3) x)```
+any element
+```racket
+x
+``` of
+```racket
+R^3
+``` that a constraint is applied to, has a proof
+```racket
+((PVT R^3) x)
+```
+of
+```racket
+((pivot R^3) x)
+```
 
 ##Build
 
