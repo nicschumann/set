@@ -299,8 +299,6 @@ public class Solver implements Model {
         throws TypecheckingException, ProofFailureException {
         Term term = _environment.getValue( g.name() );
         _renderer.removeGeometry( g );
-
-        _renderer.removeGeometry( g );
     }
 
     /**

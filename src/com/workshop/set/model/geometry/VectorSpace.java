@@ -1,11 +1,6 @@
 package com.workshop.set.model.geometry;
 
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.vecmath.Vector3d;
 
@@ -14,9 +9,6 @@ import com.workshop.set.model.interfaces.Gensym;
 import com.workshop.set.model.interfaces.Symbol;
 import com.workshop.set.model.ref.MDouble;
 
-/**
- * Created by nicschumann on 4/17/14.
- */
 public class VectorSpace {
     /**
      * A geometry set can be instantiated over a specific dimension. Instantiating a
@@ -35,6 +27,7 @@ public class VectorSpace {
      * the interface to objects that exist inside of this VectorSpace
      */
     public abstract class Geometry {
+        private Geometry parent;
         /**
          * This method returns a the name of this geometric object. Each object
          * is required to have a unique name by the runtime system, so that the
@@ -48,6 +41,30 @@ public class VectorSpace {
         public abstract Symbol name();
         
         public abstract void setName(Symbol name);
+
+        /**
+         * Returns the geometry immediate parent of this geometry
+         * @return the immediate parent of this geometry
+         */
+        public Geometry getParent() { return parent; }
+        public void setParent( Geometry parent ) { this.parent = parent; }
+
+        /**
+         * Returns the set of all anscestors of this geometry;
+         * @return a Queue of all anscestors to this geometry, in order of proximity.
+         */
+        public Queue<Geometry> getAncestors(  ) {
+            Queue<Geometry> anc = new LinkedList<>();
+
+            if ( parent != null ) {
+                anc.add( parent );
+                for ( Geometry elem : parent.getAncestors() ) {
+                    anc.add( elem );
+                }
+            }
+
+            return anc;
+        }
 
         /**
          * this method returns the atomic names that are bound to values in this geometry.
@@ -122,6 +139,7 @@ public class VectorSpace {
         public Point( Symbol name, Map<Symbol,MDouble> components ) throws GeometricFailure {
             if ( components.size() != dimension ) throw new GeometricFailure( components.size() );
 
+            setParent( null );
             this.name = name;
             this.namedComponents = new LinkedHashMap<>( components );
 
@@ -251,7 +269,7 @@ public class VectorSpace {
          * ie, an image of the first in the second. If the two structures are not similar, no such
          * mapping exists, and the empty map is returned
          *
-         * @param x a geometry in the vector space to attempt to join.
+         * @param geom a geometry in the vector space to attempt to join.
          * @return a mapping from this into x.
          */
         public Map<Symbol,Symbol> join( Geometry geom ) throws GeometricFailure {
@@ -363,6 +381,10 @@ public class VectorSpace {
 
 	public class Relation extends Geometry {
 		public Relation(Symbol name, Geometry A, Geometry B) {
+
+            A.setParent( this );
+            B.setParent( this );
+
 			this.name = name;
 			this.A = A;
 			this.B = B;
@@ -370,6 +392,9 @@ public class VectorSpace {
 		}
 
 		public Relation(Geometry A, Geometry B) {
+            A.setParent( this );
+            B.setParent( this );
+
 			this.A = A;
 			this.B = B;
 			this.init();
