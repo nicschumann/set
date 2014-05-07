@@ -14,8 +14,9 @@ when it comes to automated manufacturing, systems integration, and reasoning abo
 
 ##Geometric Formalism
 
-Instead of encoding points as locations, Set encodes points as ordered *n*-tuples of symbols, each of which varies over the real numbers.
-The symbols in a point never change once the point is defined; their values may, as constraints are imposed and satisfied by the solver.
+Instead of encoding points as locations, Set encodes points as ordered *n*-tuples of symbols, each of which varies over
+the real numbers. The symbols in a point never change once the point is defined; their values may, as constraints are
+imposed and satisfied by the solver.
 
 Set uses a lightweight, inductive definition to introduce Geometry, as follows:
 
@@ -33,22 +34,24 @@ Set uses a lightweight, inductive definition to introduce Geometry, as follows:
 
 
 
-All more complicated geometric structures are encoded as relations between points. For examples, a line is a simple relation between points,
-a plane is a relation between lines, and a volume a relation between planes. Relations of greater depth than this have more than 3 dimensions;
-one might visualize a relation between volumes ( ie, a relation between relations between relations between relations between points ) as a transition function
-from the "A" volume into the "B" volume. *NB*, Set does not implement this representation.
+All more complicated geometric structures are encoded as relations between points. For examples, a line is a simple
+relation between points, a plane is a relation between lines, and a volume a relation between planes. Relations of
+greater depth than this have more than 3 dimensions; one might visualize a relation between volumes ( ie, a relation
+between relations between relations between relations between points ) as a transition function from the "A" volume into
+the "B" volume. *NB*, Set does not implement this representation.
 
 ##Using Set
 
-Set has two principle interfaces. First, it provides a stage on which geometric objects are rendered, and can be interacted with.
-This stage can be used to create points, lines, and planes, move these objects around in space, apply defined constraints between them, and
-delete them.
+Set has two principle interfaces. First, it provides a stage on which geometric objects are rendered, and can be interacted
+with. This stage can be used to create points, lines, and planes, move these objects around in space, apply defined
+constraints between them, and delete them.
 
-Set also provides direct access to the *&lambda;const*, a small, interpreted programming language used as an intermediate representation in
-Set. If the graphical interface is Set's Java source code, then *&lambda;const* is Set's JVM byte-code. Modifying the stage affects Set's
-heap of geometry, constraints, and their applications - the runtime enforces a well-typed heap - and modifying the heap directly through the *&lambda;const*
-interpreter should affect Set's stage (although much of this dialog is not connected as of now). Set exposes its intermediate representation through a
-Command Line based Read-Evaluate-Print loop. The following subsections detail the functionality in the stage and in the REPL.
+Set also provides direct access to the *&lambda;const*, a small, interpreted programming language used as an intermediate
+representation in Set. If the graphical interface is Set's Java source code, then *&lambda;const* is Set's JVM byte-code.
+Modifying the stage affects Set's heap of geometry, constraints, and their applications - the runtime enforces a well-typed
+heap - and modifying the heap directly through the *&lambda;const* interpreter should affect Set's stage (although much
+of this dialog is not connected as of now). Set exposes its intermediate representation through a Command Line based
+Read-Evaluate-Print loop. The following subsections detail the functionality in the stage and in the REPL.
 
 #####Stage
 
@@ -75,8 +78,8 @@ is coplanar with the XY plane, offset by their Z coordinate.
 
 As geometries are selected a menu at the top left of the stage is populated with the constraints that are applicable to
 the current selection. In order for a constraint to be applied, a pivot object must be set. This pivot acts as the fixed
-point for the constraint, while the other constrained objects are allowed to vary with the constraint. Currently implemented
-constraints include:
+point for the constraint, while the other constrained objects are allowed to vary with the constraint. When a constraint
+appears on in the contextual menu, it can be applied with a click. Currently implemented constraints include:
 
 -   Setting equal X coordinates between points
 
@@ -92,6 +95,18 @@ constraints include:
 
 -   Constraining two lines to be perpendicular.
 
+
+#####REPL
+
+The REPL is a command-line based interface to Set's intermediate representation. It allows the heap to be accessed and
+manipulated directly. The following is the list of recognized terms.
+
+``` set> :context```
+
+Typing ":context" at the prompt instructs set to traverse and print the current heap. The heap is printed
+as a mapping from symbolic names, into the types ascribed to those names, mapped to the values affixed to those names. It
+is possible that a heap object may have no associated value if it is an assumption introduced into the heap by the user.
+this
 
 
 
