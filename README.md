@@ -157,7 +157,7 @@ set> :assume PVT (all (A : univ) (all (elem : A) ((pivot A) elem)))
 ```
 
 Assume that "PVT" is constructor injecting elements of some set A into the pivoting judgement. Now we can require that
-any element *x* of *R^3* that a constraint is applied to, has a proof *(( **PVT** R^3 ) x )* of *(( **pivot** R^3) x)*
+any element *x* of *R^3* that a constraint is applied to, has a proof (( **PVT** *R^3* ) *x* ) of (( **pivot** *R^3*) *x*)
 
 ##Build
 
