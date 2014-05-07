@@ -76,12 +76,10 @@ public class TempEnvironment implements Model {
 	@Override
 	public void removeGeometry(Geometry g) {
         for ( Geometry anc : g.getAncestors() ) {
-            ((Relation) anc).domain().setParent( null );
-            ((Relation) anc).codomain().setParent( null );
-            anc.setParent( null );
+            ((Relation) anc).domain().removeParent( anc  );
+            ((Relation) anc).codomain().removeParent( anc );
             _currentElements.remove( anc );
         }
-        g.setParent( null );
 		_currentElements.remove(g);
 	}
 

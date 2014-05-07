@@ -27,7 +27,11 @@ public class VectorSpace {
      * the interface to objects that exist inside of this VectorSpace
      */
     public abstract class Geometry {
-        private Geometry parent;
+        protected Geometry( ) { parents = new HashSet<>(); }
+
+        private Set<Geometry> parents;
+
+        public Set<Constraint> _constraints;
         /**
          * This method returns a the name of this geometric object. Each object
          * is required to have a unique name by the runtime system, so that the
@@ -46,8 +50,9 @@ public class VectorSpace {
          * Returns the geometry immediate parent of this geometry
          * @return the immediate parent of this geometry
          */
-        public Geometry getParent() { return parent; }
-        public void setParent( Geometry parent ) { this.parent = parent; }
+        public Set<Geometry> getParents() { return parents; }
+        public void addParent( Geometry parent ) { this.parents.add( parent ); }
+        public void removeParent( Geometry parent ) { this.parents.remove( parent ); }
 
         /**
          * Returns the set of all anscestors of this geometry;
@@ -56,12 +61,14 @@ public class VectorSpace {
         public Queue<Geometry> getAncestors(  ) {
             Queue<Geometry> anc = new LinkedList<>();
 
-            if ( parent != null ) {
-                anc.add( parent );
-                for ( Geometry elem : parent.getAncestors() ) {
-                    anc.add( elem );
+            if ( !parents.isEmpty() ) {
+                anc.addAll(parents);
+                for ( Geometry parent : parents ) {
+                    for ( Geometry elem : parent.getAncestors() ) {
+                        anc.add( elem );
+                    }
                 }
-            }
+             }
 
             return anc;
         }
@@ -134,12 +141,9 @@ public class VectorSpace {
      */
     public class Point extends Geometry {
     	
-    	public Set<Constraint> _constraints; 
-    	
         public Point( Symbol name, Map<Symbol,MDouble> components ) throws GeometricFailure {
             if ( components.size() != dimension ) throw new GeometricFailure( components.size() );
 
-            setParent( null );
             this.name = name;
             this.namedComponents = new LinkedHashMap<>( components );
 
@@ -382,8 +386,8 @@ public class VectorSpace {
 	public class Relation extends Geometry {
 		public Relation(Symbol name, Geometry A, Geometry B) {
 
-            A.setParent( this );
-            B.setParent( this );
+            A.addParent( this );
+            B.addParent( this );
 
 			this.name = name;
 			this.A = A;
@@ -392,8 +396,8 @@ public class VectorSpace {
 		}
 
 		public Relation(Geometry A, Geometry B) {
-            A.setParent( this );
-            B.setParent( this );
+            A.addParent( this );
+            B.addParent( this );
 
 			this.A = A;
 			this.B = B;
