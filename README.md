@@ -127,10 +127,19 @@ Typing ":let" followed by a name and then a term object introduces a new term in
 \<name\> with it. If \<term\> is well typed with respect to the current heap context, it is admitted into the context and
 can be used in the REPL or the Stage. The following examples serve to clarify:
 
-```lisp
-(fn (x : R) x)
+Entering
+
+```racket
+set> :let id (fn (A : univ) (fn (x : A) x))
 ```
 
+at the prompt would cause the polymorphic identity function, with the name "id", to be added to the context. Then
+entering
+
+```racket
+set> :let idVect3 (id R^3)
+```
+at the prompt would create an instance of this function applicable to vectors in 3-space. This function coul
 
 ##Build
 
