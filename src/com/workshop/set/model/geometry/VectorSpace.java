@@ -49,6 +49,7 @@ public class VectorSpace {
         
         public abstract void setName(Symbol name);
 
+
         /**
          * this method returns the atomic names that are bound to values in this geometry.
          * for example, a vector X in R3 might have values x1 x2 x3. for X, values() returns the
